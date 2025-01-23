@@ -23,6 +23,22 @@ public final class Constants {
     public static final int kPipeMotorId = 9;
   }
 
+  public static final class IntakePositionConstants {
+    public static final int kLiftMotor1Id = 0;
+    public static final int kLiftMotor2Id = 0;
+
+    public static final double kLiftP = 0;
+    public static final double kLiftI = 0;
+    public static final double kLiftD = 0;
+
+    public static final int kPivotMotor1Id = 0;
+    public static final int kPivotMotor2Id = 0;
+
+    public static final double kPivotP = 0;
+    public static final double kPivotI = 0;
+    public static final double kPivotD = 0;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
