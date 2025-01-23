@@ -12,6 +12,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units; 
 
 public final class Constants {
+  public static final class IntakeConstants {
+    // Parameters related to the Ball Intake and Pipe Intake
+
+    // TODO: TUNE
+    public static final double kPipeIntakeSpeed = 0.5;
+    public static final double kPipeOuttakeSpeed = -0.5;
+
+    // TODO: SET TO REAL MOTOR ID
+    public static final int kPipeMotorId = 9;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
