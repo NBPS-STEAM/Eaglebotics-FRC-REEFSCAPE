@@ -15,12 +15,27 @@ public final class Constants {
   public static final class IntakeConstants {
     // Parameters related to the Ball Intake and Pipe Intake
 
+    
+    // Pipe Intake:
+
     // TODO: TUNE
     public static final double kPipeIntakeSpeed = 0.5;
     public static final double kPipeOuttakeSpeed = -0.5;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 9;
+
+
+    // Ball Intake:
+
+    // TODO: TUNE
+    public static final double kBallIntakeSpeed = 0.5;
+    public static final double kBallOuttakeSpeed = -0.5;
+
+    // TODO: SET TO REAL MOTOR ID
+    public static final int kBallMotorId1 = 9;
+    public static final int kBallMotorId2 = 9;
+
   }
 
   public static final class DriveConstants {
