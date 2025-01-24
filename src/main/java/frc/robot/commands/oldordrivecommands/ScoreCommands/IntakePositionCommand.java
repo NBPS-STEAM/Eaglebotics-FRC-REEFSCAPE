@@ -5,6 +5,9 @@ import frc.robot.subsystems.IntakePositionSubsystem;
 
 public final class IntakePositionCommand {
 
+
+
+    
     public class SetIntakePositionSetpoints extends Command {
 
         private final IntakePositionSubsystem intakePositionSubsystem;
@@ -32,6 +35,8 @@ public final class IntakePositionCommand {
     }
 
 
+
+
     public class SetLiftSetpoint extends Command {
 
         private final IntakePositionSubsystem intakePositionSubsystem;
@@ -55,6 +60,8 @@ public final class IntakePositionCommand {
             return true;
         }
     }
+
+
 
 
     public class SetPivotSetpoint extends Command {
