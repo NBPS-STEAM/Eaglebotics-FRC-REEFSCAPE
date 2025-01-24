@@ -39,6 +39,22 @@ public final class Constants {
     public static final double kPivotD = 0;
   }
 
+  public static final class HangConstants {
+    // Parameters related to the Hang Subsystem
+
+    // TODO: TUNE
+    public static final double kHangTwistPosition = 10.0;
+
+    public static final double kHangP = 5e-5;
+    public static final double kHangI = 0;
+    public static final double kHangD = 0;
+    public static final double kHangIz = 0;
+
+    // TODO: SET TO REAL MOTOR ID
+    public static final int kHangMotor1Id = 10;
+    public static final int kHangMotor2Id = 11;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
