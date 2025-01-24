@@ -38,6 +38,38 @@ public final class Constants {
 
   }
 
+  public static final class IntakePositionConstants {
+    public static final int kLiftMotor1Id = 0;
+    public static final int kLiftMotor2Id = 0;
+
+    public static final double kLiftP = 0;
+    public static final double kLiftI = 0;
+    public static final double kLiftD = 0;
+
+    public static final int kPivotMotor1Id = 0;
+    public static final int kPivotMotor2Id = 0;
+
+    public static final double kPivotP = 0;
+    public static final double kPivotI = 0;
+    public static final double kPivotD = 0;
+  }
+
+  public static final class HangConstants {
+    // Parameters related to the Hang Subsystem
+
+    // TODO: TUNE
+    public static final double kHangTwistPosition = 10.0;
+
+    public static final double kHangP = 5e-5;
+    public static final double kHangI = 0;
+    public static final double kHangD = 0;
+    public static final double kHangIz = 0;
+
+    // TODO: SET TO REAL MOTOR ID
+    public static final int kHangMotor1Id = 10;
+    public static final int kHangMotor2Id = 11;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
