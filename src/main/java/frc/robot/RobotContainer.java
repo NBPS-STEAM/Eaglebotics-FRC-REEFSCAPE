@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SensorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -32,7 +34,7 @@ public class RobotContainer
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandPS5Controller driverGamepad = new CommandPS5Controller(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -49,10 +51,10 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(), Constants.OIConstants.kDriveDeadband),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(), Constants.OIConstants.kDriveDeadband),
-        () -> driverXbox.getRightX(),
-        () -> driverXbox.getRightY());
+        () -> MathUtil.applyDeadband(driverGamepad.getLeftY(), Constants.OIConstants.kDriveDeadband),
+        () -> MathUtil.applyDeadband(driverGamepad.getLeftX(), Constants.OIConstants.kDriveDeadband),
+        () -> driverGamepad.getRightX(),
+        () -> driverGamepad.getRightY());
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -60,9 +62,9 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-        () -> MathUtil.applyDeadband(driverXbox.getLeftY(),  Constants.OIConstants.kDriveDeadband),
-        () -> MathUtil.applyDeadband(driverXbox.getLeftX(),  Constants.OIConstants.kDriveDeadband),
-        () -> driverXbox.getRightX() * 0.5);
+        () -> MathUtil.applyDeadband(driverGamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
+        () -> MathUtil.applyDeadband(driverGamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
+        () -> driverGamepad.getRightX() * 0.5);
 
 
 
@@ -80,8 +82,9 @@ public class RobotContainer
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+   
+    driverGamepad.circle().onTrue((Commands.runOnce(drivebase::zeroGyro)));
     
-    driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
    
   }
 
