@@ -31,6 +31,19 @@ public class OpCommands {
             () -> gamepad.getRightX() * 0.5);
 
         return driveFieldOrientedAnglularVelocity;
+
+
+    }
+
+    public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
+        // same as above but half as fast
+        Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
+            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
+            () -> gamepad.getRightX() * (0.5 * Constants.DriveConstants.speedFactor));
+
+        return driveFieldOrientedAnglularVelocity;
+
     }
 
 }

@@ -71,6 +71,9 @@ public final class Constants {
   }
 
   public static final class DriveConstants {
+    //controls speed for telop
+    public static double speedFactor = 0.5;
+
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
     public static  double kMaxSpeedMetersPerSecond = 5.6;

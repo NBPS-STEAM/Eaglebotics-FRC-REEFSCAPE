@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -60,8 +61,10 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
    
     driverGamepad.circle().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    
-   
+
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
+    //while true does not repeat
+    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
   }
 
   /**
