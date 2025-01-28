@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
+import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SensorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -31,6 +32,7 @@ public class RobotContainer
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
+  public final IntakePositionSubsystem intakePositionSubsystem = new IntakePositionSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandPS5Controller driverGamepad = new CommandPS5Controller(0);
@@ -60,6 +62,24 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
    
     driverGamepad.circle().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+
+    
+
+    coDriverGamepad.cross().onTrue(OpCommands.getBall1Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.square().onTrue(OpCommands.getBall2Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.triangle().onTrue(OpCommands.getBall3Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.circle().onTrue(OpCommands.getBall4Command(intakePositionSubsystem, coDriverGamepad));
+
+    coDriverGamepad.povDown().onTrue(OpCommands.getPipe1Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.povRight().onTrue(OpCommands.getPipe2Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.povUp().onTrue(OpCommands.getPipe3Command(intakePositionSubsystem, coDriverGamepad));
+    coDriverGamepad.povLeft().onTrue(OpCommands.getPipe4Command(intakePositionSubsystem, coDriverGamepad));
+
+
+
+
+
+
     
    
   }

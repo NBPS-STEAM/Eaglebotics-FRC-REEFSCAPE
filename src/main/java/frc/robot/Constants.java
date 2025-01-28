@@ -12,6 +12,35 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units; 
 
 public final class Constants {
+
+  public static final class OpConstantsForBall {
+    public static final double Ball1Lift = 1.0;
+    public static final double Ball1Pivot = 1.0;
+
+    public static final double Ball2Lift = 1.0;
+    public static final double Ball2Pivot = 1.0;
+
+    public static final double Ball3Lift = 1.0;
+    public static final double Ball3Pivot = 1.0;
+
+    public static final double Ball4Lift = 1.0;
+    public static final double Ball4Pivot = 1.0;
+  }
+
+  public static final class OpConstantsForPipe {
+    public static final double Pipe1Lift = 1.0;
+    public static final double Pipe1Pivot = 1.0;
+
+    public static final double Pipe2Lift = 1.0;
+    public static final double Pipe2Pivot = 1.0;
+
+    public static final double Pipe3Lift = 1.0;
+    public static final double Pipe3Pivot = 1.0;
+
+    public static final double Pipe4Lift = 1.0;
+    public static final double Pipe4Pivot = 1.0;
+  }
+
   public static final class IntakeConstants {
     // Parameters related to the Ball Intake and Pipe Intake
 
