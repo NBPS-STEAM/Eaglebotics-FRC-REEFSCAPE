@@ -6,10 +6,12 @@ package frc.robot;
 
 import java.io.File;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.reduxrobotics.sensors.canandcolor.ProximityPeriod;
 
 import edu.wpi.first.wpilibj.Filesystem;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -49,6 +51,8 @@ public class RobotContainer
   final CommandPS5Controller driverGamepad = new CommandPS5Controller(0);
   final CommandPS5Controller coDriverGamepad = new CommandPS5Controller(1);
 
+  SendableChooser<Command> AutoChooser = new SendableChooser<>();
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -59,6 +63,9 @@ public class RobotContainer
     configureBindings();
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+
+    setAutoCommands();
+    SmartDashboard.putData("Autos", AutoChooser);
   }
 
   /**
@@ -110,10 +117,12 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
-    // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+  public Command getAutonomousCommand() {
+    return AutoChooser.getSelected(); 
+  }
+
+  public void setAutoCommands(){
+    AutoChooser.addOption("Name-In-PathPlanner", new PathPlannerAuto("Name Goes Here"));
   }
 
   public void setDriveMode()
