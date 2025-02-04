@@ -6,19 +6,21 @@ import frc.robot.subsystems.HangSubsystem;
 
 public final class HangCommands {
 
+    private HangSubsystem hangSubsystem;
+
+    public HangCommands(HangSubsystem hangSubsystem) {
+        this.hangSubsystem = hangSubsystem;
+    }
+
     public class Prepare extends Command {
 
-        private final HangSubsystem hangSubsystem;
-
-        public Prepare(HangSubsystem hangSubsystem){
-            this.hangSubsystem = hangSubsystem;
+        public Prepare(){
             addRequirements(hangSubsystem);
         }
 
         @Override 
         public void initialize() {
-            // Nothing yet!
-            // Once the grippers are on, this will "activate" those, whatever that will do.
+            // Nothing yet! Once the grippers are on, this will "activate" those, whatever that will do.
         }
 
         @Override 
@@ -29,10 +31,7 @@ public final class HangCommands {
 
     public class Activate extends Command {
 
-        private final HangSubsystem hangSubsystem;
-
-        public Activate(HangSubsystem hangSubsystem){
-            this.hangSubsystem = hangSubsystem;
+        public Activate(){
             addRequirements(hangSubsystem);
         }
 
@@ -49,10 +48,7 @@ public final class HangCommands {
 
     public class Reset extends Command {
 
-        private final HangSubsystem hangSubsystem;
-
-        public Reset(HangSubsystem hangSubsystem){
-            this.hangSubsystem = hangSubsystem;
+        public Reset(){
             addRequirements(hangSubsystem);
         }
 

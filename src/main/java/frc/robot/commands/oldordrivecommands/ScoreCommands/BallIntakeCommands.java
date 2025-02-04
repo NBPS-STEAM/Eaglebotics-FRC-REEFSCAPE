@@ -13,6 +13,7 @@ public final class BallIntakeCommands {
     }
 
     public class Intake extends Command {
+        
         public Intake() {
             addRequirements(ballIntakeSubsystem);
         }

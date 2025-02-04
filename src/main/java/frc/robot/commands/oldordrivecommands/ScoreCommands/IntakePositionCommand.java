@@ -5,20 +5,20 @@ import frc.robot.subsystems.IntakePositionSubsystem;
 
 public final class IntakePositionCommand {
 
+    private IntakePositionSubsystem intakePositionSubsystem;
 
-
+    public IntakePositionCommand(IntakePositionSubsystem intakePositionSubsystem) {
+        this.intakePositionSubsystem = intakePositionSubsystem;
+    }
     
     public class SetIntakePositionSetpoints extends Command {
 
-        private final IntakePositionSubsystem intakePositionSubsystem;
         private double liftSetpoint;
         private double pivotSetpoint;
 
-        public SetIntakePositionSetpoints(IntakePositionSubsystem intakePositionSubsystem, double liftSetpoint, double pivotSetpoint) {
-            this.intakePositionSubsystem = intakePositionSubsystem;
+        public SetIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {
             this.liftSetpoint = liftSetpoint;
             this.pivotSetpoint = pivotSetpoint;
-
             addRequirements(intakePositionSubsystem);
         }
 
@@ -39,13 +39,10 @@ public final class IntakePositionCommand {
 
     public class SetLiftSetpoint extends Command {
 
-        private final IntakePositionSubsystem intakePositionSubsystem;
         private double liftSetpoint;
 
-        public SetLiftSetpoint(IntakePositionSubsystem intakePositionSubsystem, double liftSetpoint) {
-            this.intakePositionSubsystem = intakePositionSubsystem;
+        public SetLiftSetpoint(double liftSetpoint) {
             this.liftSetpoint = liftSetpoint;
-
             addRequirements(intakePositionSubsystem);
         }
 
@@ -66,13 +63,10 @@ public final class IntakePositionCommand {
 
     public class SetPivotSetpoint extends Command {
 
-        private final IntakePositionSubsystem intakePositionSubsystem;
         private double pivotSetpoint;
 
-        public SetPivotSetpoint(IntakePositionSubsystem intakePositionSubsystem, double pivotSetpoint) {
-            this.intakePositionSubsystem = intakePositionSubsystem;
+        public SetPivotSetpoint(double pivotSetpoint) {
             this.pivotSetpoint = pivotSetpoint;
-
             addRequirements(intakePositionSubsystem);
         }
 

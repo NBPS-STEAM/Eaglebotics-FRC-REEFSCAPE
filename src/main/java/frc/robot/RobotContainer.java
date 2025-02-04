@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
@@ -43,7 +44,7 @@ public class RobotContainer
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
-  public final IntakePositionSubsystem intakePositionSubsystem = new IntakePositionSubsystem();
+  public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 
   public final BallIntakeSubsystem ballIntake = new BallIntakeSubsystem();
   public final HangSubsystem hangSubsystem = new HangSubsystem();
@@ -53,6 +54,12 @@ public class RobotContainer
   final CommandPS5Controller coDriverGamepad = new CommandPS5Controller(1);
 
   SendableChooser<Command> AutoChooser = new SendableChooser<>();
+
+
+  PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
+  BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
+  HangCommands hangCommands = new HangCommands(hangSubsystem);
+  OpCommands opCommands = new OpCommands(intakePosition);
 
 
   /**
@@ -85,34 +92,31 @@ public class RobotContainer
     
 
     //Co Driver:
-    BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
-
-    // Pipe Intake/Outtake Controls
-    coDriverGamepad.L1().onTrue(new PipeIntakeCommands().new Intake(pipeIntake));
-    coDriverGamepad.L2().onTrue(new PipeIntakeCommands().new Outtake(pipeIntake));
     
-    // Ball Intake/Outtake Controls
+    // Pipe Intake/Outtake/Stop Controls
+    coDriverGamepad.L1().onTrue(pipeIntakeCommands.new Intake());
+    coDriverGamepad.L2().onTrue(pipeIntakeCommands.new Outtake());
+    coDriverGamepad.L3().onTrue(pipeIntakeCommands.new StopIntake());
+    
+    // Ball Intake/Outtake/Stop Controls
     coDriverGamepad.R1().onTrue(ballIntakeCommands.new Intake());
     coDriverGamepad.R2().onTrue(ballIntakeCommands.new Outtake());
-
-    // Stop Ball/Pipe Controls
-    coDriverGamepad.L3().onTrue(new PipeIntakeCommands().new StopIntake(pipeIntake));
     coDriverGamepad.R3().onTrue(ballIntakeCommands.new StopIntake());
   
     // Hang Control
-    coDriverGamepad.options().onTrue(new HangCommands().new Activate(hangSubsystem));
+    coDriverGamepad.options().onTrue(hangCommands.new Activate());
   
     // Ball Set Positions
-    coDriverGamepad.cross().onTrue(OpCommands.getBall1Command(intakePositionSubsystem));
-    coDriverGamepad.square().onTrue(OpCommands.getBall2Command(intakePositionSubsystem));
-    coDriverGamepad.triangle().onTrue(OpCommands.getBall3Command(intakePositionSubsystem));
-    coDriverGamepad.circle().onTrue(OpCommands.getBall4Command(intakePositionSubsystem));
+    coDriverGamepad.cross().onTrue(opCommands.getBall1Command());
+    coDriverGamepad.square().onTrue(opCommands.getBall2Command());
+    coDriverGamepad.triangle().onTrue(opCommands.getBall3Command());
+    coDriverGamepad.circle().onTrue(opCommands.getBall4Command());
 
-    // 
-    coDriverGamepad.povDown().onTrue(OpCommands.getPipe1Command(intakePositionSubsystem));
-    coDriverGamepad.povRight().onTrue(OpCommands.getPipe2Command(intakePositionSubsystem));
-    coDriverGamepad.povUp().onTrue(OpCommands.getPipe3Command(intakePositionSubsystem));
-    coDriverGamepad.povLeft().onTrue(OpCommands.getPipe4Command(intakePositionSubsystem));
+    // Pipe Set Positions
+    coDriverGamepad.povDown().onTrue(opCommands.getPipe1Command());
+    coDriverGamepad.povRight().onTrue(opCommands.getPipe2Command());
+    coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
+    coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
 
   }
 
@@ -130,7 +134,7 @@ public class RobotContainer
   }
 
   public void registerNamedCommands() {
-    NamedCommands.registerCommand("Example Command", OpCommands.getPipe1Command(intakePositionSubsystem));
+    NamedCommands.registerCommand("Example Command", opCommands.getPipe1Command());
   }
 
   public void setDriveMode()
