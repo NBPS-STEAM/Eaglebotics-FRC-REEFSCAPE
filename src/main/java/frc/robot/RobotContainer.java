@@ -130,11 +130,11 @@ public class RobotContainer
   }
 
   public void setAutoCommands(){
-    AutoChooser.addOption("Name-In-PathPlanner", new PathPlannerAuto("Name Goes Here"));
+    AutoChooser.addOption("One-Coral-Center", new PathPlannerAuto("One-Coral-Center"));
   }
 
   public void registerNamedCommands() {
-    NamedCommands.registerCommand("Example Command", opCommands.getPipe1Command());
+    NamedCommands.registerCommand("Pipe Outake", pipeIntakeCommands.new Outtake());
   }
 
   public void setDriveMode()
