@@ -8,7 +8,6 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.reduxrobotics.sensors.canandcolor.ProximityPeriod;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
-import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
@@ -67,6 +65,9 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    // Register commands for PathPlanner
+    registerNamedCommands();
+
     // Configure the trigger bindings
     configureBindings();
 
