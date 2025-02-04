@@ -56,43 +56,43 @@ public class OpCommands {
     static IntakePositionCommand intakePositionCommand = new IntakePositionCommand();
 
 
-    public static Command getBall1Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getBall1Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForBall.Ball1Lift, Constants.OpConstantsForBall.Ball1Pivot);
     }
 
-    public static Command getBall2Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getBall2Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForBall.Ball2Lift, Constants.OpConstantsForBall.Ball2Pivot);
     }
 
-    public static Command getBall3Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getBall3Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForBall.Ball3Lift, Constants.OpConstantsForBall.Ball3Pivot);
     }
 
-    public static Command getBall4Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getBall4Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForBall.Ball4Lift, Constants.OpConstantsForBall.Ball4Pivot);
     }
 
 
-    public static Command getPipe1Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getPipe1Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForPipe.Pipe1Lift, Constants.OpConstantsForPipe.Pipe1Pivot);
     }
 
-    public static Command getPipe2Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getPipe2Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForPipe.Pipe2Lift, Constants.OpConstantsForPipe.Pipe2Pivot);
     }
 
-    public static Command getPipe3Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getPipe3Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForPipe.Pipe3Lift, Constants.OpConstantsForPipe.Pipe3Pivot);
     }
 
-    public static Command getPipe4Command(IntakePositionSubsystem intakePositionSubsystem, CommandPS5Controller gamepad) {
+    public static Command getPipe4Command(IntakePositionSubsystem intakePositionSubsystem) {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             intakePositionSubsystem, Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
     }

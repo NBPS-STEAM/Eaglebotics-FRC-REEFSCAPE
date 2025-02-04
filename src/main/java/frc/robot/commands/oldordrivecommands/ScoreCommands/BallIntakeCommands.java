@@ -6,12 +6,14 @@ import frc.robot.subsystems.BallIntakeSubsystem;
 
 public final class BallIntakeCommands {
 
+    private BallIntakeSubsystem ballIntakeSubsystem;
+
+    public BallIntakeCommands(BallIntakeSubsystem ballIntakeSubsystem) {
+        this.ballIntakeSubsystem = ballIntakeSubsystem;
+    }
+
     public class Intake extends Command {
-
-        private final BallIntakeSubsystem ballIntakeSubsystem;
-
-        public Intake(BallIntakeSubsystem ballIntakeSubsystem){
-            this.ballIntakeSubsystem = ballIntakeSubsystem;
+        public Intake() {
             addRequirements(ballIntakeSubsystem);
         }
 
@@ -27,11 +29,7 @@ public final class BallIntakeCommands {
     }
 
     public class Outtake extends Command {
-
-        private final BallIntakeSubsystem ballIntakeSubsystem;
-
-        public Outtake(BallIntakeSubsystem ballIntakeSubsystem){
-            this.ballIntakeSubsystem = ballIntakeSubsystem;
+        public Outtake() {
             addRequirements(ballIntakeSubsystem);
         }
 
@@ -47,11 +45,7 @@ public final class BallIntakeCommands {
     }
 
     public class StopIntake extends Command {
-
-        private final BallIntakeSubsystem ballIntakeSubsystem;
-
-        public StopIntake(BallIntakeSubsystem ballIntakeSubsystem){
-            this.ballIntakeSubsystem = ballIntakeSubsystem;
+        public StopIntake() {
             addRequirements(ballIntakeSubsystem);
         }
 

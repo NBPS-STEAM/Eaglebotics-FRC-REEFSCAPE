@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.reduxrobotics.sensors.canandcolor.ProximityPeriod;
 
@@ -84,31 +85,34 @@ public class RobotContainer
     
 
     //Co Driver:
+    BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
 
     // Pipe Intake/Outtake Controls
     coDriverGamepad.L1().onTrue(new PipeIntakeCommands().new Intake(pipeIntake));
     coDriverGamepad.L2().onTrue(new PipeIntakeCommands().new Outtake(pipeIntake));
     
     // Ball Intake/Outtake Controls
-    coDriverGamepad.R1().onTrue(new BallIntakeCommands().new Intake(ballIntake));
-    coDriverGamepad.R2().onTrue(new BallIntakeCommands().new Outtake(ballIntake));
+    coDriverGamepad.R1().onTrue(ballIntakeCommands.new Intake());
+    coDriverGamepad.R2().onTrue(ballIntakeCommands.new Outtake());
 
     // Stop Ball/Pipe Controls
     coDriverGamepad.L3().onTrue(new PipeIntakeCommands().new StopIntake(pipeIntake));
-    coDriverGamepad.R3().onTrue(new BallIntakeCommands().new StopIntake(ballIntake));
+    coDriverGamepad.R3().onTrue(ballIntakeCommands.new StopIntake());
   
     // Hang Control
     coDriverGamepad.options().onTrue(new HangCommands().new Activate(hangSubsystem));
   
-    coDriverGamepad.cross().onTrue(OpCommands.getBall1Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.square().onTrue(OpCommands.getBall2Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.triangle().onTrue(OpCommands.getBall3Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.circle().onTrue(OpCommands.getBall4Command(intakePositionSubsystem, coDriverGamepad));
+    // Ball Set Positions
+    coDriverGamepad.cross().onTrue(OpCommands.getBall1Command(intakePositionSubsystem));
+    coDriverGamepad.square().onTrue(OpCommands.getBall2Command(intakePositionSubsystem));
+    coDriverGamepad.triangle().onTrue(OpCommands.getBall3Command(intakePositionSubsystem));
+    coDriverGamepad.circle().onTrue(OpCommands.getBall4Command(intakePositionSubsystem));
 
-    coDriverGamepad.povDown().onTrue(OpCommands.getPipe1Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povRight().onTrue(OpCommands.getPipe2Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povUp().onTrue(OpCommands.getPipe3Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povLeft().onTrue(OpCommands.getPipe4Command(intakePositionSubsystem, coDriverGamepad));
+    // 
+    coDriverGamepad.povDown().onTrue(OpCommands.getPipe1Command(intakePositionSubsystem));
+    coDriverGamepad.povRight().onTrue(OpCommands.getPipe2Command(intakePositionSubsystem));
+    coDriverGamepad.povUp().onTrue(OpCommands.getPipe3Command(intakePositionSubsystem));
+    coDriverGamepad.povLeft().onTrue(OpCommands.getPipe4Command(intakePositionSubsystem));
 
   }
 
@@ -123,6 +127,10 @@ public class RobotContainer
 
   public void setAutoCommands(){
     AutoChooser.addOption("Name-In-PathPlanner", new PathPlannerAuto("Name Goes Here"));
+  }
+
+  public void registerNamedCommands() {
+    NamedCommands.registerCommand("Example Command", OpCommands.getPipe1Command(intakePositionSubsystem));
   }
 
   public void setDriveMode()
