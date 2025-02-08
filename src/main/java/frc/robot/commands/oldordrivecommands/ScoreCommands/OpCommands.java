@@ -11,8 +11,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class OpCommands {
 
-    
-
     public static Command getDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
         // Applies deadbands and inverts controls because joysticks
         // are back-right positive while robot
@@ -53,6 +51,10 @@ public class OpCommands {
     }
 
 
+
+
+
+    //Constructor to allow for each Command to reference the subsystem without a parameter
     private IntakePositionSubsystem intakePositionSubsystem;
 
     public OpCommands(IntakePositionSubsystem intakePositionSubsystem) {
@@ -62,6 +64,7 @@ public class OpCommands {
     IntakePositionCommand intakePositionCommand = new IntakePositionCommand(intakePositionSubsystem);
 
 
+    //Individual commands for each set position needed for the four levels of the ball and pipe
     public Command getBall1Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForBall.Ball1Lift, Constants.OpConstantsForBall.Ball1Pivot);

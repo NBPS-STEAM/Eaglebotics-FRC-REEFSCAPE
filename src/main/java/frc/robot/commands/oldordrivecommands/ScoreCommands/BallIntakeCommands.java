@@ -6,12 +6,16 @@ import frc.robot.subsystems.BallIntakeSubsystem;
 
 public final class BallIntakeCommands {
 
+    //Constructor to allow for each Command to reference the subsystem without a parameter
     private BallIntakeSubsystem ballIntakeSubsystem;
 
     public BallIntakeCommands(BallIntakeSubsystem ballIntakeSubsystem) {
         this.ballIntakeSubsystem = ballIntakeSubsystem;
     }
 
+
+
+    //Turns on the ball intake
     public class Intake extends Command {
         
         public Intake() {
@@ -29,6 +33,9 @@ public final class BallIntakeCommands {
         }
     }
 
+
+
+    //Turns on the ball outtake
     public class Outtake extends Command {
         public Outtake() {
             addRequirements(ballIntakeSubsystem);
@@ -45,6 +52,9 @@ public final class BallIntakeCommands {
         }
     }
 
+
+
+    //Stops the intake/outtake
     public class StopIntake extends Command {
         public StopIntake() {
             addRequirements(ballIntakeSubsystem);

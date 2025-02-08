@@ -5,12 +5,16 @@ import frc.robot.subsystems.IntakePositionSubsystem;
 
 public final class IntakePositionCommand {
 
+    //Constructor to allow for each Command to reference the subsystem without a parameter
     private IntakePositionSubsystem intakePositionSubsystem;
 
     public IntakePositionCommand(IntakePositionSubsystem intakePositionSubsystem) {
         this.intakePositionSubsystem = intakePositionSubsystem;
     }
     
+
+
+    //Sets the elevator and the intake arm to a specified position, which is then reached through PIDs
     public class SetIntakePositionSetpoints extends Command {
 
         private double liftSetpoint;
@@ -36,7 +40,7 @@ public final class IntakePositionCommand {
 
 
 
-
+    //Individual setter for the elevator
     public class SetLiftSetpoint extends Command {
 
         private double liftSetpoint;
@@ -60,7 +64,7 @@ public final class IntakePositionCommand {
 
 
 
-
+    //Individual setter for the intake arm
     public class SetPivotSetpoint extends Command {
 
         private double pivotSetpoint;

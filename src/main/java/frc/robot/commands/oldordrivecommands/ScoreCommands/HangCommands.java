@@ -6,12 +6,16 @@ import frc.robot.subsystems.HangSubsystem;
 
 public final class HangCommands {
 
+    //Constructor to allow for each Command to reference the subsystem without a parameter
     private HangSubsystem hangSubsystem;
 
     public HangCommands(HangSubsystem hangSubsystem) {
         this.hangSubsystem = hangSubsystem;
     }
 
+
+
+    //Positions the hang for grabbing onto the thing I forgot the name of
     public class Prepare extends Command {
 
         public Prepare(){
@@ -29,6 +33,9 @@ public final class HangCommands {
         }
     }
 
+
+
+    //Activates the hang routine
     public class Activate extends Command {
 
         public Activate(){
@@ -46,6 +53,9 @@ public final class HangCommands {
         }
     }
 
+
+
+    //Resets the hang
     public class Reset extends Command {
 
         public Reset(){
