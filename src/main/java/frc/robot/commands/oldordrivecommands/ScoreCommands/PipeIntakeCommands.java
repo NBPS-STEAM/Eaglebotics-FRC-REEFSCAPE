@@ -6,12 +6,19 @@ import frc.robot.subsystems.PipeIntakeSubsystem;
 
 public final class PipeIntakeCommands {
 
+    //Constructor to allow for each Command to reference the subsystem without a parameter
+    private PipeIntakeSubsystem pipeIntakeSubsystem;
+
+    public PipeIntakeCommands(PipeIntakeSubsystem pipeIntakeSubsystem) {
+        this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+    }
+
+
+
+    //Turns on the pipe intake
     public class Intake extends Command {
 
-        private final PipeIntakeSubsystem pipeIntakeSubsystem;
-
-        public Intake(PipeIntakeSubsystem pipeIntakeSubsystem){
-            this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+        public Intake(){
             addRequirements(pipeIntakeSubsystem);
         }
 
@@ -26,12 +33,12 @@ public final class PipeIntakeCommands {
         }
     }
 
+
+
+    //Turns on the pipe outtake
     public class Outtake extends Command {
 
-        private final PipeIntakeSubsystem pipeIntakeSubsystem;
-
-        public Outtake(PipeIntakeSubsystem pipeIntakeSubsystem){
-            this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+        public Outtake(){
             addRequirements(pipeIntakeSubsystem);
         }
 
@@ -46,12 +53,12 @@ public final class PipeIntakeCommands {
         }
     }
 
+
+
+    //Stops the intake/outtake
     public class StopIntake extends Command {
 
-        private final PipeIntakeSubsystem pipeIntakeSubsystem;
-
-        public StopIntake(PipeIntakeSubsystem pipeIntakeSubsystem){
-            this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+        public StopIntake(){
             addRequirements(pipeIntakeSubsystem);
         }
 

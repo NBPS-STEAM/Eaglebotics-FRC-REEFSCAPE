@@ -6,10 +6,12 @@ package frc.robot;
 
 import java.io.File;
 
-import com.reduxrobotics.sensors.canandcolor.ProximityPeriod;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Filesystem;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -40,7 +42,7 @@ public class RobotContainer
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
-  public final IntakePositionSubsystem intakePositionSubsystem = new IntakePositionSubsystem();
+  public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 
   public final BallIntakeSubsystem ballIntake = new BallIntakeSubsystem();
   public final HangSubsystem hangSubsystem = new HangSubsystem();
@@ -49,16 +51,30 @@ public class RobotContainer
   final CommandPS5Controller driverGamepad = new CommandPS5Controller(0);
   final CommandPS5Controller coDriverGamepad = new CommandPS5Controller(1);
 
+  SendableChooser<Command> AutoChooser = new SendableChooser<>();
+
+
+  PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
+  BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
+  HangCommands hangCommands = new HangCommands(hangSubsystem);
+  OpCommands opCommands = new OpCommands(intakePosition);
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
+    // Register commands for PathPlanner
+    registerNamedCommands();
+
     // Configure the trigger bindings
     configureBindings();
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+
+    setAutoCommands();
+    SmartDashboard.putData("Autos", AutoChooser);
   }
 
   /**
@@ -77,31 +93,31 @@ public class RobotContainer
     
 
     //Co Driver:
-
-    // Pipe Intake/Outtake Controls
-    coDriverGamepad.L1().onTrue(new PipeIntakeCommands().new Intake(pipeIntake));
-    coDriverGamepad.L2().onTrue(new PipeIntakeCommands().new Outtake(pipeIntake));
     
-    // Ball Intake/Outtake Controls
-    coDriverGamepad.R1().onTrue(new BallIntakeCommands().new Intake(ballIntake));
-    coDriverGamepad.R2().onTrue(new BallIntakeCommands().new Outtake(ballIntake));
-
-    // Stop Ball/Pipe Controls
-    coDriverGamepad.L3().onTrue(new PipeIntakeCommands().new StopIntake(pipeIntake));
-    coDriverGamepad.R3().onTrue(new BallIntakeCommands().new StopIntake(ballIntake));
+    // Pipe Intake/Outtake/Stop Controls
+    coDriverGamepad.L1().onTrue(pipeIntakeCommands.new Intake());
+    coDriverGamepad.L2().onTrue(pipeIntakeCommands.new Outtake());
+    coDriverGamepad.L3().onTrue(pipeIntakeCommands.new StopIntake());
+    
+    // Ball Intake/Outtake/Stop Controls
+    coDriverGamepad.R1().onTrue(ballIntakeCommands.new Intake());
+    coDriverGamepad.R2().onTrue(ballIntakeCommands.new Outtake());
+    coDriverGamepad.R3().onTrue(ballIntakeCommands.new StopIntake());
   
     // Hang Control
-    coDriverGamepad.options().onTrue(new HangCommands().new Activate(hangSubsystem));
+    coDriverGamepad.options().onTrue(hangCommands.new Activate());
   
-    coDriverGamepad.cross().onTrue(OpCommands.getBall1Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.square().onTrue(OpCommands.getBall2Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.triangle().onTrue(OpCommands.getBall3Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.circle().onTrue(OpCommands.getBall4Command(intakePositionSubsystem, coDriverGamepad));
+    // Ball Set Positions
+    coDriverGamepad.cross().onTrue(opCommands.getBall1Command());
+    coDriverGamepad.square().onTrue(opCommands.getBall2Command());
+    coDriverGamepad.triangle().onTrue(opCommands.getBall3Command());
+    coDriverGamepad.circle().onTrue(opCommands.getBall4Command());
 
-    coDriverGamepad.povDown().onTrue(OpCommands.getPipe1Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povRight().onTrue(OpCommands.getPipe2Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povUp().onTrue(OpCommands.getPipe3Command(intakePositionSubsystem, coDriverGamepad));
-    coDriverGamepad.povLeft().onTrue(OpCommands.getPipe4Command(intakePositionSubsystem, coDriverGamepad));
+    // Pipe Set Positions
+    coDriverGamepad.povDown().onTrue(opCommands.getPipe1Command());
+    coDriverGamepad.povRight().onTrue(opCommands.getPipe2Command());
+    coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
+    coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
 
   }
 
@@ -110,10 +126,16 @@ public class RobotContainer
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
-    // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
+  public Command getAutonomousCommand() {
+    return AutoChooser.getSelected(); 
+  }
+
+  public void setAutoCommands(){
+    AutoChooser.addOption("One-Coral-Center", new PathPlannerAuto("One-Coral-Center"));
+  }
+
+  public void registerNamedCommands() {
+    NamedCommands.registerCommand("Pipe Outake", pipeIntakeCommands.new Outtake());
   }
 
   public void setDriveMode()
