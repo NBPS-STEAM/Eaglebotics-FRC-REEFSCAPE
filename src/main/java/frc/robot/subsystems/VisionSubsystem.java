@@ -18,29 +18,29 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
   //despite the crimes against code committed here
     //AprilTagFieldLayout aprilTagFieldLayout;//used for finding distance from 2 tags
     public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limeF");
-    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limeB");//lime names passed here
+  //  public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limeB");//lime names passed here
     //public final PhotonSubsystem photonR=new PhotonSubsystem();
     //public final PhotonSubsystem photonL=new PhotonSubsystem();
 
     private Optional<Pose2d> limeFpose(){
         return limeF.getPose();//getter method for limelight subsystem
     }
-    private Optional<Pose2d> limeBpose(){
-        return limeB.getPose();//getter method for limelight subsystem
-    }
+    // private Optional<Pose2d> limeBpose(){
+    //     return limeB.getPose();//getter method for limelight subsystem
+    // }
 
     private SwerveSubsystem sd;
     public void init(SwerveSubsystem sd){
         this.sd=sd;
         limeF.init(sd);
-        limeB.init(sd);//gives swerve subsystem bc it needs imu measurements
-        //photonR.init("camR");
+        //limeB.init(sd);//gives swerve subsystem bc it needs imu measurements
+       // //photonR.init("camR");
         //photonR.init("camL");//camera names for photon
     }
 
     public void updateAll(){//update all cameras
         updateFromLimeF();
-        updateFromLimeB();
+       // updateFromLimeB();
         //updatePhotonL();
         //updatePhotonR();
     }
@@ -49,9 +49,9 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
         if(!limeFpose().isEmpty())sd.swerveDrive.addVisionMeasurement(limeFpose().get(), limeF.time,limeF.getstdev());//add limelight in
     }
 
-    public void updateFromLimeB(){
-        if(!limeBpose().isEmpty())sd.swerveDrive.addVisionMeasurement(limeBpose().get(), limeB.time,limeB.getstdev());//add limelight
-    }
+    // public void updateFromLimeB(){
+    //     if(!limeBpose().isEmpty())sd.swerveDrive.addVisionMeasurement(limeBpose().get(), limeB.time,limeB.getstdev());//add limelight
+    // }
 
 //commenting out photon as i do not think 4 cameras will be an advantage
 //also comments out some of the worst code if done that badly needs organizing to keep using

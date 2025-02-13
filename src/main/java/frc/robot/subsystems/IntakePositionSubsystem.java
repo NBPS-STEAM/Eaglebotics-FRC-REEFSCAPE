@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.servohub.ServoHub.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -10,13 +9,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.utils.Squid;
 
 public class IntakePositionSubsystem extends SubsystemBase {
 
     private SparkMax m_liftMotor1;
     private SparkMax m_liftMotor2;
     private RelativeEncoder m_liftEncoder;
-    private PIDController m_liftPID;
+    private Squid m_liftPID;
 
     private SparkMax m_pivotMotor1;
     private SparkMax m_pivotMotor2;
@@ -31,12 +31,12 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
         m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
         m_liftEncoder = m_liftMotor1.getEncoder();
-        m_liftPID = new PIDController(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
+        m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
 
         m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotMotor2 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor2Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
-        m_liftPID = new PIDController(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
+        m_pivotPID = new PIDController(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
 
     }
 
