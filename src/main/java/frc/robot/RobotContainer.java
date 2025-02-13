@@ -135,7 +135,7 @@ public class RobotContainer
   }
 
   public void registerNamedCommands() {
-    NamedCommands.registerCommand("Pipe Outake", pipeIntakeCommands.new Outtake());
+    NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
   }
 
   public void setDriveMode()
