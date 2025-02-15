@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Pipe 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Pipe Outtake"
           }
         }

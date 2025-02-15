@@ -39,6 +39,9 @@ public final class Constants {
 
     public static final double Pipe4Lift = 1.0;
     public static final double Pipe4Pivot = 1.0;
+
+    public static final double PipeRetLift = 1.0;
+    public static final double PipeRetPivot = 1.0;
   }
 
   public static final class IntakeConstants {
