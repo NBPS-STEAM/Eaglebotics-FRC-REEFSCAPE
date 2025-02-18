@@ -34,7 +34,7 @@ public final class IntakePositionCommand {
 
         @Override
         public boolean isFinished() {
-            return true;
+            return intakePositionSubsystem.atTargetPos();
         }
     }
 
@@ -58,7 +58,7 @@ public final class IntakePositionCommand {
 
         @Override
         public boolean isFinished() {
-            return true;
+            return intakePositionSubsystem.liftAtTargetPos();
         }
     }
 
@@ -82,7 +82,7 @@ public final class IntakePositionCommand {
 
         @Override
         public boolean isFinished() {
-            return true;
+            return intakePositionSubsystem.pivotAtTargetPos();
         }
     }
 

@@ -39,6 +39,9 @@ public final class Constants {
 
     public static final double Pipe4Lift = 1.0;
     public static final double Pipe4Pivot = 1.0;
+
+    public static final double PipeIntakeLift = 1.0;
+    public static final double PipeIntakePivot = 1.0;
   }
 
   public static final class IntakeConstants {
@@ -81,6 +84,9 @@ public final class Constants {
     public static final double kPivotP = 0;
     public static final double kPivotI = 0;
     public static final double kPivotD = 0;
+
+    public static final double stowPivot=0;
+    public static final double stowLift=0;
   }
 
   public static final class HangConstants {

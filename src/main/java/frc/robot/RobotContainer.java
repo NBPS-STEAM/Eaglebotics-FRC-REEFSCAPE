@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,6 +24,7 @@ import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
@@ -69,7 +71,8 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    configureBindings();
+    //configureBindings1();//little automation
+    configureBindings2();//command groups
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
 
@@ -84,7 +87,8 @@ public class RobotContainer
    * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
-  private void configureBindings()
+
+  private void configureBindings1()//little automation
   {
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
@@ -118,6 +122,63 @@ public class RobotContainer
     coDriverGamepad.povRight().onTrue(opCommands.getPipe2Command());
     coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
     coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
+
+  }
+  private void configureBindings2()//full command groups
+  {
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
+    //while true does not repeat
+    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
+    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    
+
+    //Co Driver:
+    
+    // Pipe Intake/Outtake/Stop Controls
+    coDriverGamepad.L1().onTrue(new SequentialCommandGroup(
+      opCommands.getPipeIntakeCommand(),
+      pipeIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+      ));
+
+    coDriverGamepad.L2().onTrue(new SequentialCommandGroup(
+      pipeIntakeCommands. new Outtake(),
+      new StowCommand(intakePosition)
+    ));
+    
+    
+    // Ball Intake/Outtake/Stop Controls
+    coDriverGamepad.R2().onTrue(new SequentialCommandGroup(
+      ballIntakeCommands. new Outtake(),
+      new StowCommand(intakePosition)
+    ));
+  
+    // Hang Control
+    coDriverGamepad.options().onTrue(hangCommands.new Activate());
+  
+    // Ball Set Positions
+    coDriverGamepad.cross().onTrue(new SequentialCommandGroup(
+      opCommands.ballCommandGroup(1),
+      pipeIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+      ));
+    coDriverGamepad.square().onTrue(opCommands.ballCommandGroup(2));
+    coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
+    opCommands.ballCommandGroup(3),
+    pipeIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+    ));
+    coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
+    opCommands.ballCommandGroup(4),
+    pipeIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+    ));
+
+    // Pipe Set Positions
+    coDriverGamepad.povDown().onTrue(opCommands.coralCommandGroup(1));
+    coDriverGamepad.povRight().onTrue(opCommands.coralCommandGroup(2));
+    coDriverGamepad.povUp().onTrue(opCommands.coralCommandGroup(3));
+    coDriverGamepad.povLeft().onTrue(opCommands.coralCommandGroup(4));
 
   }
 

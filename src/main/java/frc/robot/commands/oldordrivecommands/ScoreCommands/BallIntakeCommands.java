@@ -1,5 +1,6 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.BallIntakeSubsystem;
@@ -27,9 +28,14 @@ public final class BallIntakeCommands {
             ballIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kBallIntakeSpeed);
         }
 
+        @Override
+        public void end(boolean interrupted){
+            ballIntakeSubsystem.setTargetVelocity(0);
+        }
+
         @Override 
         public boolean isFinished() { 
-            return true;
+            return ballIntakeSubsystem.getHasBall();
         }
     }
 
@@ -37,6 +43,7 @@ public final class BallIntakeCommands {
 
     //Turns on the ball outtake
     public class Outtake extends Command {
+        private double time;
         public Outtake() {
             addRequirements(ballIntakeSubsystem);
         }
@@ -44,11 +51,17 @@ public final class BallIntakeCommands {
         @Override 
         public void initialize() {
             ballIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed);
+            time=Timer.getFPGATimestamp()+0.5;
+        }
+
+        @Override
+        public void end(boolean interrupted){
+            ballIntakeSubsystem.setTargetVelocity(0);
         }
 
         @Override 
         public boolean isFinished() { 
-            return true;
+            return Timer.getFPGATimestamp()>=time;
         }
     }
 

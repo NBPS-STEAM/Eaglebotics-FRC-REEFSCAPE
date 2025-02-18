@@ -1,5 +1,6 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PipeIntakeSubsystem;
@@ -27,9 +28,14 @@ public final class PipeIntakeCommands {
             pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed);
         }
 
+        @Override
+        public void end(boolean interrupted){
+            pipeIntakeSubsystem.setTargetVelocity(0);
+        }
+
         @Override 
         public boolean isFinished() { 
-            return true;
+            return pipeIntakeSubsystem.getHasPipe();
         }
     }
 
@@ -37,19 +43,25 @@ public final class PipeIntakeCommands {
 
     //Turns on the pipe outtake
     public class Outtake extends Command {
-
+        private double time;
         public Outtake(){
             addRequirements(pipeIntakeSubsystem);
         }
 
         @Override 
         public void initialize() {
+            time=Timer.getFPGATimestamp()+0.5;
             pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed);
+        }
+
+        @Override
+        public void end(boolean interrupted){
+            pipeIntakeSubsystem.setTargetVelocity(0);
         }
 
         @Override 
         public boolean isFinished() { 
-            return true;
+            return Timer.getFPGATimestamp()>=time;
         }
     }
 
