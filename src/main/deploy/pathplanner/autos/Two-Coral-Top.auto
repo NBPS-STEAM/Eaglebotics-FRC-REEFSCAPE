@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "oneCoralTopPath"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Outtake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "twoCoralTopPath"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Retrieve"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "twoCoralTopReturn"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Outtake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

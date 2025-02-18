@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -99,7 +100,9 @@ public class RobotContainer
     //Co Driver:
     
     // Pipe Intake/Outtake/Stop Controls
-    coDriverGamepad.L1().onTrue(pipeIntakeCommands.new Intake());
+    coDriverGamepad.L1().onTrue(new ParallelCommandGroup(pipeIntakeCommands.new Intake(),
+          opCommands.getPipeRetrieveCommand()));
+    coDriverGamepad.L1().onTrue(opCommands.getPipeRetrieveCommand());
     coDriverGamepad.L2().onTrue(pipeIntakeCommands.new Outtake());
     coDriverGamepad.L3().onTrue(pipeIntakeCommands.new StopIntake());
     
@@ -196,7 +199,10 @@ public class RobotContainer
   }
 
   public void registerNamedCommands() {
-    NamedCommands.registerCommand("Pipe Outake", pipeIntakeCommands.new Outtake());
+    NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
+    NamedCommands.registerCommand("Pipe Level 4", opCommands.getBall4Command());
+    NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeRetrieveCommand());
+    NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
   }
 
   public void setDriveMode()

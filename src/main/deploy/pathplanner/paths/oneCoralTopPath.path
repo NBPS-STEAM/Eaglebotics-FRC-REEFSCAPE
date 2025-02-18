@@ -3,28 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.562142650462962,
-        "y": 4.0
+        "x": 7.58,
+        "y": 6.209
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.181909351368101,
-        "y": 4.0
+        "x": 6.282462404428741,
+        "y": 5.954603536798553
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.228,
-        "y": 4.0
+        "x": 5.375,
+        "y": 5.516
       },
       "prevControl": {
-        "x": 6.51788743079431,
-        "y": 4.0
+        "x": 6.407998312308361,
+        "y": 5.883504444706615
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     }
   ],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OpCommand.getBall2Command",
-      "waypointRelativePos": 0.0,
+      "name": "Pipe Outtake",
+      "waypointRelativePos": 0.7474885844748854,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": null,

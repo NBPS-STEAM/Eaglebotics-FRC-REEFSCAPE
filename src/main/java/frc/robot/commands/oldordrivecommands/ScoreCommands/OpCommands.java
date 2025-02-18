@@ -109,6 +109,11 @@ public class OpCommands {
             Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
     }
 
+    public Command getPipeRetrieveCommand() {
+        return intakePositionCommand.new SetIntakePositionSetpoints(
+            Constants.OpConstantsForPipe.PipeRetLift, Constants.OpConstantsForPipe.PipeRetPivot);
+    }
+
     //baisic command groups
     public SequentialCommandGroup coralCommandGroup(int level){
         SequentialCommandGroup command;

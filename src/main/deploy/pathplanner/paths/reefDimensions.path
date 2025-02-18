@@ -3,12 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.562142650462962,
-        "y": 4.0
+        "x": 0.0,
+        "y": 0.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.181909351368101,
+        "x": 0.9999999999999978,
+        "y": 0.0
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.5,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 3.63,
+        "y": 4.0
+      },
+      "nextControl": {
+        "x": 5.37,
         "y": 4.0
       },
       "isLocked": false,
@@ -16,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 6.228,
+        "x": 6.25,
         "y": 4.0
       },
       "prevControl": {
-        "x": 6.51788743079431,
+        "x": 6.0,
         "y": 4.0
       },
       "nextControl": null,
@@ -31,14 +47,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "OpCommand.getBall2Command",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -55,7 +64,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
