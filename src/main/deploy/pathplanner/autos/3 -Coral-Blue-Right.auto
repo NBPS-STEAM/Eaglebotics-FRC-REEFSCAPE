@@ -1,0 +1,167 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "oneCoralBottomPath"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Group"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Group"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Group"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pipe Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "twoCoralBottomPath"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stow"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "twoCoralBottomReturn"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Group"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Group"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pipe Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "threeCoralIntakePath"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "threeCoralBottomReturn"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Group"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pipe Outtake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

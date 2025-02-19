@@ -203,6 +203,10 @@ public class RobotContainer
     NamedCommands.registerCommand("Pipe Level 4", opCommands.getBall4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeRetrieveCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
+    NamedCommands.registerCommand("L2 Group", opCommands.coralCommandGroup(2));
+    NamedCommands.registerCommand("L4 Group", opCommands.coralCommandGroup(4));
+    NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
+    NamedCommands.registerCommand("Intake Group", opCommands.getPipeIntakeCommand());
   }
 
   public void setDriveMode()
