@@ -101,8 +101,8 @@ public class RobotContainer
     
     // Pipe Intake/Outtake/Stop Controls
     coDriverGamepad.L1().onTrue(new ParallelCommandGroup(pipeIntakeCommands.new Intake(),
-          opCommands.getPipeRetrieveCommand()));
-    coDriverGamepad.L1().onTrue(opCommands.getPipeRetrieveCommand());
+          opCommands.getPipeIntakeCommand()));
+    coDriverGamepad.L1().onTrue(opCommands.getPipeIntakeCommand());
     coDriverGamepad.L2().onTrue(pipeIntakeCommands.new Outtake());
     coDriverGamepad.L3().onTrue(pipeIntakeCommands.new StopIntake());
     
@@ -201,7 +201,7 @@ public class RobotContainer
   public void registerNamedCommands() {
     NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
     NamedCommands.registerCommand("Pipe Level 4", opCommands.getBall4Command());
-    NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeRetrieveCommand());
+    NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.coralCommandGroup(2));
     NamedCommands.registerCommand("L4 Group", opCommands.coralCommandGroup(4));
