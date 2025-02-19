@@ -21,6 +21,12 @@
           "data": {
             "name": "Pipe Outtake"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
         }
       ]
     }
