@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.LimelightHelpers;
 
 public class LimeLocalizationSubsystem{
-    public String name= "";
+    private String name= "";
     private String out="";
+    public double time=0;
     public LimeLocalizationSubsystem(String name){
       this.name=name;
       out= this.name.concat(" pose");
@@ -23,7 +24,7 @@ public class LimeLocalizationSubsystem{
     public void init(SwerveSubsystem sd){
         this.sd=sd;
     }
-    public double time=0;
+
 
     public  Vector<N3> getstdev() {//janky system that adjusts how much we trust cameras based on distance and number of tags seen
       LimelightHelpers.PoseEstimate mt2=LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
@@ -49,7 +50,7 @@ public class LimeLocalizationSubsystem{
         boolean doRejectUpdate=false;
     LimelightHelpers.SetRobotOrientation(name, sd.swerveDrive.swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-    if(Math.abs(sd.pigeon.getAngularVelocityYWorld().getValue().in(DegreesPerSecond)) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    if(Math.abs(sd.pigeon.getAngularVelocityYWorld().getValue().in(DegreesPerSecond)) > 360) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
     {
       doRejectUpdate = true;
     }

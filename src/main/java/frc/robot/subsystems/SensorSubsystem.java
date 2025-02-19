@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SensorSubsystem extends SubsystemBase{
@@ -15,7 +16,11 @@ public class SensorSubsystem extends SubsystemBase{
     //2. private variable with getter metheod
 
     //all values from the sensors should be updated in the "updateAll" metheod
-
+    private DigitalInput pipeSwitch=new DigitalInput(2);
+    private DigitalInput ballSwitch=new DigitalInput(3);
+    public boolean ball=false;
+    public boolean pipe=false;
+    
     private static SensorSubsystem instance;
     public static SensorSubsystem getInstance(){
     if (instance == null) {
@@ -30,7 +35,8 @@ public class SensorSubsystem extends SubsystemBase{
     }
 
     public void updateAll(){//update all sensors and values
-
+        pipe=pipeSwitch.get();
+        ball=ballSwitch.get();
     }
 
 }

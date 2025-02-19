@@ -1,12 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,9 +16,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
     private Squid m_liftPID;
 
     private SparkMax m_pivotMotor1;
-    private SparkMax m_pivotMotor2;
     private AbsoluteEncoder m_pivotEncoder;
-    private PIDController m_pivotPID;
+    private Squid m_pivotPID;
 
     private double encoderValue;
 
@@ -34,7 +29,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_liftPID.setTolerance(5);
         m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
-        m_pivotPID = new PIDController(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
+        m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
         m_pivotPID.setTolerance(5);
     }
 

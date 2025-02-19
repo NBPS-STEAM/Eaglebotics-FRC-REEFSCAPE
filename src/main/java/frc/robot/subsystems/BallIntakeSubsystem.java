@@ -12,7 +12,6 @@ public class BallIntakeSubsystem extends SubsystemBase {
     // Instance
     private SparkMax m1_motor;
     private SparkMax m2_motor;
-    private DigitalInput ballSwitch=new DigitalInput(3);
 
     public BallIntakeSubsystem() {
         // initialize motor
@@ -26,7 +25,7 @@ public class BallIntakeSubsystem extends SubsystemBase {
     }
 
     public boolean getHasBall(){
-        return ballSwitch.get();
+        return SensorSubsystem.getInstance().pipe;
     }
 
 }
