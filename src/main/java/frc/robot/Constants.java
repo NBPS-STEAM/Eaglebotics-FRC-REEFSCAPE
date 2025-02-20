@@ -106,6 +106,8 @@ public final class Constants {
     // TODO: SET TO REAL MOTOR ID
     public static final int kHangMotor1Id = 10;
     public static final int kHangMotor2Id = 11;
+    public static final int kServo1Channel = 0;
+    public static final int kServo2Channel = 1;
   }
 
   public static final class DriveConstants {
