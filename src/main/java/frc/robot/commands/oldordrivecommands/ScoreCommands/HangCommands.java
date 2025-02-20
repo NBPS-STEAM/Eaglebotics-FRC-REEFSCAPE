@@ -36,40 +36,60 @@ public final class HangCommands {
 
 
     //Activates the hang routine
-    public class Activate extends Command {
+    public static class Activate extends Command {
 
-        public Activate(){
+        private final double targetPower;
+        private double position;
+        private final HangSubsystem hangSubsystem;
+        private boolean toggleState = false;
+
+        public Activate(HangSubsystem hangSubsystem, double power, double position){
+            this.hangSubsystem = hangSubsystem;
+            this.targetPower = power;
+            this.position = position;
             addRequirements(hangSubsystem);
         }
 
         @Override 
         public void initialize() {
-            hangSubsystem.setTwistPosition(Constants.HangConstants.kHangTwistPosition);
+            if (!toggleState) {
+                // First press: Move servos to position
+                hangSubsystem.setServoPositions(position);
+                toggleState = !toggleState;
+            } else {
+                // Second press: set the power
+                hangSubsystem.setTwistPower(targetPower);
+            }      
         }
 
         @Override 
         public boolean isFinished() { 
-            return hangSubsystem.isAtTwistPosition();
+            return false;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+        hangSubsystem.setTwistPower(0);
         }
     }
 
 
 
     //Resets the hang
-    public class Reset extends Command {
+    // public class Reset extends Command {
 
-        public Reset(){
-            addRequirements(hangSubsystem);
-        }
+    //     public Reset(){
+    //         addRequirements(hangSubsystem);
+    //     }
 
-        @Override 
-        public void initialize() {
-            hangSubsystem.setTwistPosition(0.0);
-        }
+    //     @Override 
+    //     public void initialize() {
+    //         hangSubsystem.setTwistPosition(0.0);
+    //     }
 
-        @Override 
-        public boolean isFinished() { 
-            return hangSubsystem.isAtTwistPosition();
-        }
-    }
+    //     @Override 
+    //     public boolean isFinished() { 
+    //         return hangSubsystem.isAtTwistPosition();
+    //     }
+    // }
 }

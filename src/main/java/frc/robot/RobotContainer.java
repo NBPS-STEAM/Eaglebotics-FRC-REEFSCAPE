@@ -110,9 +110,7 @@ public class RobotContainer
     coDriverGamepad.R1().onTrue(ballIntakeCommands.new Intake());
     coDriverGamepad.R2().onTrue(ballIntakeCommands.new Outtake());
     coDriverGamepad.R3().onTrue(ballIntakeCommands.new StopIntake());
-  
-    // Hang Control
-    coDriverGamepad.options().onTrue(hangCommands.new Activate());
+    
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(opCommands.getBall1Command());
@@ -157,7 +155,7 @@ public class RobotContainer
     ));
   
     // Hang Control
-    coDriverGamepad.options().onTrue(hangCommands.new Activate());
+    coDriverGamepad.options().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(new SequentialCommandGroup(
