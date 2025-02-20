@@ -57,9 +57,10 @@ public class TelePathingCommands {
     //whether or not to go in a straight line (canGoStraight).
     //If it can't go straight, it will determine the fastest direction to go around the reef (goClockwise)
     //(By the way I mixed up clockwise and counterclockwise so its actually the opposite of the variable names)
-    //After determining the direction it goes through the corners of the reef to see which are on the way'
-    //Then sorts them into a list by distance
-    //Then creates a list of poses (the robot might end up backwards)
+    //After determining the direction, it loops through the corners of the reef to see which are
+    //between the current angle from the reef and the target angle
+    //then sorts them into a list by distance from the robot
+    //then creates a list of poses (I'm not sure but the robot might end up backwards as it circles the reef)
 
     //There's probably a mistake, but I did test it in IntelliJ and it seemed alright
     //There was also probably a simpler way but oh well
