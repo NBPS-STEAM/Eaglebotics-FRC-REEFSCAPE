@@ -67,6 +67,11 @@ public class TelePathingCommands {
     public Command GoToReefSmartCommand(int index) {
 
         PathPlannerPath path;
+
+        //finDist is the distance from the final point of the path to the center of the reef
+        //waypntDist is the distance from the waypoints the robot uses to circle the reef from the center of the reef
+        double finDist = 1.75;
+        double waypntDist = 2.15;
      
 
         //The current position of the robot
@@ -74,8 +79,8 @@ public class TelePathingCommands {
         double roboY = swerve.getPose().getY();
 
         //The final position the robot will end at ((4.5, 4.0) is the center of the reef)
-        double targX = 1.75 * Math.cos(index * Math.PI / 3) + 4.5;
-        double targY = 1.75 * Math.sin(index * Math.PI / 3) + 4.0;
+        double targX = finDist * Math.cos(index * Math.PI / 3) + 4.5;
+        double targY = finDist * Math.sin(index * Math.PI / 3) + 4.0;
 
         //This calculates a line, parallel to the reef,
         //and centered at the targetpoint. Then it calculates the distance
@@ -103,8 +108,8 @@ public class TelePathingCommands {
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                 new Pose2d(
-                1.75*Math.cos(index * Math.PI/3) + 4.5,
-                1.75*Math.sin(index * Math.PI/3) + 4.0,
+                finDist*Math.cos(index * Math.PI/3) + 4.5,
+                finDist*Math.sin(index * Math.PI/3) + 4.0,
                 Rotation2d.fromDegrees(180 + index*60))
         );
 
@@ -191,7 +196,7 @@ public class TelePathingCommands {
             //then it sorts them by value (smallest/closest first).
             //It does not actually change the values, as the final list is still a list of angles
             ArrayList<Double> sortedAngleList = angleList.stream()
-                    .sorted(Comparator.comparing(ang -> Math.hypot(2.15 * Math.cos(ang) + 4.5 - roboX, 2.15 * Math.sin(ang) + 4.0 - roboY)))
+                    .sorted(Comparator.comparing(ang -> Math.hypot(waypntDist * Math.cos(ang) + 4.5 - roboX, waypntDist * Math.sin(ang) + 4.0 - roboY)))
                     .collect(Collectors.toCollection(ArrayList::new));
             
             //Creates a list of poses from each angle from sortedAngleList
@@ -199,14 +204,14 @@ public class TelePathingCommands {
             ArrayList<Pose2d> poseList = new ArrayList<>();
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
-                    2.15 * Math.cos(ang) + 4.5,
-                    2.15 * Math.sin(ang) + 4.0,
+                    waypntDist * Math.cos(ang) + 4.5,
+                    waypntDist * Math.sin(ang) + 4.0,
                     Rotation2d.fromRadians(ang + Math.PI/2)
                 ));
             }
             poseList.add(new Pose2d(
-                1.75*Math.cos(index * Math.PI/3) + 4.5,
-                1.75*Math.sin(index * Math.PI/3) + 4.0,
+                finDist*Math.cos(index * Math.PI/3) + 4.5,
+                finDist*Math.sin(index * Math.PI/3) + 4.0,
                 Rotation2d.fromDegrees(180 + index*60))
             );
 
