@@ -55,8 +55,7 @@ public class TelePathingCommands {
     //It looks really bad and complex, because it is
     //but basically it takes the target point, the robot position, and determines
     //whether or not to go in a straight line (canGoStraight).
-    //If it can't go straight, it will determine the fastest direction to go around the reef (goClockwise)
-    //(By the way I mixed up clockwise and counterclockwise so its actually the opposite of the variable names)
+    //If it can't go straight, it will determine the fastest direction to go around the reef (goCounterCW)
     //After determining the direction, it loops through the corners of the reef to see which are
     //between the current angle from the reef and the target angle
     //then sorts them into a list by distance from the robot
@@ -124,6 +123,7 @@ public class TelePathingCommands {
         } else {
 
             //Creates the angle from the center of the reef to the robot
+            //counterCW is counter clockwise
             double angle = Math.atan2(roboY - 4.0, roboX - 4.5);
             if (angle < 0) {
                 angle += Math.PI*2;
@@ -187,7 +187,7 @@ public class TelePathingCommands {
                 }
             }
 
-            //This converts the indexes gotten above into their distances from the robot
+            //This converts the angles gotten above into their distances from the robot
             //then it sorts them by value (smallest/closest first).
             //It does not actually change the values, as the final list is still a list of angles
             ArrayList<Double> sortedAngleList = angleList.stream()
@@ -195,6 +195,7 @@ public class TelePathingCommands {
                     .collect(Collectors.toCollection(ArrayList::new));
             
             //Creates a list of poses from each angle from sortedAngleList
+            //as well as adding the final point
             ArrayList<Pose2d> poseList = new ArrayList<>();
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
