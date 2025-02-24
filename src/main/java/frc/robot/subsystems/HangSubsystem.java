@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.Servo;
 
 public class HangSubsystem extends SubsystemBase {
 
@@ -15,31 +16,30 @@ public class HangSubsystem extends SubsystemBase {
     private RelativeEncoder m1_encoder;
     private SparkMax m2_motor;
     private PIDController m_pidController;
+    private final Servo servo1;
+    private final Servo servo2;
+
 
     public HangSubsystem() {
         // initialize motor
         m1_motor = new SparkMax(Constants.HangConstants.kHangMotor1Id, MotorType.kBrushless);
-        m1_encoder = m1_motor.getEncoder();
-
         m2_motor = new SparkMax(Constants.HangConstants.kHangMotor2Id, MotorType.kBrushless);
-
-        m_pidController = new PIDController(Constants.HangConstants.kHangP, Constants.HangConstants.kHangI, Constants.HangConstants.kHangD);
-        m_pidController.setIZone(Constants.HangConstants.kHangIz);
+        
+        servo1 = new Servo(Constants.HangConstants.kServo1Channel);
+        servo2 = new Servo(Constants.HangConstants.kServo2Channel);
     }
 
-    public void setTwistPosition(double position) {
-        m_pidController.setSetpoint(position);
+    public void setServoPositions(double position){
+        if (position >= 0 && position <= 1.0){
+            servo1.setPosition(position);
+            servo2.setPosition(position);
+        }
     }
 
-    public boolean isAtTwistPosition() {
-        return m_pidController.atSetpoint();
-    }
+    public void setTwistPower(double power) {
+        m1_motor.set(power);
+        m2_motor.set(power);
 
-    @Override
-    public void periodic() {
-        double speed = m_pidController.calculate(m1_encoder.getPosition());
-        m1_motor.set(speed);
-        m2_motor.set(-speed);
     }
 
 }

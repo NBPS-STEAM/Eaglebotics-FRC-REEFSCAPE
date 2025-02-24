@@ -109,12 +109,8 @@ public class OpCommands {
             Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
     }
 
-    public Command getPipeRetrieveCommand() {
-        return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.PipeRetLift, Constants.OpConstantsForPipe.PipeRetPivot);
-    }
 
-    //baisic command groups
+    //basic command groups
     public SequentialCommandGroup coralCommandGroup(int level){
         SequentialCommandGroup command;
         switch (level) {//number corresponds to scoring level
@@ -153,8 +149,16 @@ public class OpCommands {
         return command;
     }
 
-    public SequentialCommandGroup ballCommandGroup(int level){//1 for ground intake , 2 for proccesser
-        SequentialCommandGroup command;//3 for level 2 intake, 3 for level 3 intake
+    /**
+     * Levels:
+     * <p>1 - Ground intake</p>
+     * <p>2 - Proccessor</p>
+     * <p>3 - Level 2 intake</p>
+     * <p>4 - Level 3 intake</p>
+     * <p>Anything else - new StowCommand</p>
+     */
+    public SequentialCommandGroup ballCommandGroup(int level){// , 
+        SequentialCommandGroup command;//, 
         switch (level) {
             case 1:
                 command= new SequentialCommandGroup(
