@@ -61,10 +61,15 @@ public class TelePathingCommands {
     //then sorts them into a list by distance from the robot
     //then creates a list of poses (I'm not sure but the robot might end up backwards as it circles the reef)
 
+    //index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
+    //1/2 are on the blue-side, and 4/5 are on the red side
+    //subPos is where on the edge of the reef the robot will go, where 0 is the center,
+    //1 is the coral pole in the positive direction (index 1 to 2 to 3 etc)
+
     //There's probably a mistake, but I did test it in IntelliJ and it seemed alright
     //There was also probably a simpler way but oh well
     
-    public Command GoToReefSmartCommand(int index) {
+    public Command GoToReefSmartCommand(int index, int subPos) {
 
         PathPlannerPath path;
 
@@ -108,8 +113,8 @@ public class TelePathingCommands {
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                 new Pose2d(
-                finDist*Math.cos(index * Math.PI/3) + 4.5,
-                finDist*Math.sin(index * Math.PI/3) + 4.0,
+                finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
+                finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*0.155*Math.cos(index * Math.PI/3),
                 Rotation2d.fromDegrees(180 + index*60))
         );
 
@@ -210,8 +215,8 @@ public class TelePathingCommands {
                 ));
             }
             poseList.add(new Pose2d(
-                finDist*Math.cos(index * Math.PI/3) + 4.5,
-                finDist*Math.sin(index * Math.PI/3) + 4.0,
+                finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
+                finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*0.155*Math.cos(index * Math.PI/3),
                 Rotation2d.fromDegrees(180 + index*60))
             );
 
