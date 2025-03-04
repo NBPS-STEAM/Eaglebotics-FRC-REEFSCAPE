@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PipeIntakeSubsystem;
+import frc.utils.GampiecesFsm;
+import frc.utils.GampiecesFsm.Gamepieces;
 
 public final class PipeIntakeCommands {
 
@@ -35,6 +37,10 @@ public final class PipeIntakeCommands {
 
         @Override 
         public boolean isFinished() { 
+            if(pipeIntakeSubsystem.getHasPipe()){
+                GampiecesFsm.gamepieceInRobot=Gamepieces.CORAL;
+                GampiecesFsm.activeGamepiece=Gamepieces.CORAL;
+            }
             return pipeIntakeSubsystem.getHasPipe();
         }
     }

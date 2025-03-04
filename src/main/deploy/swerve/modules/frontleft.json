@@ -15,7 +15,7 @@
     "canbus": "rio"
   },
   "encoder": {
-    "type": "canandmag_can",
+    "type": "cancoder",
     "id": 4,
     "canbus": "rio"
   },
