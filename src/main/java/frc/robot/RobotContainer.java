@@ -193,18 +193,23 @@ public class RobotContainer
   }
 
   public void setAutoCommands(){
-    AutoChooser.addOption("One-Coral-Center", new PathPlannerAuto("One-Coral-Center"));
+    AutoChooser.addOption("1Coral-RedSide", new PathPlannerAuto("1Coral-RedSide"));
+    AutoChooser.addOption("1Coral-Center", new PathPlannerAuto("1Coral-Center"));
+    AutoChooser.addOption("1Coral-BlueSide", new PathPlannerAuto("1Coral-BlueSide"));
+    AutoChooser.addOption("2Coral-RedSide", new PathPlannerAuto("2Coral-RedSide"));
+    AutoChooser.addOption("2Coral-Center", new PathPlannerAuto("2Coral-Center"));
+    AutoChooser.addOption("2Coral-BlueSide", new PathPlannerAuto("2Coral-BlueSide"));
+    AutoChooser.addOption("3Coral-RedSide", new PathPlannerAuto("3Coral-RedSide"));
   }
 
   public void registerNamedCommands() {
     NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
-    NamedCommands.registerCommand("Pipe Level 4", opCommands.getBall4Command());
+    NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.coralCommandGroup(2));
     NamedCommands.registerCommand("L4 Group", opCommands.coralCommandGroup(4));
     NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
-    NamedCommands.registerCommand("Intake Group", opCommands.getPipeIntakeCommand());
   }
 
   public void setDriveMode()
