@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "oneCoralBottomPath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pipe 4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "oneCoralBottomPath"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pipe Level 4"
+                }
+              }
+            ]
           }
         },
         {

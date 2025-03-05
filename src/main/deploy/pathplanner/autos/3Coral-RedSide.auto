@@ -48,7 +48,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake Group"
+                  "name": "Pipe Retrieve"
                 }
               },
               {
@@ -110,7 +110,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake Group"
+                  "name": "Pipe Retrieve"
                 }
               },
               {
