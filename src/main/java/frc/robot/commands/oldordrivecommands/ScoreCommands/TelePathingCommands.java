@@ -239,4 +239,103 @@ public class TelePathingCommands {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    //Index 0 is the red-side processor, 1 is the blue-side processor
+    public Command goToProcessorSmartCommand(int ind) {
+
+        PathPlannerPath path;
+
+        double roboX = swerve.getPose().getX();
+        double roboY = swerve.getPose().getY();
+
+        double targX = 1.223;
+        double targY = 1.0 + 6*ind;
+
+        boolean canGoStraight = false;
+
+        if (ind == 0) {
+            if (roboY < 3 || roboX < 3.666) {
+                canGoStraight = true;
+            }
+        } else {
+            if (roboY > 5 || roboX < 3.666) {
+                canGoStraight = true;
+            }
+        }
+
+
+        ArrayList<Pose2d> poseList = new ArrayList<>();
+        if (!canGoStraight) {
+            
+            if (roboX < 4.5) { 
+                poseList.add(new Pose2d(
+                    2.321,
+                    4.795 - ind*(0.795*2),
+                    Rotation2d.fromDegrees(-125 + 250*ind))
+                );
+            } else {
+                if (ind == 0) {
+                    if (roboY > 4.5) {
+                        poseList.add(new Pose2d(
+                            6.6,
+                            4.6,
+                            Rotation2d.fromDegrees(-125 + 250*ind))
+                        );
+                    }
+                } else {
+                    if (roboY < 3.5) {
+                        poseList.add(new Pose2d(
+                            6.6,
+                            3.4,
+                            Rotation2d.fromDegrees(-125 + 250*ind))
+                        );
+                    }
+                }
+                poseList.add(new Pose2d(
+                    6.6,
+                    1.5 + 5*ind,
+                    Rotation2d.fromDegrees(-125 + 250*ind))
+                );
+            }
+
+        }
+
+        poseList.add(new Pose2d(
+            targX,
+            targY,
+            Rotation2d.fromDegrees(-125 + 250*ind))
+        );
+
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseList);
+
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+        // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+    
+        // Create the path using the waypoints created above
+        path = new PathPlannerPath(
+            waypoints,
+            constraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+            new GoalEndState(0.0, Rotation2d.fromDegrees(-125 + 250*ind)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        );
+
+
+        return AutoBuilder.followPath(path);
+
+    }
+
 }
