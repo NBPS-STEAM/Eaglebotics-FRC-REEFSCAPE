@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.BallIntakeSubsystem;
-import frc.utils.GampiecesFsm;
-import frc.utils.GampiecesFsm.Gamepieces;
+import frc.utils.Gamepieces;
 
 public final class BallIntakeCommands {
 
@@ -33,14 +32,14 @@ public final class BallIntakeCommands {
         @Override
         public void end(boolean interrupted){
             ballIntakeSubsystem.setTargetVelocity(0);
+            if (ballIntakeSubsystem.getHasBall()) {
+                Gamepieces.gamepieceInRobot=Gamepieces.ALGAE;
+                Gamepieces.activeGamepiece=Gamepieces.ALGAE;
+            }
         }
 
         @Override 
         public boolean isFinished() { 
-            if(ballIntakeSubsystem.getHasBall()){
-                GampiecesFsm.gamepieceInRobot=Gamepieces.ALGAE;
-                GampiecesFsm.activeGamepiece=Gamepieces.ALGAE;
-            }
             return ballIntakeSubsystem.getHasBall();
         }
     }
@@ -49,7 +48,9 @@ public final class BallIntakeCommands {
 
     //Turns on the ball outtake
     public class Outtake extends Command {
+
         private double time;
+
         public Outtake() {
             addRequirements(ballIntakeSubsystem);
         }
@@ -67,7 +68,6 @@ public final class BallIntakeCommands {
 
         @Override 
         public boolean isFinished() { 
-        
             return Timer.getFPGATimestamp()>=time;
         }
     }
@@ -76,6 +76,7 @@ public final class BallIntakeCommands {
 
     //Stops the intake/outtake
     public class StopIntake extends Command {
+        
         public StopIntake() {
             addRequirements(ballIntakeSubsystem);
         }

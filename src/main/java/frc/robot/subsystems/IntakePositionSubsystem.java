@@ -12,7 +12,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     private SparkMax m_liftMotor1;
     private SparkMax m_liftMotor2;
-    private Encoder m_liftEncoder=new Encoder(0,1);
+    private Encoder m_liftEncoder;
     private Squid m_liftPID;
 
     private SparkMax m_pivotMotor1;
@@ -25,6 +25,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public IntakePositionSubsystem() {
         m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
         m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
+        m_liftEncoder = new Encoder(0,1);
         m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
         m_liftPID.setTolerance(5);
         m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
@@ -50,7 +51,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     }
 
     public boolean atTargetPos(){
-        return m_liftPID.atSetpoint()&&pivotAtTargetPos();
+        return liftAtTargetPos() && pivotAtTargetPos();
     }
 
     public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {
@@ -60,12 +61,12 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        encoderValue = (m_liftPID.calculate(m_liftEncoder.getDistance()));
+        encoderValue = m_liftPID.calculate(m_liftEncoder.getDistance());
         m_liftMotor1.set(encoderValue);
         m_liftMotor2.set(encoderValue);
 
-        encoderValue = (m_pivotPID.calculate(m_pivotEncoder.getPosition()));
+        encoderValue = m_pivotPID.calculate(m_pivotEncoder.getPosition());
         m_pivotMotor1.set(encoderValue);
-        }
+    }
 
 }

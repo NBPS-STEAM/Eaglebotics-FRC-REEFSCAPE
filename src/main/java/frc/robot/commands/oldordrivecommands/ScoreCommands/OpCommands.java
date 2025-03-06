@@ -10,6 +10,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class OpCommands {
 
+    // STATIC
+
     public static Command getDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
         // Applies deadbands and inverts controls because joysticks
         // are back-right positive while robot
@@ -51,59 +53,94 @@ public class OpCommands {
 
 
 
+    // INSTANCE
 
 
     //Constructor to allow for each Command to reference the subsystem without a parameter
-    private IntakePositionSubsystem intakePositionSubsystem;
+    private final IntakePositionSubsystem intakePositionSubsystem;
+    private final IntakePositionCommand intakePositionCommand;
 
     public OpCommands(IntakePositionSubsystem intakePositionSubsystem) {
         this.intakePositionSubsystem = intakePositionSubsystem;
+        intakePositionCommand = new IntakePositionCommand(intakePositionSubsystem);
     }
-
-    IntakePositionCommand intakePositionCommand = new IntakePositionCommand(intakePositionSubsystem);
 
 
     //Individual commands for each set position needed for the four levels of the ball and pipe
-    public Command getBall1Command() {//ground intake
+
+    /**
+     * Move lift and pivot simultaneously to the ball ground intake position.
+     * @see #ballCommandGroup(int)
+     */
+    public Command getBall1Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForBall.Ball1Lift, Constants.OpConstantsForBall.Ball1Pivot);
     }
 
-    public Command getBall2Command() {//prossesor score
+    /**
+     * Move lift and pivot simultaneously to the ball processor scoring position.
+     * @see #ballCommandGroup(int)
+     */
+    public Command getBall2Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForBall.Ball2Lift, Constants.OpConstantsForBall.Ball2Pivot);
     }
 
-    public Command getBall3Command() {//level 2 intake
+    /**
+     * Move lift and pivot simultaneously to the ball level 2 intake position.
+     * @see #ballCommandGroup(int)
+     */
+    public Command getBall3Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForBall.Ball3Lift, Constants.OpConstantsForBall.Ball3Pivot);
     }
 
-    public Command getBall4Command() {//level 3 intake
+    /**
+     * Move lift and pivot simultaneously to the ball level 3 intake position.
+     * @see #ballCommandGroup(int)
+     */
+    public Command getBall4Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForBall.Ball4Lift, Constants.OpConstantsForBall.Ball4Pivot);
     }
 
+    /** Move lift and pivot simultaneously to the pipe intake position. */
     public Command getPipeIntakeCommand() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.PipeIntakeLift, Constants.OpConstantsForPipe.PipeIntakePivot);
     }
 
+    /**
+     * Move lift and pivot simultaneously to the pipe level 1 score position.
+     * @see #pipeCommandGroup(int)
+     */
     public Command getPipe1Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.Pipe1Lift, Constants.OpConstantsForPipe.Pipe1Pivot);
     }
 
+    /**
+     * Move lift and pivot simultaneously to the pipe level 2 score position.
+     * @see #pipeCommandGroup(int)
+     */
     public Command getPipe2Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.Pipe2Lift, Constants.OpConstantsForPipe.Pipe2Pivot);
     }
 
+    /**
+     * Move lift and pivot simultaneously to the pipe level 3 score position.
+     * @see #pipeCommandGroup(int)
+     */
     public Command getPipe3Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.Pipe3Lift, Constants.OpConstantsForPipe.Pipe3Pivot);
     }
 
+    /**
+     * Move lift and pivot simultaneously to the pipe level 4 score position.
+     * @see #pipeCommandGroup(int)
+     */
     public Command getPipe4Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
@@ -111,9 +148,14 @@ public class OpCommands {
 
 
     //basic command groups
-    public SequentialCommandGroup coralCommandGroup(int level){
+
+    /**
+     * Move first the lift, then the pivot to a set position for pipes.
+     * @param level The level to score at (within 1-4, otherwise will go to stow position)
+     */
+    public SequentialCommandGroup pipeCommandGroup(int level){
         SequentialCommandGroup command;
-        switch (level) {//number corresponds to scoring level
+        switch (level) {
             case 1:
                 command= new SequentialCommandGroup(
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe1Lift),
@@ -150,15 +192,16 @@ public class OpCommands {
     }
 
     /**
-     * Levels:
+     * Move first the lift, then the pivot to a set position for balls.
+     * <p>Levels:</p>
      * <p>1 - Ground intake</p>
      * <p>2 - Proccessor</p>
      * <p>3 - Level 2 intake</p>
      * <p>4 - Level 3 intake</p>
-     * <p>Anything else - new StowCommand</p>
+     * <p>Anything else - Stow position</p>
      */
-    public SequentialCommandGroup ballCommandGroup(int level){// , 
-        SequentialCommandGroup command;//, 
+    public SequentialCommandGroup ballCommandGroup(int level){
+        SequentialCommandGroup command;
         switch (level) {
             case 1:
                 command= new SequentialCommandGroup(

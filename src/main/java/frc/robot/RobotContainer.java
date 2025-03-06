@@ -32,6 +32,7 @@ import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SensorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -39,9 +40,9 @@ import frc.robot.subsystems.VisionSubsystem;
  */
 public class RobotContainer
 {
+  // The robot's subsystems and commands are defined here...
   public final SensorSubsystem sensors=new SensorSubsystem();
   public final VisionSubsystem vision=new VisionSubsystem();
-  // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
@@ -50,17 +51,17 @@ public class RobotContainer
   public final BallIntakeSubsystem ballIntake = new BallIntakeSubsystem();
   public final HangSubsystem hangSubsystem = new HangSubsystem();
 
+  PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
+  BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
+  HangCommands hangCommands = new HangCommands(hangSubsystem);
+  OpCommands opCommands = new OpCommands(intakePosition);
+
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandPS5Controller driverGamepad = new CommandPS5Controller(0);
   final CommandPS5Controller coDriverGamepad = new CommandPS5Controller(1);
 
   SendableChooser<Command> AutoChooser = new SendableChooser<>();
-
-
-  PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
-  BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
-  HangCommands hangCommands = new HangCommands(hangSubsystem);
-  OpCommands opCommands = new OpCommands(intakePosition);
 
 
   /**
@@ -72,24 +73,26 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    //configureBindings1();//little automation
-    configureBindings2();//command groups
+    //configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
+    configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
 
     setAutoCommands();
     SmartDashboard.putData("Autos", AutoChooser);
   }
+  
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
+   * Version 1: Set positions only (no command groups for IntakePosition set positions)
+   * 
+   * <p>Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
    * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
    * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
-   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
+   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.</p>
    */
-
-  private void configureBindings1()//little automation
+  private void configureBindings1()
   {
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
@@ -125,7 +128,18 @@ public class RobotContainer
     coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
 
   }
-  private void configureBindings2()//full command groups
+
+
+  /**
+   * Version 2: Sequential command groups for IntakePosition set positions
+   * 
+   * <p>Use this method to define your trigger->command mappings. Triggers can be created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary predicate, or via the
+   * named factories in {@link edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+   * {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4}
+   * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.</p>
+   */
+  private void configureBindings2()
   {
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
@@ -176,12 +190,13 @@ public class RobotContainer
     ));
 
     // Pipe Set Positions
-    coDriverGamepad.povDown().onTrue(opCommands.coralCommandGroup(1));
-    coDriverGamepad.povRight().onTrue(opCommands.coralCommandGroup(2));
-    coDriverGamepad.povUp().onTrue(opCommands.coralCommandGroup(3));
-    coDriverGamepad.povLeft().onTrue(opCommands.coralCommandGroup(4));
+    coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
+    coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(2));
+    coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(3));
+    coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(4));
 
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -207,8 +222,8 @@ public class RobotContainer
     NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
-    NamedCommands.registerCommand("L2 Group", opCommands.coralCommandGroup(2));
-    NamedCommands.registerCommand("L4 Group", opCommands.coralCommandGroup(4));
+    NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));
+    NamedCommands.registerCommand("L4 Group", opCommands.pipeCommandGroup(4));
     NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
   }
 

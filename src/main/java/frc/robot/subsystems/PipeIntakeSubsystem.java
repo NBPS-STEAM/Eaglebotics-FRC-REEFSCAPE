@@ -20,6 +20,7 @@ public class PipeIntakeSubsystem extends SubsystemBase {
     public void setTargetVelocity(double speed) {
         m_motor.set(speed);
     }
+    
     public boolean getHasPipe(){
         return SensorSubsystem.getInstance().pipe;
     }

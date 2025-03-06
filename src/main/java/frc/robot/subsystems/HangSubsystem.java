@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Servo;
@@ -13,9 +11,7 @@ public class HangSubsystem extends SubsystemBase {
 
     // Instance
     private SparkMax m1_motor;
-    private RelativeEncoder m1_encoder;
     private SparkMax m2_motor;
-    private PIDController m_pidController;
     private final Servo servo1;
     private final Servo servo2;
 
