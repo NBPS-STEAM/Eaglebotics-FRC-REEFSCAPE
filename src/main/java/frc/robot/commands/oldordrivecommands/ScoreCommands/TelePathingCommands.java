@@ -267,6 +267,7 @@ public class TelePathingCommands {
 
         boolean canGoStraight = false;
 
+        //checks if the robot is below/above the reef
         if (ind == 0) {
             if (roboY < 3 || roboX < 3.666) {
                 canGoStraight = true;
@@ -276,24 +277,31 @@ public class TelePathingCommands {
                 canGoStraight = true;
             }
         }
+        //checks if the robot is on the correct side of the reef
+        if (roboX < 3.5) {
+            canGoStraight = true;
+        }
 
 
         ArrayList<Pose2d> poseList = new ArrayList<>();
         if (!canGoStraight) {
-            
+            //If its left of the the center of the reef, it will go around it on the non-barge-side
             if (roboX < 4.5) { 
                 poseList.add(new Pose2d(
                     2.321,
                     4.795 - ind*(0.795*2),
-                    Rotation2d.fromDegrees(-125 + 250*ind))
+                    Rotation2d.fromDegrees(-90 + 180*ind))
                 );
             } else {
+                //else, it will go around the reef barge-side
+                //This if else determines if it needs to go closer to the barge before
+                //traveling up/down past the reef
                 if (ind == 0) {
                     if (roboY > 4.5) {
                         poseList.add(new Pose2d(
                             6.6,
                             4.6,
-                            Rotation2d.fromDegrees(-125 + 250*ind))
+                            Rotation2d.fromDegrees(90))
                         );
                     }
                 } else {
@@ -301,19 +309,21 @@ public class TelePathingCommands {
                         poseList.add(new Pose2d(
                             6.6,
                             3.4,
-                            Rotation2d.fromDegrees(-125 + 250*ind))
+                            Rotation2d.fromDegrees(-90))
                         );
                     }
                 }
+                //This goes up/down past the reef
                 poseList.add(new Pose2d(
                     6.6,
                     1.5 + 5*ind,
-                    Rotation2d.fromDegrees(-125 + 250*ind))
+                    Rotation2d.fromDegrees(180))
                 );
             }
 
         }
 
+        //This is always added, whether or not it can go straight, as its the processor position
         poseList.add(new Pose2d(
             targX,
             targY,
