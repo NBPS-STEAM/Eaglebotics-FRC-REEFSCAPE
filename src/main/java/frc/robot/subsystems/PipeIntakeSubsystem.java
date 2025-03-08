@@ -10,7 +10,7 @@ import frc.robot.Constants;
 public class PipeIntakeSubsystem extends SubsystemBase {
 
     // Instance
-    private SparkMax m_motor;
+    public final SparkMax m_motor;
 
     public PipeIntakeSubsystem() {
         // initialize motor

@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj.Servo;
 public class HangSubsystem extends SubsystemBase {
 
     // Instance
-    private SparkMax m1_motor;
-    private SparkMax m2_motor;
-    private final Servo servo1;
-    private final Servo servo2;
+    public final SparkMax m1_motor;
+    public final SparkMax m2_motor;
+    public final Servo servo1;
+    public final Servo servo2;
 
 
     public HangSubsystem() {

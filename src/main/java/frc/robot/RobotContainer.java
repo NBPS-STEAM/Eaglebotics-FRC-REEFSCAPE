@@ -248,5 +248,8 @@ public class RobotContainer
 
     SmartDashboard.putBoolean("Lift at Target?", intakePosition.liftAtTargetPos());
     SmartDashboard.putBoolean("Pivot at Target?", intakePosition.pivotAtTargetPos());
+
+    SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getDistance());
+    SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
   }
 }

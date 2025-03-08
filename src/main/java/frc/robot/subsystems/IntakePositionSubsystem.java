@@ -10,14 +10,14 @@ import frc.utils.Squid;
 
 public class IntakePositionSubsystem extends SubsystemBase {
 
-    private SparkMax m_liftMotor1;
-    private SparkMax m_liftMotor2;
-    private Encoder m_liftEncoder;
-    private Squid m_liftPID;
+    public final SparkMax m_liftMotor1;
+    public final SparkMax m_liftMotor2;
+    public final Encoder m_liftEncoder;
+    public final Squid m_liftPID;
 
-    private SparkMax m_pivotMotor1;
-    private AbsoluteEncoder m_pivotEncoder;
-    private Squid m_pivotPID;
+    public final SparkMax m_pivotMotor1;
+    public final AbsoluteEncoder m_pivotEncoder;
+    public final Squid m_pivotPID;
 
     private double encoderValue;
 

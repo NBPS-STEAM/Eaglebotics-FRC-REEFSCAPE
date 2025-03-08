@@ -9,8 +9,8 @@ import frc.robot.Constants;
 public class BallIntakeSubsystem extends SubsystemBase {
 
     // Instance
-    private SparkMax m1_motor;
-    private SparkMax m2_motor;
+    public final SparkMax m1_motor;
+    public final SparkMax m2_motor;
 
     public BallIntakeSubsystem() {
         // initialize motor
