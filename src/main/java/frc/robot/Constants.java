@@ -58,7 +58,7 @@ public final class Constants {
     public static final double kPipeOuttakeSpeed = -0.5;
 
     // TODO: SET TO REAL MOTOR ID
-    public static final int kPipeMotorId = 9;
+    public static final int kPipeMotorId = 4;
 
 
     // Ball Intake:
@@ -68,23 +68,22 @@ public final class Constants {
     public static final double kBallOuttakeSpeed = -0.5;
 
     // TODO: SET TO REAL MOTOR ID
-    public static final int kBallMotorId1 = 9;
-    public static final int kBallMotorId2 = 9;
+    public static final int kBallMotorId1 = 12;
+    public static final int kBallMotorId2 = 13;
 
   }
 
   public static final class IntakePositionConstants {
-    public static final int kLiftMotor1Id = 0;
-    public static final int kLiftMotor2Id = 0;
+    public static final int kLiftMotor1Id = 5;
+    public static final int kLiftMotor2Id = 11;
 
     public static final double kLiftP = 0;
     public static final double kLiftI = 0;
     public static final double kLiftD = 0;
 
-    public static final int kPivotMotor1Id = 0;
-    public static final int kPivotMotor2Id = 0;
+    public static final int kPivotMotor1Id = 27;
 
-    public static final double kPivotP = 0;
+    public static final double kPivotP = 0.001;
     public static final double kPivotI = 0;
     public static final double kPivotD = 0;
 
@@ -104,8 +103,8 @@ public final class Constants {
     public static final double kHangIz = 0;
 
     // TODO: SET TO REAL MOTOR ID
-    public static final int kHangMotor1Id = 10;
-    public static final int kHangMotor2Id = 11;
+    public static final int kHangMotor1Id = 6;
+    public static final int kHangMotor2Id = 7;
     public static final int kServo1Channel = 0;
     public static final int kServo2Channel = 1;
   }
