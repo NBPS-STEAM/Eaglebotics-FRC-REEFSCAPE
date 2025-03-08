@@ -22,10 +22,11 @@ public class SensorSubsystem extends SubsystemBase{
     public boolean pipe=false;
     
     private static SensorSubsystem instance;
+
     public static SensorSubsystem getInstance(){
-    if (instance == null) {
-      instance = new SensorSubsystem();
-    }
+        if (instance == null) {
+            instance = new SensorSubsystem();
+        }
         return instance;
     }
 

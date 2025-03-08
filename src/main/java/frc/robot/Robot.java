@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.SensorSubsystem;
 import swervelib.parser.SwerveParser;
 
 /**
@@ -36,7 +37,7 @@ public class Robot extends TimedRobot
     //vision actually updates the odometry, while sensors just update
     //thier respective values
     addPeriodic(()->{m_robotContainer.vision.updateAll();
-      m_robotContainer.sensors.updateAll();//all susbsystems that need pid should have the methods that
+      SensorSubsystem.getInstance().updateAll();//all susbsystems that need pid should have the methods that
     }, 0.01,0.005);//update pid here to make sure they run as fast as possible, ONLY PID, nothing else
     instance = this;//it wont be stable then
   }

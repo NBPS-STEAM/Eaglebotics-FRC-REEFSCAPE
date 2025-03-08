@@ -14,10 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,7 +29,6 @@ import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
-import frc.robot.subsystems.SensorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -43,7 +40,6 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer
 {
   // The robot's subsystems and commands are defined here...
-  public final SensorSubsystem sensors=new SensorSubsystem();
   public final VisionSubsystem vision=new VisionSubsystem();
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
@@ -242,8 +238,8 @@ public class RobotContainer
 
 
   public void updateSmartDashboard() {
-    SmartDashboard.putBoolean("Algae Sensor?", sensors.ball);
-    SmartDashboard.putBoolean("Coral Sensor?", sensors.pipe);
+    SmartDashboard.putBoolean("Algae Sensor?", ballIntake.getHasBall());
+    SmartDashboard.putBoolean("Coral Sensor?", pipeIntake.getHasPipe());
 
     SmartDashboard.putBoolean("Lift at Target?", intakePosition.liftAtTargetPos());
     SmartDashboard.putBoolean("Pivot at Target?", intakePosition.pivotAtTargetPos());
