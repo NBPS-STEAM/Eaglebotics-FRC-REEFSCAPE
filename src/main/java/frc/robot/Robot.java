@@ -36,7 +36,7 @@ public class Robot extends TimedRobot
   {//this runs all sensors and vision faster than the normal loop
     //vision actually updates the odometry, while sensors just update
     //thier respective values
-    addPeriodic(()->{m_robotContainer.vision.updateAll();
+    addPeriodic(()->{//m_robotContainer.vision.updateAll(); TODO: UNCOMMENT WHEN VisionSubsystem WORKS
       SensorSubsystem.getInstance().updateAll();//all susbsystems that need pid should have the methods that
     }, 0.01,0.005);//update pid here to make sure they run as fast as possible, ONLY PID, nothing else
     instance = this;//it wont be stable then
@@ -71,7 +71,7 @@ public class Robot extends TimedRobot
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_robotContainer.vision.init(m_robotContainer.drivebase);
+    //m_robotContainer.vision.init(m_robotContainer.drivebase); TODO: UNCOMMENT WHEN VisionSubsystem WORKS
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
@@ -102,7 +102,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit()
   {
-    m_robotContainer.setMotorBrake(true);
+    //m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
   }
@@ -152,7 +152,7 @@ public class Robot extends TimedRobot
       m_autonomousCommand.cancel();
     }
     m_robotContainer.setDriveMode();
-    m_robotContainer.setMotorBrake(true);
+    //m_robotContainer.setMotorBrake(true);
   }
 
   /**

@@ -29,7 +29,7 @@ import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystemV2;
 import frc.robot.subsystems.VisionSubsystem;
 
 /**
@@ -40,9 +40,10 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer
 {
   // The robot's subsystems and commands are defined here...
-  public final VisionSubsystem vision=new VisionSubsystem();
-  public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-                                                                         "swerve"));
+  //public final VisionSubsystem vision=new VisionSubsystem();
+  //public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+  //                                                                       "swerve"));
+  public final SwerveSubsystemV2 drivebase = new SwerveSubsystemV2();
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
   public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 
@@ -96,7 +97,7 @@ public class RobotContainer
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
     driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
-    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroHeading));
     
 
     //Co Driver:
@@ -143,7 +144,7 @@ public class RobotContainer
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
     driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
-    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroHeading));
     
 
     //Co Driver:
@@ -231,10 +232,10 @@ public class RobotContainer
     //drivebase.setDefaultCommand();
   }
 
-  public void setMotorBrake(boolean brake)
+  /* public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
-  }
+  } */
 
 
   public void updateSmartDashboard() {

@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakePositionSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystemV2;
 
 public class OpCommands {
 
     // STATIC
 
-    public static Command getDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
+    public static Command getDriveCommand(SwerveSubsystemV2 drivebase, CommandPS5Controller gamepad) {
         // Applies deadbands and inverts controls because joysticks
         // are back-right positive while robot
         // controls are front-left positive
@@ -39,7 +39,7 @@ public class OpCommands {
 
     }
 
-    public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
+    public static Command getSlowDriveCommand(SwerveSubsystemV2 drivebase, CommandPS5Controller gamepad) {
         // same as above but half as fast
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
