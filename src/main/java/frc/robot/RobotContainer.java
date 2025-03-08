@@ -75,15 +75,14 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    //configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
-    configureBindings2(); // Sequential command groups for IntakePosition set positions
+    configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
+    //configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
 
     setAutoCommands();
 
     SmartDashboard.putData("Autos", AutoChooser);
-    new RunCommand(this::updateSmartDashboard).schedule();
   }
   
 
