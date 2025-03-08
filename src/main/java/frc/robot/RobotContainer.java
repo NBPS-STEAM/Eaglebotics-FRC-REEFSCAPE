@@ -251,5 +251,7 @@ public class RobotContainer
 
     SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getDistance());
     SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
+
+    SmartDashboard.updateValues();
   }
 }
