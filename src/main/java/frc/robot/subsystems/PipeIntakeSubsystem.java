@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 
@@ -15,6 +17,8 @@ public class PipeIntakeSubsystem extends SubsystemBase {
     public PipeIntakeSubsystem() {
         // initialize motor
         m_motor = new SparkMax(Constants.IntakeConstants.kPipeMotorId, MotorType.kBrushless);
+
+        m_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setTargetVelocity(double speed) {

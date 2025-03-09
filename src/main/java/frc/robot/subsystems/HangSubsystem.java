@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,7 +22,10 @@ public class HangSubsystem extends SubsystemBase {
         // initialize motor
         m1_motor = new SparkMax(Constants.HangConstants.kHangMotor1Id, MotorType.kBrushless);
         m2_motor = new SparkMax(Constants.HangConstants.kHangMotor2Id, MotorType.kBrushless);
-        
+
+        m1_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m2_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
         servo1 = new Servo(Constants.HangConstants.kServo1Channel);
         servo2 = new Servo(Constants.HangConstants.kServo2Channel);
     }

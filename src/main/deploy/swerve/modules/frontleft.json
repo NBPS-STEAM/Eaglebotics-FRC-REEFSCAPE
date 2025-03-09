@@ -20,8 +20,8 @@
     "canbus": "rio"
   },
   "inverted": {
-    "drive": true,
-    "angle": true
+    "drive": false,
+    "angle": false
   },
   "absoluteEncoderInverted": false
 }

@@ -16,12 +16,12 @@
   },
   "encoder": {
     "type": "canandmag_can",
-    "id": 32,
+    "id": 33,
     "canbus": "rio"
   },
   "inverted": {
-    "drive": true,
-    "angle": true
+    "drive": false,
+    "angle": false
   },
-  "absoluteEncoderInverted": true
+  "absoluteEncoderInverted": false
 }

@@ -3,8 +3,12 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Encoder;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.utils.Squid;
@@ -24,15 +28,24 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
 
     public IntakePositionSubsystem() {
-        m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
-        m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
+        // Initialize PIDs
         m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
         m_liftPID.setTolerance(0.5);
-        m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
-        m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
         m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
         m_pivotPID.setTolerance(0.03);
-        m_liftEncoder=m_liftMotor2.getAlternateEncoder();
+
+        // Lift motors
+        m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
+        m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
+        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).follow(m_liftMotor2);
+        m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftMotor2.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftEncoder = m_liftMotor2.getAlternateEncoder();
+
+        // Pivot motor
+        m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
+        m_pivotMotor1.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
     }
 
     public void setLiftSetpoint(double setpoint) {
@@ -63,7 +76,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         encoderValue = m_liftPID.calculate(m_liftEncoder.getPosition());
-        m_liftMotor1.set(encoderValue);
+        //m_liftMotor1.set(encoderValue); m_liftMotor1 follow m_liftMotor2
         m_liftMotor2.set(encoderValue);
 
         encoderValue = m_pivotPID.calculate(m_pivotEncoder.getPosition());
