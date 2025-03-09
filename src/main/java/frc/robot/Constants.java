@@ -162,7 +162,7 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 10; // CAN OK ("rio" canbus)
     public static final int kRearRightTurnEncoderCanId = 31; // CAN OK ("rio" canbus)
 
-    public static final int kPigeonGyroCanId = 5; // CAN UNKNOWN ("swerve" canbus)
+    public static final int kPigeonGyroCanId = 5; // CAN OK ("swerve" canbus)
     //public static final boolean kGyroReversed = false;
   }
 
