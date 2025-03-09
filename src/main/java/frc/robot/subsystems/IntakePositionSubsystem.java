@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -12,7 +13,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     public final SparkMax m_liftMotor1;
     public final SparkMax m_liftMotor2;
-    public final Encoder m_liftEncoder;
+    public final RelativeEncoder m_liftEncoder;
     public final Squid m_liftPID;
 
     public final SparkMax m_pivotMotor1;
@@ -25,13 +26,13 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public IntakePositionSubsystem() {
         m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
         m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
-        m_liftEncoder = new Encoder(0,1);
         m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
-        m_liftPID.setTolerance(5);
+        m_liftPID.setTolerance(0.5);
         m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
         m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
-        m_pivotPID.setTolerance(5);
+        m_pivotPID.setTolerance(0.03);
+        m_liftEncoder=m_liftMotor2.getAlternateEncoder();
     }
 
     public void setLiftSetpoint(double setpoint) {
@@ -61,7 +62,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        encoderValue = m_liftPID.calculate(m_liftEncoder.getDistance());
+        encoderValue = m_liftPID.calculate(m_liftEncoder.getPosition());
         m_liftMotor1.set(encoderValue);
         m_liftMotor2.set(encoderValue);
 
