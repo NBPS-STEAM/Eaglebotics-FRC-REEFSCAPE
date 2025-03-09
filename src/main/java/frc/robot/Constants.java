@@ -59,6 +59,7 @@ public final class Constants {
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4;
+    public static final int kPipeSensorChannel = 1;
 
 
     // Ball Intake:
@@ -70,6 +71,7 @@ public final class Constants {
     // TODO: SET TO REAL MOTOR ID
     public static final int kBallMotorId1 = 12;
     public static final int kBallMotorId2 = 13;
+    public static final int kBallSensorChannel = 0;
 
   }
 
