@@ -16,8 +16,8 @@ public class SensorSubsystem extends SubsystemBase{
     //2. private variable with getter metheod
 
     //all values from the sensors should be updated in the "updateAll" metheod
-    private DigitalInput pipeSwitch=new DigitalInput(2);
-    private DigitalInput ballSwitch=new DigitalInput(3);
+    private DigitalInput pipeSwitch=new DigitalInput(1);
+    private DigitalInput ballSwitch=new DigitalInput(0);
     public boolean ball=false;
     public boolean pipe=false;
     
@@ -36,8 +36,8 @@ public class SensorSubsystem extends SubsystemBase{
     }
 
     public void updateAll(){//update all sensors and values
-        pipe=pipeSwitch.get();
-        ball=ballSwitch.get();
+        pipe=!pipeSwitch.get();
+        ball=!ballSwitch.get();
     }
 
 }

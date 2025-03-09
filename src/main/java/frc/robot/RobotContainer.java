@@ -102,9 +102,8 @@ public class RobotContainer
     //Co Driver:
     
     // Pipe Intake/Outtake/Stop Controls
-    coDriverGamepad.L1().onTrue(new ParallelCommandGroup(pipeIntakeCommands.new Intake(),
-          opCommands.getPipeIntakeCommand()));
-    coDriverGamepad.L1().onTrue(opCommands.getPipeIntakeCommand());
+    coDriverGamepad.L1().onTrue(pipeIntakeCommands.new Intake());
+    //coDriverGamepad.L1().onTrue(opCommands.getPipeIntakeCommand());
     coDriverGamepad.L2().onTrue(pipeIntakeCommands.new Outtake());
     coDriverGamepad.L3().onTrue(pipeIntakeCommands.new StopIntake());
     
@@ -244,8 +243,9 @@ public class RobotContainer
     SmartDashboard.putBoolean("Lift at Target?", intakePosition.liftAtTargetPos());
     SmartDashboard.putBoolean("Pivot at Target?", intakePosition.pivotAtTargetPos());
 
-    SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getDistance());
+    SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getPosition());
     SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
+    System.out.println(intakePosition.m_liftEncoder.getPosition());
 
     SmartDashboard.updateValues();
   }

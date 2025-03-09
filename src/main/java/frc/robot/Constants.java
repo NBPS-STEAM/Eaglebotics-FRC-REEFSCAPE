@@ -21,7 +21,7 @@ public final class Constants {
     public static final double Ball2Pivot = 1.0;
 
     public static final double Ball3Lift = 1.0;
-    public static final double Ball3Pivot = 1.0;
+    public static final double Ball3Pivot = 0.58;
 
     public static final double Ball4Lift = 1.0;
     public static final double Ball4Pivot = 1.0;
