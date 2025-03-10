@@ -17,37 +17,37 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
 
   public static final class OpConstantsForBall {
-    public static final double Ball1Lift = 1.0;
-    public static final double Ball1Pivot = 1.0;
+    public static final double Ball1Lift = 0.0;
+    public static final double Ball1Pivot = 0.05;
 
-    public static final double Ball2Lift = 1.0;
-    public static final double Ball2Pivot = 1.0;
+    public static final double Ball2Lift = 0.0;
+    public static final double Ball2Pivot = 0.1;
 
-    public static final double Ball3Lift = 4.0;
-    public static final double Ball3Pivot = 0.2;
+    public static final double Ball3Lift = 4.0; //TESTING VALUES
+    public static final double Ball3Pivot = 0.2; //TESTING VALUES
 
-    public static final double Ball4Lift = 1.0;
-    public static final double Ball4Pivot = 1.0;
+    public static final double Ball4Lift = 3.5;
+    public static final double Ball4Pivot = 0.2;
   }
 
   public static final class OpConstantsForPipe {
-    public static final double Pipe1Lift = 1.0;
-    public static final double Pipe1Pivot = 1.0;
+    public static final double Pipe1Lift = 1.5;
+    public static final double Pipe1Pivot = 0.2;
 
-    public static final double Pipe2Lift = 1.0;
-    public static final double Pipe2Pivot = 1.0;
+    public static final double Pipe2Lift = 2.0;
+    public static final double Pipe2Pivot = 0.2;
 
-    public static final double Pipe3Lift = 1.0;
-    public static final double Pipe3Pivot = 1.0;
+    public static final double Pipe3Lift = 3.5;
+    public static final double Pipe3Pivot = 0.2;
 
-    public static final double Pipe4Lift = 1.0;
-    public static final double Pipe4Pivot = 1.0;
+    public static final double Pipe4Lift = 4.8;
+    public static final double Pipe4Pivot = 0.25;
 
     public static final double PipeRetLift = 1.0;
-    public static final double PipeRetPivot = 1.0;
+    public static final double PipeRetPivot = 0.25;
 
-    public static final double PipeIntakeLift = 1.0;
-    public static final double PipeIntakePivot = 1.0;
+    public static final double PipeIntakeLift = 0.0; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakePivot = 0.01; //REDUNDENT WITH PipeRetPivot
   }
 
   public static final class IntakeConstants {
@@ -85,14 +85,14 @@ public final class Constants {
     public static final double kLiftP = 15;
     public static final double kLiftI = 0;
     public static final double kLiftD = 0;
-    public static final double kLiftTolerance = 0.1;
+    public static final double kLiftTolerance = 0.05;
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
     public static final double kPivotP = 15;
     public static final double kPivotI = 0;
     public static final double kPivotD = 0.35;
-    public static final double kPivotTolerance = 0.03;
+    public static final double kPivotTolerance = 0.015;
 
     public static final double stowPivot=0;
     public static final double stowLift=0;
