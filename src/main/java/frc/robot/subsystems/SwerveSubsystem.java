@@ -113,7 +113,9 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     for (SwerveModule module : swerveDrive.swerveDriveConfiguration.modules) {
+      boolean inverted = module.getConfiguration().absoluteEncoderInverted;
       module.getAbsoluteEncoder().factoryDefault();
+      module.getAbsoluteEncoder().configure(inverted);
     }
 
     setupPathPlanner();

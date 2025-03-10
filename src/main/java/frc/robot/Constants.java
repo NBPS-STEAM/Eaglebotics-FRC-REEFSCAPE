@@ -23,8 +23,8 @@ public final class Constants {
     public static final double Ball2Lift = 1.0;
     public static final double Ball2Pivot = 1.0;
 
-    public static final double Ball3Lift = 1.0;
-    public static final double Ball3Pivot = 0.58;
+    public static final double Ball3Lift = 4.0;
+    public static final double Ball3Pivot = 0.2;
 
     public static final double Ball4Lift = 1.0;
     public static final double Ball4Pivot = 1.0;
@@ -82,15 +82,17 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftP = 0;
+    public static final double kLiftP = 15;
     public static final double kLiftI = 0;
     public static final double kLiftD = 0;
+    public static final double kLiftTolerance = 0.1;
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 0.001;
+    public static final double kPivotP = 15;
     public static final double kPivotI = 0;
-    public static final double kPivotD = 0;
+    public static final double kPivotD = 0.35;
+    public static final double kPivotTolerance = 0.03;
 
     public static final double stowPivot=0;
     public static final double stowLift=0;

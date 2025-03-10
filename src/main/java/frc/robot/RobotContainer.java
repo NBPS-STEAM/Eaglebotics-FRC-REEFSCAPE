@@ -71,7 +71,7 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
+    configureBindings1(); // (PREFERRED) Set positions only (no command groups for IntakePosition set positions)
     //configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
@@ -197,6 +197,14 @@ public class RobotContainer
 
 
   /**
+   * Controller/command bindings for testing the robot.
+   */
+  public void configureBindingsTesting() {
+
+  }
+
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
@@ -244,6 +252,8 @@ public class RobotContainer
     SmartDashboard.putBoolean("Pivot at Target?", intakePosition.pivotAtTargetPos());
 
     SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getPosition());
+    SmartDashboard.putNumber("Lift Motor Power", intakePosition.m_liftMotor2.get());
+    SmartDashboard.putNumber("Lift Sum Current Draw", intakePosition.m_liftMotor1.getOutputCurrent() + intakePosition.m_liftMotor2.getOutputCurrent());
     SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
 
     SmartDashboard.putNumber("Pigeon Oritentation", drivebase.pigeon.getAccumGyroZ().getValueAsDouble() % 360.0);

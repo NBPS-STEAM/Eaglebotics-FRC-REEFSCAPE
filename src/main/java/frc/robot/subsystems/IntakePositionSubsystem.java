@@ -30,16 +30,18 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public IntakePositionSubsystem() {
         // Initialize PIDs
         m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
-        m_liftPID.setTolerance(0.5);
+        m_liftPID.setTolerance(Constants.IntakePositionConstants.kLiftTolerance);
         m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
-        m_pivotPID.setTolerance(0.03);
+        m_pivotPID.setTolerance(Constants.IntakePositionConstants.kPivotTolerance);
 
         // Lift motors
         m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
         m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
-        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).follow(m_liftMotor2);
+        SparkBaseConfig sharedConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(55, 55);
+        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(sharedConfig).follow(m_liftMotor2);
+        SparkBaseConfig liftMotor2Config = new SparkMaxConfig().apply(sharedConfig).inverted(true);
         m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        m_liftMotor2.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         m_liftEncoder = m_liftMotor2.getAlternateEncoder();
 
         // Pivot motor
