@@ -82,10 +82,15 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftP = 15;
-    public static final double kLiftI = 0;
-    public static final double kLiftD = 0;
     public static final double kLiftTolerance = 0.05;
+    // Used when the lift is going up:
+    public static final double kLiftPosP = 15;
+    public static final double kLiftPosI = 0;
+    public static final double kLiftPosD = 0;
+    // Used when the lift is going down:
+    public static final double kLiftNegP = 0.1;
+    public static final double kLiftNegI = 0;
+    public static final double kLiftNegD = 0;
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
