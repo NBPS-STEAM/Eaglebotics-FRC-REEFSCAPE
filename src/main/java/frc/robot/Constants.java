@@ -17,30 +17,30 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
 
   public static final class OpConstantsForBall {
-    public static final double Ball1Lift = 0.0;
+    public static final double Ball1Lift = 0.0; //Cross
     public static final double Ball1Pivot = 0.05;
 
-    public static final double Ball2Lift = 0.0;
+    public static final double Ball2Lift = 0.0; //Square
     public static final double Ball2Pivot = 0.1;
 
-    public static final double Ball3Lift = 4.0; //TESTING VALUES
+    public static final double Ball3Lift = 4.0; //TESTING VALUES - Triangle
     public static final double Ball3Pivot = 0.2; //TESTING VALUES
 
-    public static final double Ball4Lift = 3.5;
+    public static final double Ball4Lift = 3.5; //Circle
     public static final double Ball4Pivot = 0.2;
   }
 
   public static final class OpConstantsForPipe {
-    public static final double Pipe1Lift = 1.5;
+    public static final double Pipe1Lift = 1.5; //DDown
     public static final double Pipe1Pivot = 0.2;
 
-    public static final double Pipe2Lift = 2.0;
+    public static final double Pipe2Lift = 2.0; //DRight
     public static final double Pipe2Pivot = 0.2;
 
-    public static final double Pipe3Lift = 3.5;
+    public static final double Pipe3Lift = 3.5; //DUp
     public static final double Pipe3Pivot = 0.2;
 
-    public static final double Pipe4Lift = 4.8;
+    public static final double Pipe4Lift = 4.8; //DLeft
     public static final double Pipe4Pivot = 0.25;
 
     public static final double PipeRetLift = 1.0;
@@ -89,13 +89,13 @@ public final class Constants {
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 15;
+    public static final double kPivotP = 12;
     public static final double kPivotI = 0;
-    public static final double kPivotD = 0.35;
+    public static final double kPivotD = 0.5;
     public static final double kPivotTolerance = 0.015;
 
-    public static final double stowPivot=0;
-    public static final double stowLift=0;
+    public static final double stowPivot = 0.32;
+    public static final double stowLift = 0.0;
   }
 
   public static final class HangConstants {

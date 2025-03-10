@@ -125,6 +125,8 @@ public class RobotContainer
     coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
     coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
 
+
+    coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
   }
 
 

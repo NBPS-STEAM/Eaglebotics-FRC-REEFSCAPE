@@ -69,6 +69,14 @@ public class OpCommands {
     //Individual commands for each set position needed for the four levels of the ball and pipe
 
     /**
+     * Move lift and pivot simultaneously to the stow position.
+     */
+    public Command getStowParallelCommand() {
+        return intakePositionCommand.new SetIntakePositionSetpoints(
+            Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot);
+    }
+
+    /**
      * Move lift and pivot simultaneously to the ball ground intake position.
      * @see #ballCommandGroup(int)
      */
@@ -145,6 +153,9 @@ public class OpCommands {
         return intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
     }
+
+
+    
 
 
     //basic command groups
