@@ -260,6 +260,10 @@ public class RobotContainer
 
     SmartDashboard.putNumber("Pigeon Oritentation", drivebase.pigeon.getAccumGyroZ().getValueAsDouble() % 360.0);
     //System.out.println(intakePosition.m_liftEncoder.getPosition());
+    
+    boolean goToStow = SmartDashboard.getBoolean("Go to stow position", false);
+    if (goToStow) opCommands.getStowParallelCommand().schedule();
+    SmartDashboard.putBoolean("Go to stow position", false);
 
     SmartDashboard.updateValues();
   }
