@@ -114,27 +114,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
-    for (SwerveModule module : swerveDrive.swerveDriveConfiguration.modules) {
-      /* boolean inverted = module.getConfiguration().absoluteEncoderInverted;
-      module.getAbsoluteEncoder().factoryDefault();
-      module.getAbsoluteEncoder().configure(inverted); */
-
-      module.getAbsoluteEncoder().setAbsoluteEncoderOffset(0);
-
-      /* if (module.getAbsoluteEncoder() instanceof CanAndMagSwerve) {
-        // CanAndMagSwerve.factoryDefault() chooses not to reset the zero position, for some reason
-        boolean inverted = module.getConfiguration().absoluteEncoderInverted;
-        ((CanAndMagSwerve) module.getAbsoluteEncoder()).encoder.resetFactoryDefaults(true, 2.5);
-        module.getAbsoluteEncoder().configure(inverted);
-        System.out.println("CanAngMag encoder reset");
-
-      } else */ /* if (module.getAbsoluteEncoder() instanceof CANCoderSwerve) */ /* {
-        boolean inverted = module.getConfiguration().absoluteEncoderInverted;
-        module.getAbsoluteEncoder().factoryDefault();
-        module.getAbsoluteEncoder().configure(inverted);
-        System.out.println(module.getAbsoluteEncoder().getClass().getTypeName() + " encoder reset");
-      } */
-    }
+    fixEncoders();
 
     setupPathPlanner();
     pigeon=(Pigeon2)swerveDrive.swerveDriveConfiguration.imu.getIMU();
@@ -156,9 +136,45 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
-   * Setup the photon vision class.
+   * Correct the encoders by resetting the zero offsets.
    */
- 
+  public void fixEncoders() {
+    // The swerve encoders seem to get zeroed when the robot initializes. This shouldn't happen.
+    // Because they're absolute encoders, their positions should be able to persist across power cycles.
+    // Thus, this zeroing is likely a result of something having the encoders recalculate their zero offsets.
+    // We try to work around this by resetting the encoders' offsets to zero.
+    // The swerve config should then offset from this in code to get the actual position. (See "absoluteEncoderOffset" in src/main/deploy/swerve/modules/*.json)
+    for (SwerveModule module : swerveDrive.swerveDriveConfiguration.modules) {
+      for (int i = 0; i < 10; i++) { // retry up to 10 times (each attempt should take no more than 350 ms)
+        boolean success = false;
+
+        // Solution 1: Set the absolute encoder offset to 0
+        // This should work as long as the encoder supports it.
+        success = module.getAbsoluteEncoder().setAbsoluteEncoderOffset(0);
+
+        // Solution 2: Reset the absolute encoder to factory defaults, returning the offset to 0
+        /* if (module.getAbsoluteEncoder() instanceof CanAndMagSwerve) {
+          // CanAndMagSwerve.factoryDefault() chooses not to reset the zero position, for some reason
+          boolean inverted = module.getConfiguration().absoluteEncoderInverted;
+          success = ((CanAndMagSwerve) module.getAbsoluteEncoder()).encoder.resetFactoryDefaults(true).allSettingsReceived();
+          module.getAbsoluteEncoder().configure(inverted);
+        }
+        else { // if (module.getAbsoluteEncoder() instanceof CANCoderSwerve) {
+          boolean inverted = module.getConfiguration().absoluteEncoderInverted;
+          module.getAbsoluteEncoder().factoryDefault();
+          module.getAbsoluteEncoder().configure(inverted);
+          success = true; // there is no way to verify success with this interface, so just move on
+        } */
+        
+        if (success) {
+          System.out.println(module.getAbsoluteEncoder().getAbsoluteEncoder().getClass().getTypeName() + " encoder reset");
+          break;
+        } else {
+          System.out.println("WARNING: " + module.getAbsoluteEncoder().getAbsoluteEncoder().getClass().getTypeName() + " encoder FAILED to reset (attempt " + (i+1) + ")");
+        }
+      }
+    }
+  }
 
   @Override
   public void periodic()
