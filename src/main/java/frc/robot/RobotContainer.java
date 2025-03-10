@@ -266,7 +266,17 @@ public class RobotContainer
     SmartDashboard.putNumber("Go to stow", 0);
     SmartDashboard.putBoolean("Will go stow?", dashboardStowCommand.isScheduled());
 
+    intakePosition.k_liftP = checkNumber("Lift P", Constants.IntakePositionConstants.kLiftP);
+    intakePosition.k_liftI = checkNumber("Lift I", Constants.IntakePositionConstants.kLiftI);
+    intakePosition.k_liftD = checkNumber("Lift D", Constants.IntakePositionConstants.kLiftD);
+    intakePosition.k_liftAntigrav = checkNumber("Lift antigrav", Constants.IntakePositionConstants.kLiftAntigrav);
+
     SmartDashboard.updateValues();
+  }
+
+  private double checkNumber(String key, double defaultValue) {
+    if (!SmartDashboard.containsKey(key)) SmartDashboard.putNumber(key, defaultValue);
+    return SmartDashboard.getNumber(key, defaultValue);
   }
 
   private Command dashboardStowCommand = opCommands.getStowParallelCommand();
