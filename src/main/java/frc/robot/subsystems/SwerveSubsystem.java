@@ -49,6 +49,8 @@ import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
 import swervelib.SwerveModule;
+import swervelib.encoders.CANCoderSwerve;
+import swervelib.encoders.CanAndMagSwerve;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -113,9 +115,25 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     for (SwerveModule module : swerveDrive.swerveDriveConfiguration.modules) {
-      boolean inverted = module.getConfiguration().absoluteEncoderInverted;
+      /* boolean inverted = module.getConfiguration().absoluteEncoderInverted;
       module.getAbsoluteEncoder().factoryDefault();
-      module.getAbsoluteEncoder().configure(inverted);
+      module.getAbsoluteEncoder().configure(inverted); */
+
+      module.getAbsoluteEncoder().setAbsoluteEncoderOffset(0);
+
+      /* if (module.getAbsoluteEncoder() instanceof CanAndMagSwerve) {
+        // CanAndMagSwerve.factoryDefault() chooses not to reset the zero position, for some reason
+        boolean inverted = module.getConfiguration().absoluteEncoderInverted;
+        ((CanAndMagSwerve) module.getAbsoluteEncoder()).encoder.resetFactoryDefaults(true, 2.5);
+        module.getAbsoluteEncoder().configure(inverted);
+        System.out.println("CanAngMag encoder reset");
+
+      } else */ /* if (module.getAbsoluteEncoder() instanceof CANCoderSwerve) */ /* {
+        boolean inverted = module.getConfiguration().absoluteEncoderInverted;
+        module.getAbsoluteEncoder().factoryDefault();
+        module.getAbsoluteEncoder().configure(inverted);
+        System.out.println(module.getAbsoluteEncoder().getClass().getTypeName() + " encoder reset");
+      } */
     }
 
     setupPathPlanner();
