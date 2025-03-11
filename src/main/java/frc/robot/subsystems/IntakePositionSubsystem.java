@@ -24,12 +24,17 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public final AbsoluteEncoder m_pivotEncoder;
     public final Squid m_pivotPID;
 
+    public double k_liftP = Constants.IntakePositionConstants.kLiftP;
+    public double k_liftI = Constants.IntakePositionConstants.kLiftI;
+    public double k_liftD = Constants.IntakePositionConstants.kLiftD;
+    public double k_liftAntigrav = Constants.IntakePositionConstants.kLiftAntigrav;
+
     private double encoderValue;
 
 
     public IntakePositionSubsystem() {
         // Initialize PIDs
-        m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
+        m_liftPID = new Squid(k_liftP, k_liftI, k_liftD);
         m_liftPID.setTolerance(Constants.IntakePositionConstants.kLiftTolerance);
         m_liftPID.setSetpoint(Constants.IntakePositionConstants.stowLift);
         m_liftPID.setIZone(0.15);
@@ -81,12 +86,35 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        encoderValue = m_liftPID.calculate(m_liftEncoder.getPosition());
-        //m_liftMotor1.set(encoderValue); m_liftMotor1 follow m_liftMotor2
+        m_liftPID.setP(k_liftP);
+        m_liftPID.setI(k_liftI);
+        m_liftPID.setD(k_liftD);
+
+        //double liftPosition = m_liftEncoder.getPosition();
+        //checkLiftPidDirection(liftPosition);
+        encoderValue = m_liftPID.calculate(m_liftEncoder.getPosition()) + k_liftAntigrav;
+        //m_liftMotor1.set(encoderValue); m_liftMotor1 follows m_liftMotor2
         m_liftMotor2.set(encoderValue);
 
         encoderValue = m_pivotPID.calculate(m_pivotEncoder.getPosition());
         m_pivotMotor1.set(encoderValue);
     }
+
+    /**
+     * Check whether to apply the positive (upwards) or negative (downwards) PID for the lift.
+     */
+    /* private void checkLiftPidDirection(double liftPosition) {
+        if (m_liftPID.getSetpoint() - liftPosition >= 0) { // This will need to be changed if the input is continuous
+            // If the error is greater than or equal to zero (the lift needs to go up)...
+            m_liftPID.setP(Constants.IntakePositionConstants.kLiftPosP);
+            m_liftPID.setI(Constants.IntakePositionConstants.kLiftPosI);
+            m_liftPID.setD(Constants.IntakePositionConstants.kLiftPosD);
+        } else {
+            // If the error is less than zero (the lift needs to go down)...
+            m_liftPID.setP(Constants.IntakePositionConstants.kLiftNegP);
+            m_liftPID.setI(Constants.IntakePositionConstants.kLiftNegI);
+            m_liftPID.setD(Constants.IntakePositionConstants.kLiftNegD);
+        }
+    } */
 
 }
