@@ -259,17 +259,20 @@ public class RobotContainer
     SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
 
     SmartDashboard.putNumber("Pigeon Oritentation", drivebase.pigeon.getAccumGyroZ().getValueAsDouble() % 360.0);
+
+    SmartDashboard.putNumber("Lift target", intakePosition.m_liftPID.getSetpoint());
+    SmartDashboard.putNumber("Pivot target", intakePosition.m_pivotPID.getSetpoint());
     //System.out.println(intakePosition.m_liftEncoder.getPosition());
     
-    double goToStow = SmartDashboard.getNumber("Go to stow", 0);
+    /* double goToStow = SmartDashboard.getNumber("Go to stow", 0);
     if (goToStow > 0.001) dashboardStowCommand.schedule();
     SmartDashboard.putNumber("Go to stow", 0);
-    SmartDashboard.putBoolean("Will go stow?", dashboardStowCommand.isScheduled());
+    SmartDashboard.putBoolean("Will go stow?", dashboardStowCommand.isScheduled()); */
 
-    intakePosition.k_liftP = checkNumber("Lift P", Constants.IntakePositionConstants.kLiftP);
+    /* intakePosition.k_liftP = checkNumber("Lift P", Constants.IntakePositionConstants.kLiftP);
     intakePosition.k_liftI = checkNumber("Lift I", Constants.IntakePositionConstants.kLiftI);
     intakePosition.k_liftD = checkNumber("Lift D", Constants.IntakePositionConstants.kLiftD);
-    intakePosition.k_liftAntigrav = checkNumber("Lift antigrav", Constants.IntakePositionConstants.kLiftAntigrav);
+    intakePosition.k_liftAntigrav = checkNumber("Lift antigrav", Constants.IntakePositionConstants.kLiftAntigrav); */
 
     SmartDashboard.updateValues();
   }
