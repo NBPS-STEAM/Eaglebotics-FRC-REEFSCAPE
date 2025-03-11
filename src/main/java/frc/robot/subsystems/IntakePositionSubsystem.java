@@ -2,81 +2,105 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.utils.Squid;
+import frc.robot.Constants.IntakePositionConstants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
 
     public final SparkMax m_liftMotor1;
     public final SparkMax m_liftMotor2;
     public final RelativeEncoder m_liftEncoder;
-    public final Squid m_liftPID;
+    public final SparkClosedLoopController m_liftClosedLoopController;
 
     public final SparkMax m_pivotMotor1;
     public final AbsoluteEncoder m_pivotEncoder;
-    public final Squid m_pivotPID;
+    public final SparkClosedLoopController m_pivotClosedLoopController;
 
-    public double k_liftP = Constants.IntakePositionConstants.kLiftP;
-    public double k_liftI = Constants.IntakePositionConstants.kLiftI;
-    public double k_liftD = Constants.IntakePositionConstants.kLiftD;
-    public double k_liftAntigrav = Constants.IntakePositionConstants.kLiftAntigrav;
-
-    private double encoderValue;
+    private double liftClosedLoopReference = 0.0;
+    private double pivotClosedLoopReference = 0.0;
 
 
     public IntakePositionSubsystem() {
-        // Initialize PIDs
-        m_liftPID = new Squid(k_liftP, k_liftI, k_liftD);
-        m_liftPID.setTolerance(Constants.IntakePositionConstants.kLiftTolerance);
-        m_liftPID.setSetpoint(Constants.IntakePositionConstants.stowLift);
-        m_liftPID.setIZone(0.15);
-
-        m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
-        m_pivotPID.setTolerance(Constants.IntakePositionConstants.kPivotTolerance);
-        m_pivotPID.setSetpoint(Constants.IntakePositionConstants.stowPivot);
-        m_pivotPID.setIZone(0.0);
-        // Lift motors
-        m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
-        m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
-        SparkBaseConfig sharedConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(55, 55);
-        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(sharedConfig).follow(m_liftMotor2);
-        SparkBaseConfig liftMotor2Config = new SparkMaxConfig().apply(sharedConfig).inverted(true);
-        m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        
+        // Configure Lift Motors
+        m_liftMotor1 = new SparkMax(IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
+        m_liftMotor2 = new SparkMax(IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);
         m_liftEncoder = m_liftMotor2.getAlternateEncoder();
+        m_liftClosedLoopController = m_liftMotor2.getClosedLoopController();
 
-        // Pivot motor
-        m_pivotMotor1 = new SparkMax(Constants.IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
-        m_pivotMotor1.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        SparkBaseConfig sharedLiftConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(55, 55);
+        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(sharedLiftConfig).follow(m_liftMotor2);
+        SparkBaseConfig liftMotor2Config = new SparkMaxConfig().apply(sharedLiftConfig).inverted(true);
+        liftMotor2Config.closedLoop.outputRange(-1, 1)
+                                    .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+                                    .pid(IntakePositionConstants.kLiftP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftD)
+                                    .iZone(IntakePositionConstants.kLiftIZone)
+                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftTolerance);
+
+        m_liftMotor1.configure(liftMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftMotor2.configure(liftMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        // Configure Pivot Motor
+        m_pivotMotor1 = new SparkMax(IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
+        m_pivotClosedLoopController = m_pivotMotor1.getClosedLoopController();
+
+        SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(40, 40);
+        pivotMotor1Config.closedLoop.outputRange(-1, 1)
+                                    .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+                                    .pid(IntakePositionConstants.kPivotP, IntakePositionConstants.kPivotI, IntakePositionConstants.kPivotD)
+                                    .iZone(IntakePositionConstants.kPivotIZone)
+                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kPivotTolerance);
+
+        m_pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        // Go to Stow Position
+        setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot);
+    }
+
+    public double getLiftPosition() {
+        return m_liftEncoder.getPosition();
+    }
+
+    public double getLiftSetpoint() {
+        return liftClosedLoopReference;
     }
 
     public void setLiftSetpoint(double setpoint) {
-        m_liftPID.setSetpoint(setpoint);
+        liftClosedLoopReference = setpoint;
+        m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
+    }
+
+    public boolean liftAtTargetPos() {
+        return Math.abs(getLiftSetpoint() - getLiftPosition()) < IntakePositionConstants.kLiftTolerance;
+    }
+
+    public double getPivotPosition() {
+        return m_pivotEncoder.getPosition();
+    }
+
+    public double getPivotSetpoint() {
+        return pivotClosedLoopReference;
     }
 
     public void setPivotSetpoint(double setpoint) {
-        m_pivotPID.setSetpoint(setpoint);
+        pivotClosedLoopReference = setpoint;
+        m_pivotClosedLoopController.setReference(pivotClosedLoopReference, ControlType.kPosition);
     }
 
-    public boolean liftAtTargetPos(){
-        return m_liftPID.atSetpoint();
-    }
-
-    public boolean pivotAtTargetPos(){
-        return m_pivotPID.atSetpoint();
-    }
-
-    public boolean atTargetPos(){
-        return liftAtTargetPos() && pivotAtTargetPos();
+    public boolean pivotAtTargetPos() {
+        return Math.abs(getPivotSetpoint() - getPivotPosition()) < IntakePositionConstants.kPivotTolerance;
     }
 
     public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {
@@ -84,37 +108,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
         setPivotSetpoint(pivotSetpoint);
     }
 
-    @Override
-    public void periodic() {
-        m_liftPID.setP(k_liftP);
-        m_liftPID.setI(k_liftI);
-        m_liftPID.setD(k_liftD);
-
-        //double liftPosition = m_liftEncoder.getPosition();
-        //checkLiftPidDirection(liftPosition);
-        encoderValue = m_liftPID.calculate(m_liftEncoder.getPosition()) + k_liftAntigrav;
-        //m_liftMotor1.set(encoderValue); m_liftMotor1 follows m_liftMotor2
-        m_liftMotor2.set(encoderValue);
-
-        encoderValue = m_pivotPID.calculate(m_pivotEncoder.getPosition());
-        m_pivotMotor1.set(encoderValue);
+    public boolean atTargetPos() {
+        return liftAtTargetPos() && pivotAtTargetPos();
     }
-
-    /**
-     * Check whether to apply the positive (upwards) or negative (downwards) PID for the lift.
-     */
-    /* private void checkLiftPidDirection(double liftPosition) {
-        if (m_liftPID.getSetpoint() - liftPosition >= 0) { // This will need to be changed if the input is continuous
-            // If the error is greater than or equal to zero (the lift needs to go up)...
-            m_liftPID.setP(Constants.IntakePositionConstants.kLiftPosP);
-            m_liftPID.setI(Constants.IntakePositionConstants.kLiftPosI);
-            m_liftPID.setD(Constants.IntakePositionConstants.kLiftPosD);
-        } else {
-            // If the error is less than zero (the lift needs to go down)...
-            m_liftPID.setP(Constants.IntakePositionConstants.kLiftNegP);
-            m_liftPID.setI(Constants.IntakePositionConstants.kLiftNegI);
-            m_liftPID.setD(Constants.IntakePositionConstants.kLiftNegD);
-        }
-    } */
 
 }

@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "OpCommand.getBall2Command",
+      "name": "Ball Level 2",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": null

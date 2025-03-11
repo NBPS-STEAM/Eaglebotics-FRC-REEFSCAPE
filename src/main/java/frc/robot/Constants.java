@@ -85,6 +85,7 @@ public final class Constants {
     public static final double kLiftP = 2;//4;
     public static final double kLiftI = 0.05;
     public static final double kLiftD = 0.5;
+    public static final double kLiftIZone = 0.15;
     public static final double kLiftTolerance = 0;//0.05;
     public static final double kLiftAntigrav = 0.15; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
@@ -102,6 +103,7 @@ public final class Constants {
     public static final double kPivotP = 4;
     public static final double kPivotI = 0.05;
     public static final double kPivotD = 0.5;
+    public static final double kPivotIZone = 0.0;
     public static final double kPivotTolerance = 0.0;
 
     public static final double stowPivot = 0.32;

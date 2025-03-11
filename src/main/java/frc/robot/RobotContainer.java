@@ -232,6 +232,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));
     NamedCommands.registerCommand("L4 Group", opCommands.pipeCommandGroup(4));
+    NamedCommands.registerCommand("Ball Level 2", opCommands.getBall2Command());
     NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
   }
 
@@ -253,34 +254,23 @@ public class RobotContainer
     SmartDashboard.putBoolean("Lift at Target?", intakePosition.liftAtTargetPos());
     SmartDashboard.putBoolean("Pivot at Target?", intakePosition.pivotAtTargetPos());
 
-    SmartDashboard.putNumber("Lift Encoder Position", intakePosition.m_liftEncoder.getPosition());
+    SmartDashboard.putNumber("Lift Encoder Position", intakePosition.getLiftPosition());
     SmartDashboard.putNumber("Lift Motor Power", intakePosition.m_liftMotor2.get());
     SmartDashboard.putNumber("Lift Sum Current Draw", intakePosition.m_liftMotor1.getOutputCurrent() + intakePosition.m_liftMotor2.getOutputCurrent());
-    SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.m_pivotEncoder.getPosition());
+    SmartDashboard.putNumber("Pivot Encoder Position", intakePosition.getPivotPosition());
 
     SmartDashboard.putNumber("Pigeon Oritentation", drivebase.pigeon.getAccumGyroZ().getValueAsDouble() % 360.0);
 
-    SmartDashboard.putNumber("Lift target", intakePosition.m_liftPID.getSetpoint());
-    SmartDashboard.putNumber("Pivot target", intakePosition.m_pivotPID.getSetpoint());
-    //System.out.println(intakePosition.m_liftEncoder.getPosition());
+    SmartDashboard.putNumber("Lift target", intakePosition.getLiftSetpoint());
+    SmartDashboard.putNumber("Pivot target", intakePosition.getPivotSetpoint());
     
     /* double goToStow = SmartDashboard.getNumber("Go to stow", 0);
     if (goToStow > 0.001) dashboardStowCommand.schedule();
     SmartDashboard.putNumber("Go to stow", 0);
     SmartDashboard.putBoolean("Will go stow?", dashboardStowCommand.isScheduled()); */
 
-    /* intakePosition.k_liftP = checkNumber("Lift P", Constants.IntakePositionConstants.kLiftP);
-    intakePosition.k_liftI = checkNumber("Lift I", Constants.IntakePositionConstants.kLiftI);
-    intakePosition.k_liftD = checkNumber("Lift D", Constants.IntakePositionConstants.kLiftD);
-    intakePosition.k_liftAntigrav = checkNumber("Lift antigrav", Constants.IntakePositionConstants.kLiftAntigrav); */
-
     SmartDashboard.updateValues();
   }
 
-  private double checkNumber(String key, double defaultValue) {
-    if (!SmartDashboard.containsKey(key)) SmartDashboard.putNumber(key, defaultValue);
-    return SmartDashboard.getNumber(key, defaultValue);
-  }
-
-  private Command dashboardStowCommand = opCommands.getStowParallelCommand();
+  //private Command dashboardStowCommand = opCommands.getStowParallelCommand();
 }
