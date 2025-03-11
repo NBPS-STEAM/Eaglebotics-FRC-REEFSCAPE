@@ -32,11 +32,12 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_liftPID = new Squid(Constants.IntakePositionConstants.kLiftP, Constants.IntakePositionConstants.kLiftI, Constants.IntakePositionConstants.kLiftD);
         m_liftPID.setTolerance(Constants.IntakePositionConstants.kLiftTolerance);
         m_liftPID.setSetpoint(Constants.IntakePositionConstants.stowLift);
+        m_liftPID.setIZone(0.15);
 
         m_pivotPID = new Squid(Constants.IntakePositionConstants.kPivotP, Constants.IntakePositionConstants.kPivotI, Constants.IntakePositionConstants.kPivotD);
         m_pivotPID.setTolerance(Constants.IntakePositionConstants.kPivotTolerance);
         m_pivotPID.setSetpoint(Constants.IntakePositionConstants.stowPivot);
-
+        m_liftPID.setIZone(0.15);
         // Lift motors
         m_liftMotor1 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor1Id, MotorType.kBrushless);
         m_liftMotor2 = new SparkMax(Constants.IntakePositionConstants.kLiftMotor2Id, MotorType.kBrushless);

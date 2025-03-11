@@ -24,10 +24,10 @@ public final class Constants {
     public static final double Ball2Pivot = 0.1;
 
     public static final double Ball3Lift = 4.0; //TESTING VALUES - Triangle
-    public static final double Ball3Pivot = 0.2; //TESTING VALUES
+    public static final double Ball3Pivot = 0.3; //TESTING VALUES
 
-    public static final double Ball4Lift = 3.5; //Circle
-    public static final double Ball4Pivot = 0.2;
+    public static final double Ball4Lift = 5.2; //Circle
+    public static final double Ball4Pivot = 0.3;
   }
 
   public static final class OpConstantsForPipe {
@@ -82,17 +82,17 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftP = 15;
-    public static final double kLiftI = 0;
-    public static final double kLiftD = 0;
+    public static final double kLiftP = 4;
+    public static final double kLiftI = 0.05;
+    public static final double kLiftD = 0.5;
     public static final double kLiftTolerance = 0.05;
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 12;
-    public static final double kPivotI = 0;
+    public static final double kPivotP = 4;
+    public static final double kPivotI = 0.05;
     public static final double kPivotD = 0.5;
-    public static final double kPivotTolerance = 0.015;
+    public static final double kPivotTolerance = 0.0015;
 
     public static final double stowPivot = 0.32;
     public static final double stowLift = 0.0;
