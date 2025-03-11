@@ -31,11 +31,13 @@ public class Robot extends TimedRobot
   public RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  Timer m_gcTimer = new Timer();
 
   public Robot()
   {//this runs all sensors and vision faster than the normal loop
     //vision actually updates the odometry, while sensors just update
     //thier respective values
+    m_gcTimer.start();
     addPeriodic(()->{m_robotContainer.vision.updateAll();
       SensorSubsystem.getInstance().updateAll();//all susbsystems that need pid should have the methods that
     }, 0.01,0.005);//update pid here to make sure they run as fast as possible, ONLY PID, nothing else
@@ -68,6 +70,12 @@ public class Robot extends TimedRobot
 
 // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
 //Logger.start();
+    /* try {
+      Runtime.getRuntime().exec("/sbin/swapon /dev/sda"); // This sucks, but competition is tomorrow.
+      System.out.println("NOTICE: SWAP COMMAND FINISHED");
+    } catch (IOException e) {
+      System.out.println("WARNING: SWAP FIX DID NOT WORK: " + e.getMessage());
+    } */
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -88,6 +96,9 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
+    if (m_gcTimer.advanceIfElapsed(5)) {
+      System.gc();
+    }
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic

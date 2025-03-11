@@ -32,7 +32,7 @@ public class OpCommands {
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
             () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
-            () -> gamepad.getRightX() * 0.5);
+            () -> gamepad.getRightX());
 
         return driveFieldOrientedAnglularVelocity;
 
@@ -44,7 +44,7 @@ public class OpCommands {
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
             () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
-            () -> gamepad.getRightX() * (0.5 * Constants.DriveConstants.speedFactor));
+            () -> gamepad.getRightX() * Constants.DriveConstants.speedFactor);
 
         return driveFieldOrientedAnglularVelocity;
 

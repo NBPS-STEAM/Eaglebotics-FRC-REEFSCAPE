@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
@@ -51,6 +52,7 @@ public class RobotContainer
 
   PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
   BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
+  IntakePositionCommand intakePositionCommands = new IntakePositionCommand(intakePosition);
   HangCommands hangCommands = new HangCommands(hangSubsystem);
   OpCommands opCommands = new OpCommands(intakePosition);
 
@@ -95,8 +97,11 @@ public class RobotContainer
   {
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
+    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
     driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
+    driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.1));
     
 
     //Co Driver:
@@ -127,6 +132,7 @@ public class RobotContainer
 
 
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
+    coDriverGamepad.PS().onTrue(opCommands.getPipeIntakeCommand());
   }
 
 

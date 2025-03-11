@@ -24,8 +24,8 @@ public class BallIntakeSubsystem extends SubsystemBase {
     }
 
     public void setTargetVelocity(double speed) {
-        m1_motor.set(speed);
-        m2_motor.set(-speed);
+        m1_motor.set(-speed);
+        m2_motor.set(speed);
     }
 
     public boolean getHasBall(){

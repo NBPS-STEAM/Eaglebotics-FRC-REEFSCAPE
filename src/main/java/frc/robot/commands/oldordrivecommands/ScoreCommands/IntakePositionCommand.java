@@ -86,4 +86,60 @@ public final class IntakePositionCommand {
         }
     }
 
+
+
+    /** Run the lift at velocity for duration of command */
+    public class SetLiftVelocity extends Command {
+
+        private double velocity;
+
+        public SetLiftVelocity(double velocity) {
+            this.velocity = velocity;
+            addRequirements(intakePositionSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakePositionSubsystem.setLiftVelocity(velocity);
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            intakePositionSubsystem.setLiftVelocity(0);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+    }
+
+
+
+    /** Run the pivot at velocity for duration of command */
+    public class SetPivotVelocity extends Command {
+
+        private double velocity;
+
+        public SetPivotVelocity(double velocity) {
+            this.velocity = velocity;
+            addRequirements(intakePositionSubsystem);
+        }
+
+        @Override
+        public void initialize() {
+            intakePositionSubsystem.setPivotVelocity(velocity);
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            intakePositionSubsystem.setPivotVelocity(0);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+    }
+
 }

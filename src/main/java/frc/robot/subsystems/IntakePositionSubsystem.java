@@ -2,11 +2,13 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -27,8 +29,14 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public final AbsoluteEncoder m_pivotEncoder;
     public final SparkClosedLoopController m_pivotClosedLoopController;
 
+    private final SparkBaseConfig liftMotor1Config;
+    private final SparkBaseConfig liftMotor2Config;
+    private final SparkBaseConfig pivotMotor1Config;
+
     private double liftClosedLoopReference = 0.0;
     private double pivotClosedLoopReference = 0.0;
+
+    private boolean liftAscending = true;
 
 
     public IntakePositionSubsystem() {
@@ -40,23 +48,23 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_liftClosedLoopController = m_liftMotor2.getClosedLoopController();
 
         SparkBaseConfig sharedLiftConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(55, 55);
-        SparkBaseConfig liftMotor1Config = new SparkMaxConfig().apply(sharedLiftConfig).follow(m_liftMotor2);
-        SparkBaseConfig liftMotor2Config = new SparkMaxConfig().apply(sharedLiftConfig).inverted(true);
+        liftMotor1Config = new SparkMaxConfig().apply(sharedLiftConfig).follow(m_liftMotor2);
+        liftMotor2Config = new SparkMaxConfig().apply(sharedLiftConfig).inverted(true);
         liftMotor2Config.closedLoop.outputRange(-1, 1)
                                     .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-                                    .pid(IntakePositionConstants.kLiftP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftD)
+                                    .pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftD)
                                     .iZone(IntakePositionConstants.kLiftIZone)
                                     .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftTolerance);
 
-        m_liftMotor1.configure(liftMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_liftMotor2.configure(liftMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         // Configure Pivot Motor
         m_pivotMotor1 = new SparkMax(IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
         m_pivotClosedLoopController = m_pivotMotor1.getClosedLoopController();
 
-        SparkBaseConfig pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(40, 40);
+        pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(40, 40);
         pivotMotor1Config.closedLoop.outputRange(-1, 1)
                                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                                     .pid(IntakePositionConstants.kPivotP, IntakePositionConstants.kPivotI, IntakePositionConstants.kPivotD)
@@ -69,6 +77,23 @@ public class IntakePositionSubsystem extends SubsystemBase {
         setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot);
     }
 
+    @Override
+    public void periodic() {
+        // Prevent I from accumulating below zero
+        m_liftClosedLoopController.setIAccum(Math.max(0, m_liftClosedLoopController.getIAccum()));
+        // Change lift P when changing between ascending/descending
+        boolean liftAscendingNow = getLiftError() >= 0;
+        if (liftAscendingNow != liftAscending) {
+            liftAscending = liftAscendingNow;
+            liftMotor2Config.closedLoop.p(liftAscending ? IntakePositionConstants.kLiftPosP : IntakePositionConstants.kLiftNegP);
+            m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        }
+    }
+
+    public void zeroLift() {
+        m_liftEncoder.setPosition(0);
+    }
+
     public double getLiftPosition() {
         return m_liftEncoder.getPosition();
     }
@@ -79,11 +104,20 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     public void setLiftSetpoint(double setpoint) {
         liftClosedLoopReference = setpoint;
-        m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
+        m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition, ClosedLoopSlot.kSlot0, IntakePositionConstants.kLiftAntigrav, ArbFFUnits.kPercentOut);
+        //m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
+    }
+
+    public void setLiftVelocity(double velocity) {
+        m_liftClosedLoopController.setReference(velocity, ControlType.kVelocity);
+    }
+
+    public double getLiftError() {
+        return getLiftSetpoint() - getLiftPosition();
     }
 
     public boolean liftAtTargetPos() {
-        return Math.abs(getLiftSetpoint() - getLiftPosition()) < IntakePositionConstants.kLiftTolerance;
+        return Math.abs(getLiftError()) < IntakePositionConstants.kLiftTolerance;
     }
 
     public double getPivotPosition() {
@@ -99,8 +133,16 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_pivotClosedLoopController.setReference(pivotClosedLoopReference, ControlType.kPosition);
     }
 
+    public void setPivotVelocity(double velocity) {
+        m_pivotClosedLoopController.setReference(velocity, ControlType.kVelocity);
+    }
+
+    public double getPivotError() {
+        return getPivotSetpoint() - getPivotPosition();
+    }
+
     public boolean pivotAtTargetPos() {
-        return Math.abs(getPivotSetpoint() - getPivotPosition()) < IntakePositionConstants.kPivotTolerance;
+        return Math.abs(getPivotError()) < IntakePositionConstants.kPivotTolerance;
     }
 
     public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {

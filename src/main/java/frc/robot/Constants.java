@@ -17,37 +17,37 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
 
   public static final class OpConstantsForBall {
-    public static final double Ball1Lift = 0.0; //Cross
-    public static final double Ball1Pivot = 0.05;
+    public static final double Ball1Lift = 0.0; //GROUND BALL
+    public static final double Ball1Pivot = 0.05; //CROSS (X)
 
-    public static final double Ball2Lift = 0.0; //Square
-    public static final double Ball2Pivot = 0.1;
+    public static final double Ball2Lift = 1.75; //PROCESSOR BALL
+    public static final double Ball2Pivot = 0.18; //SQUARE
 
-    public static final double Ball3Lift = 4.0; //TESTING VALUES - Triangle
-    public static final double Ball3Pivot = 0.3; //TESTING VALUES
+    public static final double Ball3Lift = 1.75; //BALL LEVEL 1
+    public static final double Ball3Pivot = 0.18; //TRIANGLE
 
-    public static final double Ball4Lift = 5.2; //Circle
-    public static final double Ball4Pivot = 0.3;
+    public static final double Ball4Lift = 4.75; //BALL LEVEL 2
+    public static final double Ball4Pivot = 0.17; //CIRCLE
   }
 
   public static final class OpConstantsForPipe {
-    public static final double Pipe1Lift = 1.5; //DDown
-    public static final double Pipe1Pivot = 0.2;
+    public static final double Pipe1Lift = 0.65; //DDown
+    public static final double Pipe1Pivot = 0.31; //TROUGH
 
-    public static final double Pipe2Lift = 2.0; //DRight
-    public static final double Pipe2Pivot = 0.2;
+    public static final double Pipe2Lift = 2.95; //DRight
+    public static final double Pipe2Pivot = 0.21; //LEVEL 1
 
-    public static final double Pipe3Lift = 3.5; //DUp
-    public static final double Pipe3Pivot = 0.2;
+    public static final double Pipe3Lift = 5.91; //DUp
+    public static final double Pipe3Pivot = 0.23; //LEVEL 2
 
-    public static final double Pipe4Lift = 4.8; //DLeft
-    public static final double Pipe4Pivot = 0.25;
+    public static final double Pipe4Lift = 10.57; //DLeft
+    public static final double Pipe4Pivot = 0.25; //HIGHEST
 
-    public static final double PipeRetLift = 1.0;
+    public static final double PipeRetLift = 2.0;
     public static final double PipeRetPivot = 0.25;
 
-    public static final double PipeIntakeLift = 0.0; //REDUNDENT WITH PipeRetLift
-    public static final double PipeIntakePivot = 0.01; //REDUNDENT WITH PipeRetPivot
+    public static final double PipeIntakeLift = 2.53; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakePivot = 0.33; //REDUNDENT WITH PipeRetPivot
   }
 
   public static final class IntakeConstants {
@@ -82,29 +82,21 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftP = 2;//4;
-    public static final double kLiftI = 0.05;
-    public static final double kLiftD = 0.5;
-    public static final double kLiftIZone = 0.15;
-    public static final double kLiftTolerance = 0;//0.05;
-    public static final double kLiftAntigrav = 0.15; // Antigrav constant: an amount of power added to the PID output to counteract gravity
-
-    /* // Used when the lift is going up:
-    public static final double kLiftPosP = 15;
-    public static final double kLiftPosI = 0;
-    public static final double kLiftPosD = 0;
-    // Used when the lift is going down:
-    public static final double kLiftNegP = 0.1;
-    public static final double kLiftNegI = 0;
-    public static final double kLiftNegD = 0; */
+    public static final double kLiftPosP = 2.0; // Used when the lift is going up
+    public static final double kLiftNegP = 0.1; // Used when the lift is going down
+    public static final double kLiftI = 0.6; // I does not accumulate below zero
+    public static final double kLiftD = 0.3;
+    public static final double kLiftIZone = 1.0;
+    public static final double kLiftTolerance = 0.1;
+    public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 4;
-    public static final double kPivotI = 0.05;
-    public static final double kPivotD = 0.5;
+    public static final double kPivotP = 2.5;
+    public static final double kPivotI = 0.0;
+    public static final double kPivotD = 0.0;
     public static final double kPivotIZone = 0.0;
-    public static final double kPivotTolerance = 0.0;
+    public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
     public static final double stowLift = 0.0;
