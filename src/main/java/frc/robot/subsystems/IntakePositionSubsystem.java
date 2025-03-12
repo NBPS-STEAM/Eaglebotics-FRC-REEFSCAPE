@@ -52,7 +52,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         liftMotor2Config = new SparkMaxConfig().apply(sharedLiftConfig).inverted(true);
         liftMotor2Config.closedLoop.outputRange(-1, 1)
                                     .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-                                    .pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftD)
+                                    .pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftPosD)
                                     .iZone(IntakePositionConstants.kLiftIZone)
                                     .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftTolerance);
 
@@ -79,13 +79,15 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Prevent I from accumulating below zero
-        m_liftClosedLoopController.setIAccum(Math.max(0, m_liftClosedLoopController.getIAccum()));
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
         if (liftAscendingNow != liftAscending) {
             liftAscending = liftAscendingNow;
-            liftMotor2Config.closedLoop.p(liftAscending ? IntakePositionConstants.kLiftPosP : IntakePositionConstants.kLiftNegP);
+            if (liftAscending) {
+                liftMotor2Config.closedLoop.pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftPosD);
+            } else {
+                liftMotor2Config.closedLoop.pid(IntakePositionConstants.kLiftNegP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftNegD);
+            }
             m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
         }
     }

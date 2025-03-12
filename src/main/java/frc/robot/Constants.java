@@ -82,12 +82,13 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftPosP = 2.0; // Used when the lift is going up
-    public static final double kLiftNegP = 0.1; // Used when the lift is going down
-    public static final double kLiftI = 0.6; // I does not accumulate below zero
-    public static final double kLiftD = 0.3;
-    public static final double kLiftIZone = 1.0;
-    public static final double kLiftTolerance = 0.1;
+    public static final double kLiftPosP = 1.5; // Used when the lift is going up (error is positive)
+    public static final double kLiftNegP = 0.3; // Used when the lift is going down (error is negative)
+    public static final double kLiftI = 0.0015;
+    public static final double kLiftPosD = 0.0; // TODO: needs tuning
+    public static final double kLiftNegD = 0.0; // TODO: needs tuning
+    public static final double kLiftIZone = 0.5;
+    public static final double kLiftTolerance = 0.05;
     public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
@@ -99,7 +100,7 @@ public final class Constants {
     public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
-    public static final double stowLift = 0.0;
+    public static final double stowLift = 0.2;
   }
 
   public static final class HangConstants {
