@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.BallIntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.utils.Gamepieces;
 
 public final class BallIntakeCommands {
@@ -27,15 +28,18 @@ public final class BallIntakeCommands {
         @Override 
         public void initialize() {
             ballIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kBallIntakeSpeed);
+            LEDSubsystem.getInstance().setIntake();
         }
 
         @Override
         public void end(boolean interrupted){
-            ballIntakeSubsystem.setTargetVelocity(0);
+            if(!interrupted)ballIntakeSubsystem.setTargetVelocity(0.1);
+            else ballIntakeSubsystem.setTargetVelocity(0);
             if (ballIntakeSubsystem.getHasBall()) {
                 Gamepieces.gamepieceInRobot=Gamepieces.ALGAE;
                 Gamepieces.activeGamepiece=Gamepieces.ALGAE;
             }
+            LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override 
@@ -57,6 +61,7 @@ public final class BallIntakeCommands {
 
         @Override 
         public void initialize() {
+            LEDSubsystem.getInstance().setOuttake();
             ballIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed);
             time=Timer.getFPGATimestamp()+0.5;
         }
@@ -64,6 +69,7 @@ public final class BallIntakeCommands {
         @Override
         public void end(boolean interrupted){
             ballIntakeSubsystem.setTargetVelocity(0);
+            LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override 

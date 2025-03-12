@@ -2,10 +2,13 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class OpCommands {
@@ -71,9 +74,11 @@ public class OpCommands {
     /**
      * Move lift and pivot simultaneously to the stow position.
      */
-    public Command getStowParallelCommand() {
-        return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot);
+    public ParallelCommandGroup getStowParallelCommand() {
+        return new ParallelCommandGroup(intakePositionCommand.new SetIntakePositionSetpoints(
+            Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot),
+            new InstantCommand(()->LEDSubsystem.getInstance().setStow())
+            );
     }
 
     /**

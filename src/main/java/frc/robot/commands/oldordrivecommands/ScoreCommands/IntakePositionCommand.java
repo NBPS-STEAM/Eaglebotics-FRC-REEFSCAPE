@@ -1,7 +1,9 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public final class IntakePositionCommand {
 
@@ -30,6 +32,7 @@ public final class IntakePositionCommand {
         @Override
         public void initialize() {
             intakePositionSubsystem.setIntakePositionSetpoints(liftSetpoint, pivotSetpoint);
+            if(liftSetpoint!=Constants.IntakePositionConstants.stowLift)LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override
@@ -54,6 +57,7 @@ public final class IntakePositionCommand {
         @Override
         public void initialize() {
             intakePositionSubsystem.setLiftSetpoint(liftSetpoint);
+            if(liftSetpoint!=Constants.IntakePositionConstants.stowLift)LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override
@@ -78,6 +82,7 @@ public final class IntakePositionCommand {
         @Override
         public void initialize() {
             intakePositionSubsystem.setPivotSetpoint(pivotSetpoint);
+            if(pivotSetpoint!=Constants.IntakePositionConstants.stowPivot)LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override

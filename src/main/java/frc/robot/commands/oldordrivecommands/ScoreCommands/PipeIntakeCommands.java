@@ -3,6 +3,7 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.utils.Gamepieces;
 
@@ -27,11 +28,13 @@ public final class PipeIntakeCommands {
         @Override 
         public void initialize() {
             pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed);
+            LEDSubsystem.getInstance().setIntake();
         }
 
         @Override
         public void end(boolean interrupted){
             pipeIntakeSubsystem.setTargetVelocity(0);
+            LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override 
@@ -57,11 +60,13 @@ public final class PipeIntakeCommands {
         public void initialize() {
             time=Timer.getFPGATimestamp()+0.5;
             pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed);
+            LEDSubsystem.getInstance().setOuttake();
         }
 
         @Override
         public void end(boolean interrupted){
             pipeIntakeSubsystem.setTargetVelocity(0);
+            LEDSubsystem.getInstance().setPlacePos();
         }
 
         @Override 
