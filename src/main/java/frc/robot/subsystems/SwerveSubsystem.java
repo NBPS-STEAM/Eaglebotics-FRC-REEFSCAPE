@@ -84,9 +84,15 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
-    // ---- Swerve fix 3 part 1 ----
-    // double flAbs = new CANCoderSwerve(0, "bus").encoder.get;
-    // double frAbs = new CanAndMagSwerve(0);
+    // ---- Swerve fix 4 part 1 ----
+    /* CANCoderSwerve cancoderEnc = new CANCoderSwerve(30);
+    CanAndMagSwerve canmagEnc1 = new CanAndMagSwerve(31);
+    CanAndMagSwerve canmagEnc2 = new CanAndMagSwerve(32);
+    CanAndMagSwerve canmagEnc3 = new CanAndMagSwerve(33);
+    //double cancoderAbs = cancoderEnc.encoder.getAbsolutePosition();
+    double canmagAbs1 = canmagEnc1.encoder.getAbsPosition();
+    double canmagAbs2 = canmagEnc2.encoder.getAbsPosition();
+    double canmagAbs3 = canmagEnc3.encoder.getAbsPosition(); */
     // ---- End fix ----
 
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -120,7 +126,14 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     //swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
+    // Swerve fix 1 or 2
     //fixEncoders();
+
+    // Swerve fix 4 (part 2)
+    /* cancoderEnc.setAbsoluteEncoderOffset(0);
+    canmagEnc1.encoder.setAbsPosition(canmagAbs1);
+    canmagEnc2.encoder.setAbsPosition(canmagAbs2);
+    canmagEnc3.encoder.setAbsPosition(canmagAbs3); */
     
     setupPathPlanner();
     pigeon=(Pigeon2)swerveDrive.swerveDriveConfiguration.imu.getIMU();

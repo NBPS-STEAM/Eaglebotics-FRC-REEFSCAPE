@@ -82,6 +82,16 @@ public class OpCommands {
     }
 
     /**
+     * Move lift and pivot simultaneously to the barge shooting position.
+     */
+    public ParallelCommandGroup getBargeShootCommand() {
+        return new ParallelCommandGroup(intakePositionCommand.new SetIntakePositionSetpoints(
+            Constants.IntakePositionConstants.bargeLift, Constants.IntakePositionConstants.bargePivot),
+            new InstantCommand(()->LEDSubsystem.getInstance().setBarge())
+            );
+    }
+
+    /**
      * Move lift and pivot simultaneously to the ball ground intake position.
      * @see #ballCommandGroup(int)
      */

@@ -101,6 +101,9 @@ public final class Constants {
 
     public static final double stowPivot = 0.32;
     public static final double stowLift = 0.2;
+
+    public static final double bargePivot = 0.4;
+    public static final double bargeLift = 10.57;
   }
 
   public static final class HangConstants {
