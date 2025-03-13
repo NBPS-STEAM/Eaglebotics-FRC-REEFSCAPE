@@ -32,22 +32,22 @@ public final class Constants {
 
   public static final class OpConstantsForPipe {
     public static final double Pipe1Lift = 0.65; //DDown
-    public static final double Pipe1Pivot = 0.31; //TROUGH
+    public static final double Pipe1Pivot = 0.33; //TROUGH
 
-    public static final double Pipe2Lift = 2.95; //DRight
+    public static final double Pipe2Lift = 3.57; //DRight
     public static final double Pipe2Pivot = 0.21; //LEVEL 1
 
-    public static final double Pipe3Lift = 5.91; //DUp
-    public static final double Pipe3Pivot = 0.23; //LEVEL 2
+    public static final double Pipe3Lift = 5.75; //DUp
+    public static final double Pipe3Pivot = 0.255; //LEVEL 2
 
-    public static final double Pipe4Lift = 10.57; //DLeft
-    public static final double Pipe4Pivot = 0.25; //HIGHEST
+    public static final double Pipe4Lift = 10.32; //DLeft
+    public static final double Pipe4Pivot = 0.22; //HIGHEST
 
-    public static final double PipeRetLift = 2.0;
-    public static final double PipeRetPivot = 0.25;
+    public static final double PipeRetLift = 3.0;
+    public static final double PipeRetPivot = 0.33;
 
-    public static final double PipeIntakeLift = 2.53; //REDUNDENT WITH PipeRetLift
-    public static final double PipeIntakePivot = 0.33; //REDUNDENT WITH PipeRetPivot
+    public static final double PipeIntakeLift = 3.2; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakePivot = 0.345; //REDUNDENT WITH PipeRetPivot
   }
 
   public static final class IntakeConstants {
@@ -57,8 +57,8 @@ public final class Constants {
     // Pipe Intake:
 
     // TODO: TUNE
-    public static final double kPipeIntakeSpeed = 0.5;
-    public static final double kPipeOuttakeSpeed = -0.5;
+    public static final double kPipeIntakeSpeed = 0.25;
+    public static final double kPipeOuttakeSpeed = -0.25;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK

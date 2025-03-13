@@ -145,9 +145,11 @@ public class OpCommands {
     }
 
     /** Move lift and pivot simultaneously to the pipe intake position. */
-    public Command getPipeIntakeCommand() {
-        return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.PipeIntakeLift, Constants.OpConstantsForPipe.PipeIntakePivot);
+    public SequentialCommandGroup getPipeIntakeCommand() {
+        return new SequentialCommandGroup(
+        intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.PipeIntakeLift),
+        intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.PipeIntakePivot)
+        );
     }
 
     /**

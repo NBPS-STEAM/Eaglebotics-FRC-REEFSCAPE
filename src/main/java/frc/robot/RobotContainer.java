@@ -80,8 +80,6 @@ public class RobotContainer
     //configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
     configureBindings2(); // Sequential command groups for IntakePosition set positions
 
-    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
-
     setAutoCommands();
   }
   
@@ -97,16 +95,17 @@ public class RobotContainer
    */
   private void configureBindings1()
   {
+    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
     driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
     driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    /* driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
     driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
     driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.5));
     driverGamepad.povRight().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(0.5)));
-    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5)));
+    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5))); */
     
 
     //Co Driver:
@@ -152,9 +151,10 @@ public class RobotContainer
    */
   private void configureBindings2()
   {
+    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
+    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
     /* driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
@@ -163,22 +163,23 @@ public class RobotContainer
     driverGamepad.triangle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180));
     driverGamepad.L1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240));
     driverGamepad.square().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300)); */
-
-    driverGamepad.L2().and(driverGamepad.R2()).debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
-    driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
-    driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.5));
-    driverGamepad.povRight().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(0.5)));
-    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5)));
     
 
     //Co Driver:
+
+    // Manual lift and pivot controls
+    coDriverGamepad.R1().debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    new Trigger(() -> Math.abs(coDriverGamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustPivot(coDriverGamepad::getLeftY, null));
+    new Trigger(() -> Math.abs(coDriverGamepad.getRightY()) > Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustLift(coDriverGamepad::getRightY, null));
     
     // Pipe Intake/Outtake/Stop Controls
     coDriverGamepad.L1().onTrue(new SequentialCommandGroup(
       opCommands.getPipeIntakeCommand(),
       pipeIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
-      ));
+    ));
 
     coDriverGamepad.L2().onTrue(new SequentialCommandGroup(
       pipeIntakeCommands. new Outtake(),
@@ -195,6 +196,9 @@ public class RobotContainer
     // Stow Position
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
   
+    // Barge Shoot Position
+    //coDriverGamepad.PS().whileTrue(opCommands.bargeShootCommandGroup());
+  
     // Hang Control
     //coDriverGamepad.PS().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
   
@@ -203,7 +207,7 @@ public class RobotContainer
       opCommands.ballCommandGroup(1),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
-      ));
+    ));
     coDriverGamepad.circle().onTrue(opCommands.ballCommandGroup(2));
     coDriverGamepad.square().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(3),

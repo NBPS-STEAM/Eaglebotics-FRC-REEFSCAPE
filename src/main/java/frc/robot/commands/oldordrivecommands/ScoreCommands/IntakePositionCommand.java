@@ -1,5 +1,8 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakePositionSubsystem;
@@ -93,57 +96,81 @@ public final class IntakePositionCommand {
 
 
 
-    /** Run the lift at velocity for duration of command */
-    public class SetLiftVelocity extends Command {
+    /**
+     * Adjust the lift's position by running it at velocity for duration of command.
+     * Continuously updates a DoubleConsumer as it runs with the current position.
+     * Sets the lift's setpoint to current position when the command ends.
+     */
+    public class AdjustLift extends Command {
 
-        private double velocity;
+        private DoubleSupplier rateSupplier;
+        private DoubleConsumer positionConsumer;
 
-        public SetLiftVelocity(double velocity) {
-            this.velocity = velocity;
+        public AdjustLift(DoubleSupplier rateSupplier, DoubleConsumer positionConsumer) {
+            this.rateSupplier = rateSupplier;
+            this.positionConsumer = positionConsumer;
             addRequirements(intakePositionSubsystem);
         }
 
         @Override
-        public void initialize() {
-            intakePositionSubsystem.setLiftVelocity(velocity);
+        public void execute() {
+            intakePositionSubsystem.setLiftVelocity(rateSupplier.getAsDouble());
+            updateConsumer();
         }
 
         @Override
         public void end(boolean interrupted) {
-            intakePositionSubsystem.setLiftVelocity(0);
+            updateConsumer();
+            intakePositionSubsystem.setLiftSetpoint(intakePositionSubsystem.getLiftPosition()); // also cancels setting velocity
         }
 
         @Override
         public boolean isFinished() {
             return false;
+        }
+
+        private void updateConsumer() {
+            if (positionConsumer != null) positionConsumer.accept(intakePositionSubsystem.getLiftPosition());
         }
     }
 
 
 
-    /** Run the pivot at velocity for duration of command */
-    public class SetPivotVelocity extends Command {
+    /**
+     * Adjust the pivot's position by offsetting its position for duration of command.
+     * Continuously updates a DoubleConsumer as it runs with the current position.
+     * Sets the pivot's setpoint to current position when the command ends.
+     */
+    public class AdjustPivot extends Command {
 
-        private double velocity;
+        private DoubleSupplier rateSupplier;
+        private DoubleConsumer positionConsumer;
 
-        public SetPivotVelocity(double velocity) {
-            this.velocity = velocity;
+        public AdjustPivot(DoubleSupplier rateSupplier, DoubleConsumer positionConsumer) {
+            this.rateSupplier = rateSupplier;
+            this.positionConsumer = positionConsumer;
             addRequirements(intakePositionSubsystem);
         }
 
         @Override
-        public void initialize() {
-            intakePositionSubsystem.setPivotVelocity(velocity);
+        public void execute() {
+            intakePositionSubsystem.setPivotVelocity(rateSupplier.getAsDouble());
+            updateConsumer();
         }
 
         @Override
         public void end(boolean interrupted) {
-            intakePositionSubsystem.setPivotVelocity(0);
+            updateConsumer();
+            intakePositionSubsystem.setPivotSetpoint(intakePositionSubsystem.getPivotPosition()); // also cancels setting velocity
         }
 
         @Override
         public boolean isFinished() {
             return false;
+        }
+
+        private void updateConsumer() {
+            if (positionConsumer != null) positionConsumer.accept(intakePositionSubsystem.getPivotPosition());
         }
     }
 
