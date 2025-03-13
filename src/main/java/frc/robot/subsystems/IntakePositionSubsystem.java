@@ -77,8 +77,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot);
     }
 
-    @Override
-    public void periodic() {
+    public void updateAll() {
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
         if (liftAscendingNow != liftAscending) {
@@ -110,6 +109,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
         //m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
     }
 
+    public void offsetLiftSetpoint(double delta) {
+        setLiftSetpoint(liftClosedLoopReference + delta);
+    }
+
     public void setLiftVelocity(double velocity) {
         m_liftClosedLoopController.setReference(velocity, ControlType.kVelocity);
     }
@@ -133,6 +136,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void setPivotSetpoint(double setpoint) {
         pivotClosedLoopReference = setpoint;
         m_pivotClosedLoopController.setReference(pivotClosedLoopReference, ControlType.kPosition);
+    }
+
+    public void offsetPivotSetpoint(double delta) {
+        setPivotSetpoint(pivotClosedLoopReference + delta);
     }
 
     public void setPivotVelocity(double velocity) {

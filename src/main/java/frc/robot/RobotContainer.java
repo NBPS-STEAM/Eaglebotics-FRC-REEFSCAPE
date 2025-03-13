@@ -32,6 +32,7 @@ import frc.robot.subsystems.HangSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import swervelib.SwerveModule;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -73,7 +74,7 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    configureBindings1(); // (PREFERRED) Set positions only (no command groups for IntakePosition set positions)
+    configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
     //configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
@@ -99,9 +100,12 @@ public class RobotContainer
     //while true does not repeat
     driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
     driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+
     driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
     driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
-    driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.1));
+    driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.5));
+    driverGamepad.povRight().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(0.5)));
+    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5)));
     
 
     //Co Driver:
@@ -205,14 +209,6 @@ public class RobotContainer
 
 
   /**
-   * Controller/command bindings for testing the robot.
-   */
-  public void configureBindingsTesting() {
-
-  }
-
-
-  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
@@ -269,6 +265,13 @@ public class RobotContainer
 
     SmartDashboard.putNumber("Lift target", intakePosition.getLiftSetpoint());
     SmartDashboard.putNumber("Pivot target", intakePosition.getPivotSetpoint());
+    int i=1;
+    for (SwerveModule module : drivebase.swerveDrive.swerveDriveConfiguration.modules) {
+      SmartDashboard.putNumber("module absolute "+i, module.getAbsoluteEncoder().getAbsolutePosition());
+      SmartDashboard.putNumber("module angle "+i, module.getState().angle.getDegrees());
+      SmartDashboard.putNumber("module offset "+i,Math.abs(module.getAbsoluteEncoder().getAbsolutePosition()-module.getState().angle.getDegrees()));
+      i++;
+    }
     
     /* double goToStow = SmartDashboard.getNumber("Go to stow", 0);
     if (goToStow > 0.001) dashboardStowCommand.schedule();

@@ -248,5 +248,5 @@ public final class Constants {
     public static final int kJoystick2Port = 1;
   }
   
-  public static final double MAX_SPEED  = Units.feetToMeters(18.47);
+  public static final double MAX_SPEED  = Units.feetToMeters(18.42);
 }
