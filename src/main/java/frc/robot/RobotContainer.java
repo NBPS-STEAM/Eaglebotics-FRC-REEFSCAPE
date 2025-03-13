@@ -77,14 +77,12 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
-    //configureBindings2(); // Sequential command groups for IntakePosition set positions
+    //configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
+    configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
 
     setAutoCommands();
-
-    SmartDashboard.putData("Autos", AutoChooser);
   }
   
 
@@ -127,15 +125,15 @@ public class RobotContainer
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(opCommands.getBall1Command());
-    coDriverGamepad.square().onTrue(opCommands.getBall2Command());
-    coDriverGamepad.triangle().onTrue(opCommands.getBall3Command());
-    coDriverGamepad.circle().onTrue(opCommands.getBall4Command());
+    coDriverGamepad.circle().onTrue(opCommands.getBall2Command());
+    coDriverGamepad.square().onTrue(opCommands.getBall3Command());
+    coDriverGamepad.triangle().onTrue(opCommands.getBall4Command());
 
     // Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.getPipe1Command());
-    coDriverGamepad.povRight().onTrue(opCommands.getPipe2Command());
-    coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
-    coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
+    coDriverGamepad.povLeft().onTrue(opCommands.getPipe2Command());
+    coDriverGamepad.povRight().onTrue(opCommands.getPipe3Command());
+    coDriverGamepad.povUp().onTrue(opCommands.getPipe4Command());
 
 
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
@@ -157,7 +155,20 @@ public class RobotContainer
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
     //while true does not repeat
     driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
-    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
+
+    /* driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
+    driverGamepad.circle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60));
+    driverGamepad.R1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120));
+    driverGamepad.triangle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180));
+    driverGamepad.L1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240));
+    driverGamepad.square().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300)); */
+
+    driverGamepad.L2().and(driverGamepad.R2()).debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
+    driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.5));
+    driverGamepad.povRight().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(0.5)));
+    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5)));
     
 
     //Co Driver:
@@ -180,33 +191,36 @@ public class RobotContainer
       ballIntakeCommands. new Outtake(),
       new StowCommand(intakePosition)
     ));
+
+    // Stow Position
+    coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
   
     // Hang Control
-    coDriverGamepad.options().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
+    //coDriverGamepad.PS().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(1),
-      pipeIntakeCommands. new Intake(),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
       ));
-    coDriverGamepad.square().onTrue(opCommands.ballCommandGroup(2));
-    coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
-    opCommands.ballCommandGroup(3),
-    pipeIntakeCommands. new Intake(),
+    coDriverGamepad.circle().onTrue(opCommands.ballCommandGroup(2));
+    coDriverGamepad.square().onTrue(new SequentialCommandGroup(
+      opCommands.ballCommandGroup(3),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
     coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
-    opCommands.ballCommandGroup(4),
-    pipeIntakeCommands. new Intake(),
+      opCommands.ballCommandGroup(4),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
 
     // Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
-    coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(2));
-    coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(3));
-    coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(4));
+    coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(2));
+    coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(3));
+    coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(4));
 
   }
 
@@ -253,6 +267,8 @@ public class RobotContainer
 
 
   public void updateSmartDashboard() {
+    SmartDashboard.putData("Autos", AutoChooser);
+
     SmartDashboard.putBoolean("Algae Sensor?", ballIntake.getHasBall());
     SmartDashboard.putBoolean("Coral Sensor?", pipeIntake.getHasPipe());
 

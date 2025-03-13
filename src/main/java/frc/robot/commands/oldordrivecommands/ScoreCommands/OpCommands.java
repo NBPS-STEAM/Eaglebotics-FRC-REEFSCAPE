@@ -1,12 +1,14 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -54,6 +56,31 @@ public class OpCommands {
     
     }
 
+    /**
+     * A command that will strafe from the gamepad's left stick and turn to face an angle specified in degrees: [0, 360).
+     */
+    public static Command getAutoTurnDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad, double degrees) {
+        PIDController turnController = new PIDController(DriveConstants.kTurningP, DriveConstants.kTurningI, DriveConstants.kTurningD);
+        turnController.setIZone(DriveConstants.kTurningIZone);
+        turnController.enableContinuousInput(0, 360);
+        turnController.setSetpoint(degrees);
+
+        Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
+            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
+            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
+            () -> turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
+
+        return driveFieldOrientedAnglularVelocity;
+
+    
+    }
+
+    private static double normalDegrees(double deg) {
+        double mod = deg % 360.0;
+        if (mod < 0) mod += 360;
+        return mod;
+    }
+
 
 
     // INSTANCE
@@ -78,16 +105,6 @@ public class OpCommands {
         return new ParallelCommandGroup(intakePositionCommand.new SetIntakePositionSetpoints(
             Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot),
             new InstantCommand(()->LEDSubsystem.getInstance().setStow())
-            );
-    }
-
-    /**
-     * Move lift and pivot simultaneously to the barge shooting position.
-     */
-    public ParallelCommandGroup getBargeShootCommand() {
-        return new ParallelCommandGroup(intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.IntakePositionConstants.bargeLift, Constants.IntakePositionConstants.bargePivot),
-            new InstantCommand(()->LEDSubsystem.getInstance().setBarge())
             );
     }
 
@@ -174,6 +191,18 @@ public class OpCommands {
 
 
     //basic command groups
+
+    /**
+     * Move lift and pivot in order to the barge shooting position.
+     */
+    public SequentialCommandGroup bargeShootCommandGroup() {
+        return new SequentialCommandGroup(
+            new InstantCommand(()->LEDSubsystem.getInstance().setBarge()),
+            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivotTravel),
+            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.bargeLift),
+            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivot)
+        );
+    }
 
     /**
      * Move first the lift, then the pivot to a set position for pipes.
