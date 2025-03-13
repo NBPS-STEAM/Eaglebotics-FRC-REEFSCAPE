@@ -57,8 +57,8 @@ public final class Constants {
     // Pipe Intake:
 
     // TODO: TUNE
-    public static final double kPipeIntakeSpeed = 0.5;
-    public static final double kPipeOuttakeSpeed = -0.5;
+    public static final double kPipeIntakeSpeed = 1;
+    public static final double kPipeOuttakeSpeed = -1;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK
@@ -68,7 +68,7 @@ public final class Constants {
     // Ball Intake:
 
     // TODO: TUNE
-    public static final double kBallIntakeSpeed = 0.5;
+    public static final double kBallIntakeSpeed = 1;
     public static final double kBallOuttakeSpeed = -0.5;
 
     // TODO: SET TO REAL MOTOR ID

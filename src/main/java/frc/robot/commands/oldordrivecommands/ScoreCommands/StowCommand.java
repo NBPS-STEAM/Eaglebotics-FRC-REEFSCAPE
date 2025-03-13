@@ -1,8 +1,10 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class StowCommand extends SequentialCommandGroup {
     IntakePositionCommand intakePositionCommand;
@@ -10,7 +12,8 @@ public class StowCommand extends SequentialCommandGroup {
         intakePositionCommand=new IntakePositionCommand(intakePositionSubsystem);
         addCommands(
             intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.stowPivot),
-            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.stowLift)
+            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.stowLift),
+            new InstantCommand(()->LEDSubsystem.getInstance().setStow())
         );
     }
     
