@@ -7,6 +7,7 @@ package frc.robot;
 import java.io.File;
 import java.io.IOException;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.Filesystem;
