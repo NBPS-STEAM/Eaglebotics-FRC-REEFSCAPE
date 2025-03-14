@@ -118,8 +118,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
         setLiftSetpoint(liftClosedLoopReference + delta, null);
     }
 
-    public void setLiftVelocity(double velocity) {
-        m_liftClosedLoopController.setReference(velocity, ControlType.kVelocity);
+    public void setLiftSpeed(double speed) {
+        m_liftMotor2.set(speed);
     }
 
     public double getLiftError() {
@@ -148,8 +148,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
         setPivotSetpoint(pivotClosedLoopReference + delta, null);
     }
 
-    public void setPivotVelocity(double velocity) {
-        m_pivotClosedLoopController.setReference(velocity, ControlType.kVelocity);
+    public void setPivotSpeed(double speed) {
+        m_pivotMotor1.set(speed);
     }
 
     public double getPivotError() {

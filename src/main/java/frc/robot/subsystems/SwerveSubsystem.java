@@ -38,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -72,9 +74,9 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final boolean             visionDriveTest     = false;
   public Pigeon2 pigeon;
-  /**
-   * PhotonVision class to keep an accurate odometry.
-   */
+  
+  /** A multiplier applied to the input axes of drive commands. */
+  public double driveMultiplier = DriveConstants.speedFull;
 
 
   /**
@@ -479,9 +481,9 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
-                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
+                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier,
+                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier), 0.8),
+                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
                         true,
                         false);
     });
@@ -502,13 +504,13 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
 
-      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                                                 translationY.getAsDouble()), 0.8);
+      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble() * driveMultiplier,
+                                                                                 translationY.getAsDouble() * driveMultiplier), 0.8);
 
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-                                                                      headingX.getAsDouble(),
-                                                                      headingY.getAsDouble(),
+                                                                      headingX.getAsDouble() * driveMultiplier,
+                                                                      headingY.getAsDouble() * driveMultiplier,
                                                                       swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });

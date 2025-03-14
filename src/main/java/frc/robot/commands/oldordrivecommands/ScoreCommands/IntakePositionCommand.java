@@ -120,7 +120,7 @@ public final class IntakePositionCommand {
 
         @Override
         public void execute() {
-            intakePositionSubsystem.setLiftVelocity(rateSupplier.getAsDouble());
+            intakePositionSubsystem.setLiftSpeed(rateSupplier.getAsDouble());
             updateConsumer();
         }
 
@@ -160,7 +160,7 @@ public final class IntakePositionCommand {
 
         @Override
         public void execute() {
-            intakePositionSubsystem.setPivotVelocity(rateSupplier.getAsDouble());
+            intakePositionSubsystem.setPivotSpeed(rateSupplier.getAsDouble());
             updateConsumer();
         }
 

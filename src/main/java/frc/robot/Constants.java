@@ -41,7 +41,8 @@ public final class Constants {
     public static final double Pipe3Pivot = 0.255; //LEVEL 2
 
     public static final double Pipe4Lift = 10.32; //DLeft
-    public static final double Pipe4Pivot = 0.22; //HIGHEST
+    public static final double Pipe4Pivot = 0.25; //HIGHEST
+    public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
     public static final double PipeRetLift = 3.0;
     public static final double PipeRetPivot = 0.33;
@@ -58,7 +59,7 @@ public final class Constants {
 
     // TODO: TUNE
     public static final double kPipeIntakeSpeed = 0.25;
-    public static final double kPipeOuttakeSpeed = -0.25;
+    public static final double kPipeOuttakeSpeed = -0.4;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK
@@ -100,7 +101,7 @@ public final class Constants {
     public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
-    public static final double stowLift = 1.1;
+    public static final double stowLift = 0.9;
 
     public static final double bargePivotTravel = 0.32; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
@@ -127,7 +128,8 @@ public final class Constants {
 
   public static final class DriveConstants {
     //controls speed for telop
-    public static double speedFactor = 0.5;
+    public static final double speedFull = 1.0;
+    public static final double speedSlow = 0.5;
 
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss

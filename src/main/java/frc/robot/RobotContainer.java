@@ -104,9 +104,8 @@ public class RobotContainer
   private void configureBindings1()
   {
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
-    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
-    //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
     driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
     /* driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
@@ -160,9 +159,8 @@ public class RobotContainer
   private void configureBindings2()
   {
     drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
-    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
-    //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
     driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
@@ -199,7 +197,11 @@ public class RobotContainer
         pipeIntakeCommands. new Outtake(),
         new SequentialCommandGroup(
           new WaitCommand(0.2),
-          new InstantCommand(() -> intakePosition.setPivotSetpoint(0.3, null))
+          new InstantCommand(() -> pipeIntake.setTargetVelocity(0)),
+          new InstantCommand(() -> intakePosition.setPivotSetpoint(Constants.OpConstantsForPipe.Pipe4PivotOut, null)),
+          new InstantCommand(() -> pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed)),
+          new WaitCommand(0.3),
+          new InstantCommand(() -> pipeIntake.setTargetVelocity(0))
         )
       ),
       new StowCommand(intakePosition)

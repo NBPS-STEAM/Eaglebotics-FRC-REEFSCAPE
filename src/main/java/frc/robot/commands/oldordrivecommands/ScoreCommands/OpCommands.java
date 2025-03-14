@@ -36,16 +36,16 @@ public class OpCommands {
         // left stick controls translation
         // right stick controls the angular velocity of the robot
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
-            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
-            () -> gamepad.getRightX());
+            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband), 3),
+            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband), 3),
+            () -> Math.pow(gamepad.getRightX(), 3));
 
         return driveFieldOrientedAnglularVelocity;
 
 
     }
 
-    public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
+    /* public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
         // same as above but half as fast
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
@@ -55,7 +55,7 @@ public class OpCommands {
         return driveFieldOrientedAnglularVelocity;
 
     
-    }
+    } */
 
     /**
      * A command that will strafe from the gamepad's left stick and turn to face an angle specified in degrees: [0, 360).
@@ -67,8 +67,8 @@ public class OpCommands {
         turnController.setSetpoint(degrees);
 
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
-            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
+            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband), 3),
+            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband), 3),
             () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
 
         return driveFieldOrientedAnglularVelocity;
@@ -80,6 +80,20 @@ public class OpCommands {
         double mod = deg % 360.0;
         if (mod < 0) mod += 360;
         return mod;
+    }
+
+    public static Command getTemporarySlowSpeedCommand(SwerveSubsystem swerve) {
+        return new Command() {
+            @Override
+            public void initialize() {
+                swerve.driveMultiplier = DriveConstants.speedSlow;
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+                swerve.driveMultiplier = DriveConstants.speedFull;
+            }
+        };
     }
 
 
