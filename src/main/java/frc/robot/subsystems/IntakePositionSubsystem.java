@@ -49,7 +49,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_liftEncoder = m_liftMotor2.getAlternateEncoder();
         m_liftClosedLoopController = m_liftMotor2.getClosedLoopController();
 
-        SparkBaseConfig sharedLiftConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(55, 55);
+        SparkBaseConfig sharedLiftConfig = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(60, 60);
         liftMotor1Config = new SparkMaxConfig().apply(sharedLiftConfig).follow(m_liftMotor2);
         liftMotor2Config = new SparkMaxConfig().apply(sharedLiftConfig).inverted(true);
         liftMotor2Config.closedLoop.outputRange(-1, 1)

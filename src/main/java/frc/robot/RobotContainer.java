@@ -11,6 +11,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakePositionConstants;
 import frc.robot.commands.oldordrivecommands.AutoCommands.WaitCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
@@ -176,9 +179,9 @@ public class RobotContainer
     // Manual lift and pivot controls
     coDriverGamepad.R1().debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
     new Trigger(() -> Math.abs(coDriverGamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(coDriverGamepad::getLeftY, null));
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY(), null));
     new Trigger(() -> Math.abs(coDriverGamepad.getRightY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(coDriverGamepad::getRightY, null));
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY(), null));
     
     // Pipe Intake/Outtake/Stop Controls
     coDriverGamepad.L1().onTrue(new SequentialCommandGroup(
@@ -187,34 +190,25 @@ public class RobotContainer
       new StowCommand(intakePosition)
     ));
 
-    Command intakeNormal = new SequentialCommandGroup(
-      pipeIntakeCommands. new Outtake(),
-      new StowCommand(intakePosition)
-    );
-
-    Command intakeAndBack = new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        pipeIntakeCommands. new Outtake(),
-        new SequentialCommandGroup(
-          new WaitCommand(0.2),
-          new InstantCommand(() -> pipeIntake.setTargetVelocity(0)),
-          new InstantCommand(() -> intakePosition.setPivotSetpoint(Constants.OpConstantsForPipe.Pipe4PivotOut, null)),
-          new InstantCommand(() -> pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed)),
-          new WaitCommand(0.3),
-          new InstantCommand(() -> pipeIntake.setTargetVelocity(0))
-        )
-      ),
-      new StowCommand(intakePosition)
-    );
-
-    coDriverGamepad.L2().onTrue(new ConditionalCommand(intakeAndBack, intakeNormal, () -> intakePosition.getPositionLevel() == 4));
+    coDriverGamepad.L2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
     //coDriverGamepad.L2().onTrue(intakeNormal);
     
     
     // Ball Intake/Outtake/Stop Controls
-    coDriverGamepad.R2().onTrue(new SequentialCommandGroup(
-      new ConditionalCommand(ballIntakeCommands.new Outtake(-1.0), ballIntakeCommands.new Outtake(), () -> intakePosition.getPositionLevel() == 5),
+    Command normalBallOuttake = new SequentialCommandGroup(
+      ballIntakeCommands.new Outtake(),
       new StowCommand(intakePosition)
+    );
+
+    Command bargeOuttake = new ParallelCommandGroup(
+      ballIntakeCommands.new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
+      new InstantCommand(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
+    );
+
+    coDriverGamepad.R2().onTrue(new ConditionalCommand(
+      bargeOuttake,
+      normalBallOuttake,
+      () -> intakePosition.getPositionLevel() == 5
     ));
 
     // Stow Position
@@ -232,7 +226,11 @@ public class RobotContainer
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
-    coDriverGamepad.circle().onTrue(opCommands.ballCommandGroup(2));
+    coDriverGamepad.circle().onTrue(new SequentialCommandGroup(
+      opCommands.ballCommandGroup(2),
+      ballIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+    ));
     coDriverGamepad.square().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(3),
       ballIntakeCommands. new Intake(),
@@ -276,10 +274,15 @@ public class RobotContainer
 
     Command pathplannerless = new SequentialCommandGroup(
       new ParallelDeadlineGroup(
+        new WaitCommand(1),
+        drivebase.centerModulesCommand()
+      ),
+      new ParallelDeadlineGroup(
         new WaitCommand(10),
         opCommands.getPipe1Command(),
         drivebase.driveCommand(() -> -0.1, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
       ),
+      new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.k180deg))),
       pipeIntakeCommands.new Outtake()
     );
 

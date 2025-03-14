@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+  public static final SparkBaseConfig kBrakeInvertedConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
   public static final class OpConstantsForBall {
     public static final double Ball1Lift = 0.0; //GROUND BALL
@@ -32,7 +33,7 @@ public final class Constants {
 
   public static final class OpConstantsForPipe {
     public static final double Pipe1Lift = 0.65; //DDown
-    public static final double Pipe1Pivot = 0.33; //TROUGH
+    public static final double Pipe1Pivot = 0.35; //TROUGH
 
     public static final double Pipe2Lift = 3.57; //DRight
     public static final double Pipe2Pivot = 0.21; //LEVEL 1
@@ -58,8 +59,9 @@ public final class Constants {
     // Pipe Intake:
 
     // TODO: TUNE
-    public static final double kPipeIntakeSpeed = 0.25;
+    public static final double kPipeIntakeSpeed = 0.75;
     public static final double kPipeOuttakeSpeed = -0.4;
+    public static final double kPipeOuttakeL1Speed = -0.2;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK
@@ -71,6 +73,7 @@ public final class Constants {
     // TODO: TUNE
     public static final double kBallIntakeSpeed = 1;
     public static final double kBallOuttakeSpeed = -0.5;
+    public static final double kBallOuttakeBargeSpeed = -1.0;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kBallMotorId1 = 12; // CAN OK
@@ -105,6 +108,7 @@ public final class Constants {
 
     public static final double bargePivotTravel = 0.32; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
+    public static final double bargePivotShove = 0.3; // applied while depositing barge
     public static final double bargeLift = 10.57;
   }
 
@@ -128,8 +132,8 @@ public final class Constants {
 
   public static final class DriveConstants {
     //controls speed for telop
-    public static final double speedFull = 1.0;
-    public static final double speedSlow = 0.5;
+    public static final double speedFull = 0.5;
+    public static final double speedSlow = 1.0;
 
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss

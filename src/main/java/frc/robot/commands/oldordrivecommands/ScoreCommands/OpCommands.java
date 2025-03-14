@@ -36,9 +36,9 @@ public class OpCommands {
         // left stick controls translation
         // right stick controls the angular velocity of the robot
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband), 3),
-            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband), 3),
-            () -> Math.pow(gamepad.getRightX(), 3));
+            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
+            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
+            () -> gamepad.getRightX());
 
         return driveFieldOrientedAnglularVelocity;
 
