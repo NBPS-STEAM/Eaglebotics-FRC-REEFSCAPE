@@ -102,7 +102,7 @@ public final class Constants {
     public static final double stowPivot = 0.32;
     public static final double stowLift = 1.1;
 
-    public static final double bargePivotTravel = 0.25; // pivot moves to this first before lift rises
+    public static final double bargePivotTravel = 0.32; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
     public static final double bargeLift = 10.57;
   }

@@ -205,13 +205,13 @@ public class RobotContainer
       new StowCommand(intakePosition)
     );
 
-    //coDriverGamepad.L2().onTrue(new ConditionalCommand(intakeAndBack, intakeNormal, () -> intakePosition.getPositionLevel() == 4));
-    coDriverGamepad.L2().onTrue(intakeNormal);
+    coDriverGamepad.L2().onTrue(new ConditionalCommand(intakeAndBack, intakeNormal, () -> intakePosition.getPositionLevel() == 4));
+    //coDriverGamepad.L2().onTrue(intakeNormal);
     
     
     // Ball Intake/Outtake/Stop Controls
     coDriverGamepad.R2().onTrue(new SequentialCommandGroup(
-      ballIntakeCommands. new Outtake(),
+      new ConditionalCommand(ballIntakeCommands.new Outtake(-1.0), ballIntakeCommands.new Outtake(), () -> intakePosition.getPositionLevel() == 5),
       new StowCommand(intakePosition)
     ));
 
@@ -219,7 +219,7 @@ public class RobotContainer
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
   
     // Barge Shoot Position
-    coDriverGamepad.PS().whileTrue(opCommands.bargeShootCommandGroup());
+    coDriverGamepad.PS().onTrue(opCommands.bargeShootCommandGroup());
   
     // Hang Control
     //coDriverGamepad.PS().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
