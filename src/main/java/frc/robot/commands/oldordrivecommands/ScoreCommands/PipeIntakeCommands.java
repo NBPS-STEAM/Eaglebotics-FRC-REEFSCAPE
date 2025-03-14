@@ -3,6 +3,8 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakePositionConstants;
+import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.utils.Gamepieces;
@@ -51,7 +53,9 @@ public final class PipeIntakeCommands {
 
     //Turns on the pipe outtake
     public class Outtake extends Command {
+
         private double time;
+
         public Outtake(){
             addRequirements(pipeIntakeSubsystem);
         }

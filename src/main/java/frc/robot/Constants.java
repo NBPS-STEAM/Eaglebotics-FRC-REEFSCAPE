@@ -82,25 +82,25 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftPosP = 1.5; // Used when the lift is going up (error is positive)
+    public static final double kLiftPosP = 1.75; // Used when the lift is going up (error is positive)
     public static final double kLiftNegP = 0.3; // Used when the lift is going down (error is negative)
     public static final double kLiftI = 0.0015;
     public static final double kLiftPosD = 0.0001;
-    public static final double kLiftNegD = 0.001;
+    public static final double kLiftNegD = 0.003;
     public static final double kLiftIZone = 0.5;
     public static final double kLiftTolerance = 0.05;
     public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 2.5;
+    public static final double kPivotP = 2.75;
     public static final double kPivotI = 0.005;
     public static final double kPivotD = 0.0;
     public static final double kPivotIZone = 0.03;
     public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
-    public static final double stowLift = 0.2;
+    public static final double stowLift = 1.1;
 
     public static final double bargePivotTravel = 0.25; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
@@ -153,10 +153,10 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2; */
 
     // Used for auto turning
-    public static final double kTurningP = 0.01;
-    public static final double kTurningI = 0.0;
-    public static final double kTurningD = 0.0;
-    public static final double kTurningIZone = 0.0;
+    public static final double kTurningP = 0.02;
+    public static final double kTurningI = 0.001;
+    public static final double kTurningD = 0.005;
+    public static final double kTurningIZone = 30.0;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 1; // CAN OK ("swerve" canbus)

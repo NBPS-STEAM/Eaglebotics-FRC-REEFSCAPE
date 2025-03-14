@@ -68,7 +68,7 @@ public class OpCommands {
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
             () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
-            () -> turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
+            () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
 
         return driveFieldOrientedAnglularVelocity;
 
@@ -103,7 +103,7 @@ public class OpCommands {
      */
     public ParallelCommandGroup getStowParallelCommand() {
         return new ParallelCommandGroup(intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot),
+            Constants.IntakePositionConstants.stowLift, Constants.IntakePositionConstants.stowPivot, 0),
             new InstantCommand(()->LEDSubsystem.getInstance().setStow())
             );
     }
@@ -114,7 +114,7 @@ public class OpCommands {
      */
     public Command getBall1Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForBall.Ball1Lift, Constants.OpConstantsForBall.Ball1Pivot);
+            Constants.OpConstantsForBall.Ball1Lift, Constants.OpConstantsForBall.Ball1Pivot, 1);
     }
 
     /**
@@ -123,7 +123,7 @@ public class OpCommands {
      */
     public Command getBall2Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForBall.Ball2Lift, Constants.OpConstantsForBall.Ball2Pivot);
+            Constants.OpConstantsForBall.Ball2Lift, Constants.OpConstantsForBall.Ball2Pivot, 2);
     }
 
     /**
@@ -132,7 +132,7 @@ public class OpCommands {
      */
     public Command getBall3Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForBall.Ball3Lift, Constants.OpConstantsForBall.Ball3Pivot);
+            Constants.OpConstantsForBall.Ball3Lift, Constants.OpConstantsForBall.Ball3Pivot, 3);
     }
 
     /**
@@ -141,14 +141,14 @@ public class OpCommands {
      */
     public Command getBall4Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForBall.Ball4Lift, Constants.OpConstantsForBall.Ball4Pivot);
+            Constants.OpConstantsForBall.Ball4Lift, Constants.OpConstantsForBall.Ball4Pivot, 4);
     }
 
     /** Move lift and pivot simultaneously to the pipe intake position. */
     public SequentialCommandGroup getPipeIntakeCommand() {
         return new SequentialCommandGroup(
-        intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.PipeIntakeLift),
-        intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.PipeIntakePivot)
+        intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.PipeIntakeLift, 0),
+        intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.PipeIntakePivot, 0)
         );
     }
 
@@ -158,7 +158,7 @@ public class OpCommands {
      */
     public Command getPipe1Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.Pipe1Lift, Constants.OpConstantsForPipe.Pipe1Pivot);
+            Constants.OpConstantsForPipe.Pipe1Lift, Constants.OpConstantsForPipe.Pipe1Pivot, 1);
     }
 
     /**
@@ -167,7 +167,7 @@ public class OpCommands {
      */
     public Command getPipe2Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.Pipe2Lift, Constants.OpConstantsForPipe.Pipe2Pivot);
+            Constants.OpConstantsForPipe.Pipe2Lift, Constants.OpConstantsForPipe.Pipe2Pivot, 1);
     }
 
     /**
@@ -176,7 +176,7 @@ public class OpCommands {
      */
     public Command getPipe3Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.Pipe3Lift, Constants.OpConstantsForPipe.Pipe3Pivot);
+            Constants.OpConstantsForPipe.Pipe3Lift, Constants.OpConstantsForPipe.Pipe3Pivot, 3);
     }
 
     /**
@@ -185,7 +185,7 @@ public class OpCommands {
      */
     public Command getPipe4Command() {
         return intakePositionCommand.new SetIntakePositionSetpoints(
-            Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot);
+            Constants.OpConstantsForPipe.Pipe4Lift, Constants.OpConstantsForPipe.Pipe4Pivot, 4);
     }
 
 
@@ -200,9 +200,9 @@ public class OpCommands {
     public SequentialCommandGroup bargeShootCommandGroup() {
         return new SequentialCommandGroup(
             new InstantCommand(()->LEDSubsystem.getInstance().setBarge()),
-            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivotTravel),
-            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.bargeLift),
-            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivot)
+            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivotTravel, 5),
+            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.bargeLift, 5),
+            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivot, 5)
         );
     }
 
@@ -215,28 +215,28 @@ public class OpCommands {
         switch (level) {
             case 1:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe1Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe1Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe1Lift, 1),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe1Pivot, 1)
                 );
                 break;
             case 2:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe2Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe2Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe2Lift, 2),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe2Pivot, 2)
                 );
                 
                 break;
             case 3:
                  command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe3Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe3Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe3Lift, 3),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe3Pivot, 3)
                 );
                 
                 break;
             case 4:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe4Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe4Lift, 4),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4Pivot, 4)
                 );
                 
                 break;
@@ -262,28 +262,28 @@ public class OpCommands {
         switch (level) {
             case 1:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball1Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball1Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball1Lift, 1),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball1Pivot, 1)
                 );
                 break;
             case 2:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball2Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball2Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball2Lift, 2),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball2Pivot, 2)
                 );
                 
                 break;
             case 3:
                  command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball3Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball3Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball3Lift, 3),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball3Pivot, 3)
                 );
                 
                 break;
             case 4:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball4Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball4Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball4Lift, 4),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball4Pivot, 4)
                 );
                 
                 break;

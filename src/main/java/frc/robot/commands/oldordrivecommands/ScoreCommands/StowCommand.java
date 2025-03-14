@@ -11,8 +11,8 @@ public class StowCommand extends SequentialCommandGroup {
     public StowCommand(IntakePositionSubsystem intakePositionSubsystem){
         intakePositionCommand=new IntakePositionCommand(intakePositionSubsystem);
         addCommands(
-            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.stowPivot),
-            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.stowLift),
+            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.stowPivot, 0),
+            intakePositionCommand.new SetLiftSetpoint(Constants.IntakePositionConstants.stowLift, 0),
             new InstantCommand(()->LEDSubsystem.getInstance().setStow())
         );
     }

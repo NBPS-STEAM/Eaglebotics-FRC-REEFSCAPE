@@ -36,6 +36,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
     private double liftClosedLoopReference = 0.0;
     private double pivotClosedLoopReference = 0.0;
 
+    private int positionLevel = 0;
+
     private boolean liftAscending = true;
 
 
@@ -69,12 +71,14 @@ public class IntakePositionSubsystem extends SubsystemBase {
                                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                                     .pid(IntakePositionConstants.kPivotP, IntakePositionConstants.kPivotI, IntakePositionConstants.kPivotD)
                                     .iZone(IntakePositionConstants.kPivotIZone)
+                                    .positionWrappingInputRange(0, 1.0)
+                                    .positionWrappingEnabled(true)
                                     .maxMotion.allowedClosedLoopError(IntakePositionConstants.kPivotTolerance);
 
         m_pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Go to Stow Position
-        setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot);
+        setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot, 0);
     }
 
     public void updateAll() {
@@ -103,14 +107,15 @@ public class IntakePositionSubsystem extends SubsystemBase {
         return liftClosedLoopReference;
     }
 
-    public void setLiftSetpoint(double setpoint) {
+    public void setLiftSetpoint(double setpoint, Integer forLevel) {
+        if (forLevel != null) positionLevel = forLevel;
         liftClosedLoopReference = setpoint;
         m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition, ClosedLoopSlot.kSlot0, IntakePositionConstants.kLiftAntigrav, ArbFFUnits.kPercentOut);
         //m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
     }
 
     public void offsetLiftSetpoint(double delta) {
-        setLiftSetpoint(liftClosedLoopReference + delta);
+        setLiftSetpoint(liftClosedLoopReference + delta, null);
     }
 
     public void setLiftVelocity(double velocity) {
@@ -133,13 +138,14 @@ public class IntakePositionSubsystem extends SubsystemBase {
         return pivotClosedLoopReference;
     }
 
-    public void setPivotSetpoint(double setpoint) {
+    public void setPivotSetpoint(double setpoint, Integer forLevel) {
+        if (forLevel != null) positionLevel = forLevel;
         pivotClosedLoopReference = setpoint;
         m_pivotClosedLoopController.setReference(pivotClosedLoopReference, ControlType.kPosition);
     }
 
     public void offsetPivotSetpoint(double delta) {
-        setPivotSetpoint(pivotClosedLoopReference + delta);
+        setPivotSetpoint(pivotClosedLoopReference + delta, null);
     }
 
     public void setPivotVelocity(double velocity) {
@@ -154,9 +160,13 @@ public class IntakePositionSubsystem extends SubsystemBase {
         return Math.abs(getPivotError()) < IntakePositionConstants.kPivotTolerance;
     }
 
-    public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {
-        setLiftSetpoint(liftSetpoint);
-        setPivotSetpoint(pivotSetpoint);
+    public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint, Integer forLevel) {
+        setLiftSetpoint(liftSetpoint, forLevel);
+        setPivotSetpoint(pivotSetpoint, forLevel);
+    }
+
+    public int getPositionLevel() {
+        return positionLevel;
     }
 
     public boolean atTargetPos() {

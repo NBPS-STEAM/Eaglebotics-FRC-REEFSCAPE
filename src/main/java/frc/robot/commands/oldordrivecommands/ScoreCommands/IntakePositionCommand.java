@@ -24,17 +24,19 @@ public final class IntakePositionCommand {
 
         private double liftSetpoint;
         private double pivotSetpoint;
+        private Integer forLevel;
 
-        public SetIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint) {
+        public SetIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint, Integer forLevel) {
             this.liftSetpoint = liftSetpoint;
             this.pivotSetpoint = pivotSetpoint;
+            this.forLevel = forLevel;
             addRequirements(intakePositionSubsystem);
         }
 
         
         @Override
         public void initialize() {
-            intakePositionSubsystem.setIntakePositionSetpoints(liftSetpoint, pivotSetpoint);
+            intakePositionSubsystem.setIntakePositionSetpoints(liftSetpoint, pivotSetpoint, forLevel);
             if(liftSetpoint!=Constants.IntakePositionConstants.stowLift)LEDSubsystem.getInstance().setPlacePos();
         }
 
@@ -50,16 +52,18 @@ public final class IntakePositionCommand {
     public class SetLiftSetpoint extends Command {
 
         private double liftSetpoint;
+        private Integer forLevel;
 
-        public SetLiftSetpoint(double liftSetpoint) {
+        public SetLiftSetpoint(double liftSetpoint, Integer forLevel) {
             this.liftSetpoint = liftSetpoint;
+            this.forLevel = forLevel;
             addRequirements(intakePositionSubsystem);
         }
 
         
         @Override
         public void initialize() {
-            intakePositionSubsystem.setLiftSetpoint(liftSetpoint);
+            intakePositionSubsystem.setLiftSetpoint(liftSetpoint, forLevel);
             if(liftSetpoint!=Constants.IntakePositionConstants.stowLift)LEDSubsystem.getInstance().setPlacePos();
         }
 
@@ -75,16 +79,18 @@ public final class IntakePositionCommand {
     public class SetPivotSetpoint extends Command {
 
         private double pivotSetpoint;
+        private Integer forLevel;
 
-        public SetPivotSetpoint(double pivotSetpoint) {
+        public SetPivotSetpoint(double pivotSetpoint, Integer forLevel) {
             this.pivotSetpoint = pivotSetpoint;
+            this.forLevel = forLevel;
             addRequirements(intakePositionSubsystem);
         }
 
         
         @Override
         public void initialize() {
-            intakePositionSubsystem.setPivotSetpoint(pivotSetpoint);
+            intakePositionSubsystem.setPivotSetpoint(pivotSetpoint, forLevel);
             if(pivotSetpoint!=Constants.IntakePositionConstants.stowPivot)LEDSubsystem.getInstance().setPlacePos();
         }
 
@@ -121,7 +127,7 @@ public final class IntakePositionCommand {
         @Override
         public void end(boolean interrupted) {
             updateConsumer();
-            intakePositionSubsystem.setLiftSetpoint(intakePositionSubsystem.getLiftPosition()); // also cancels setting velocity
+            intakePositionSubsystem.setLiftSetpoint(intakePositionSubsystem.getLiftPosition(), null); // also cancels setting velocity
         }
 
         @Override
@@ -161,7 +167,7 @@ public final class IntakePositionCommand {
         @Override
         public void end(boolean interrupted) {
             updateConsumer();
-            intakePositionSubsystem.setPivotSetpoint(intakePositionSubsystem.getPivotPosition()); // also cancels setting velocity
+            intakePositionSubsystem.setPivotSetpoint(intakePositionSubsystem.getPivotPosition(), null); // also cancels setting velocity
         }
 
         @Override
