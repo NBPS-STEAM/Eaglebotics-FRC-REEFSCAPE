@@ -15,9 +15,16 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.IntakePositionConstants;
+import frc.robot.commands.oldordrivecommands.AutoCommands.WaitCommand;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
 
 public class IntakePositionSubsystem extends SubsystemBase {
     LinearFilter Tempfilter1=LinearFilter.movingAverage(5);
@@ -88,8 +95,15 @@ public class IntakePositionSubsystem extends SubsystemBase {
     }
     public void updateAll() {
         if((Tempfilter1.calculate(m_liftMotor1.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp||Tempfilter2.calculate(m_liftMotor2.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp)&&!OverrideTempLimit){
-            m_liftMotor1.disable();
-            m_liftMotor2.disable();
+            CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                new ParallelRaceGroup(new StowCommand(this), new WaitCommand(3)),
+                new InstantCommand(()->{
+                    m_liftMotor1.disable();
+                    m_liftMotor2.disable();
+                })
+            ));
+            System.out.println("WARNING LIFT MAX TEMP EXCEEDED");
+            System.out.println("ELEVATOR WILL ATTEMPT TO STOW THEN DISABLE");
         }
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
