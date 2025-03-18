@@ -301,8 +301,8 @@ public class OpCommands {
                 );
             case 5:
                 command= new SequentialCommandGroup(
-                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball5Lift),
-                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball5Pivot)
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball5Lift,5),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball5Pivot,5)
                 );
         
                 break;

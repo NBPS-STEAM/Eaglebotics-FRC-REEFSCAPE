@@ -87,6 +87,7 @@ public final class Constants {
   }
 
   public static final class IntakePositionConstants {
+    public static final int kMaxLiftMotorTemp=75;
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 

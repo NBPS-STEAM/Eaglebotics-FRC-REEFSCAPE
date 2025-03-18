@@ -14,12 +14,15 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakePositionConstants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
-
+    LinearFilter Tempfilter1=LinearFilter.movingAverage(5);
+    LinearFilter Tempfilter2=LinearFilter.movingAverage(5);
+    private boolean OverrideTempLimit=false;
     public final SparkMax m_liftMotor1;
     public final SparkMax m_liftMotor2;
     public final RelativeEncoder m_liftEncoder;
@@ -79,8 +82,15 @@ public class IntakePositionSubsystem extends SubsystemBase {
         // Go to Stow Position
         setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot, 0);
     }
-
+    
+    public void OverrideTempLimit(){
+        OverrideTempLimit=true;
+    }
     public void updateAll() {
+        if((Tempfilter1.calculate(m_liftMotor1.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp||Tempfilter2.calculate(m_liftMotor2.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp)&&!OverrideTempLimit){
+            m_liftMotor1.disable();
+            m_liftMotor2.disable();
+        }
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
         if (liftAscendingNow != liftAscending) {
