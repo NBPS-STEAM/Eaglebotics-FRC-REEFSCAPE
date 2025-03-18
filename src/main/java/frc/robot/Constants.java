@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
+  public static final SparkBaseConfig kBrakeInvertedConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
   public static final class OpConstantsForBall {
     public static final double Ball1Lift = 0.0; //GROUND BALL
@@ -32,22 +33,23 @@ public final class Constants {
 
   public static final class OpConstantsForPipe {
     public static final double Pipe1Lift = 0.65; //DDown
-    public static final double Pipe1Pivot = 0.31; //TROUGH
+    public static final double Pipe1Pivot = 0.35; //TROUGH
 
-    public static final double Pipe2Lift = 2.95; //DRight
+    public static final double Pipe2Lift = 3.57; //DRight
     public static final double Pipe2Pivot = 0.21; //LEVEL 1
 
-    public static final double Pipe3Lift = 5.91; //DUp
-    public static final double Pipe3Pivot = 0.23; //LEVEL 2
+    public static final double Pipe3Lift = 5.75; //DUp
+    public static final double Pipe3Pivot = 0.255; //LEVEL 2
 
-    public static final double Pipe4Lift = 10.57; //DLeft
+    public static final double Pipe4Lift = 10.32; //DLeft
     public static final double Pipe4Pivot = 0.25; //HIGHEST
+    public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
-    public static final double PipeRetLift = 2.0;
-    public static final double PipeRetPivot = 0.25;
+    public static final double PipeRetLift = 3.0;
+    public static final double PipeRetPivot = 0.33;
 
-    public static final double PipeIntakeLift = 2.53; //REDUNDENT WITH PipeRetLift
-    public static final double PipeIntakePivot = 0.33; //REDUNDENT WITH PipeRetPivot
+    public static final double PipeIntakeLift = 3.2; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakePivot = 0.345; //REDUNDENT WITH PipeRetPivot
   }
 
   public static final class IntakeConstants {
@@ -57,8 +59,9 @@ public final class Constants {
     // Pipe Intake:
 
     // TODO: TUNE
-    public static final double kPipeIntakeSpeed = 1;
-    public static final double kPipeOuttakeSpeed = -1;
+    public static final double kPipeIntakeSpeed = 0.75;
+    public static final double kPipeOuttakeSpeed = -0.4;
+    public static final double kPipeOuttakeL1Speed = -0.2;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK
@@ -70,6 +73,7 @@ public final class Constants {
     // TODO: TUNE
     public static final double kBallIntakeSpeed = 1;
     public static final double kBallOuttakeSpeed = -0.5;
+    public static final double kBallOuttakeBargeSpeed = -1.0;
 
     // TODO: SET TO REAL MOTOR ID
     public static final int kBallMotorId1 = 12; // CAN OK
@@ -82,25 +86,30 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftPosP = 1.5; // Used when the lift is going up (error is positive)
+    public static final double kLiftPosP = 1.75; // Used when the lift is going up (error is positive)
     public static final double kLiftNegP = 0.3; // Used when the lift is going down (error is negative)
     public static final double kLiftI = 0.0015;
-    public static final double kLiftPosD = 0.0; // TODO: needs tuning
-    public static final double kLiftNegD = 0.0; // TODO: needs tuning
+    public static final double kLiftPosD = 0.0001;
+    public static final double kLiftNegD = 0.003;
     public static final double kLiftIZone = 0.5;
     public static final double kLiftTolerance = 0.05;
     public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 
-    public static final double kPivotP = 2.5;
-    public static final double kPivotI = 0.0;
+    public static final double kPivotP = 2.75;
+    public static final double kPivotI = 0.005;
     public static final double kPivotD = 0.0;
-    public static final double kPivotIZone = 0.0;
+    public static final double kPivotIZone = 0.03;
     public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
-    public static final double stowLift = 0.2;
+    public static final double stowLift = 0.9;
+
+    public static final double bargePivotTravel = 0.32; // pivot moves to this first before lift rises
+    public static final double bargePivot = 0.4;
+    public static final double bargePivotShove = 0.3; // applied while depositing barge
+    public static final double bargeLift = 10.57;
   }
 
   public static final class HangConstants {
@@ -123,7 +132,8 @@ public final class Constants {
 
   public static final class DriveConstants {
     //controls speed for telop
-    public static double speedFactor = 0.5;
+    public static final double speedFull = 0.5;
+    public static final double speedSlow = 1.0;
 
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
@@ -146,11 +156,13 @@ public final class Constants {
     /* public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
     public static final double kFrontRightChassisAngularOffset = 0;
     public static final double kBackLeftChassisAngularOffset = Math.PI;
-    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+    public static final double kBackRightChassisAngularOffset = Math.PI / 2; */
 
-    public static final double kTurningP = 1.0;
-    public static final double kTurningI = 0.0;
-    public static final double kTurningD = 0.0; */
+    // Used for auto turning
+    public static final double kTurningP = 0.02;
+    public static final double kTurningI = 0.001;
+    public static final double kTurningD = 0.005;
+    public static final double kTurningIZone = 30.0;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 1; // CAN OK ("swerve" canbus)

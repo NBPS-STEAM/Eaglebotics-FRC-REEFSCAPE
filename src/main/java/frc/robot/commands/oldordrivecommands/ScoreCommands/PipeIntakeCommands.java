@@ -2,7 +2,15 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakePositionConstants;
+import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.utils.Gamepieces;
@@ -14,6 +22,36 @@ public final class PipeIntakeCommands {
 
     public PipeIntakeCommands(PipeIntakeSubsystem pipeIntakeSubsystem) {
         this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+    }
+
+
+
+    public Command getAwareOuttakeCommand(IntakePositionSubsystem intakePosition, IntakePositionCommand intakePositionCommands) {
+        Command outtakeNormal = new SequentialCommandGroup(
+            new Outtake(),
+            new StowCommand(intakePosition)
+        );
+
+        Command outtakeSlow = new SequentialCommandGroup(
+            new Outtake(IntakeConstants.kPipeOuttakeL1Speed),
+            new StowCommand(intakePosition)
+        );
+
+        Command outtakeAndBack = new SequentialCommandGroup(
+            new ParallelDeadlineGroup(
+                new SequentialCommandGroup(
+                    new WaitCommand(0.25),
+                    intakePositionCommands.new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4PivotOut, null),
+                    new WaitCommand(0.3)
+                ),
+                new Outtake()
+            ),
+            new StowCommand(intakePosition)
+        );
+
+        return new ConditionalCommand(outtakeAndBack, 
+                                    new ConditionalCommand(outtakeSlow, outtakeNormal, () -> intakePosition.getPositionLevel() == 1),
+                                    () -> intakePosition.getPositionLevel() == 4);
     }
 
 
@@ -51,15 +89,23 @@ public final class PipeIntakeCommands {
 
     //Turns on the pipe outtake
     public class Outtake extends Command {
+
         private double time;
-        public Outtake(){
+        private final double speed;
+
+        public Outtake() {
+            this(Constants.IntakeConstants.kPipeOuttakeSpeed);
+        }
+
+        public Outtake(double speed){
+            this.speed = speed;
             addRequirements(pipeIntakeSubsystem);
         }
 
         @Override 
         public void initialize() {
             time=Timer.getFPGATimestamp()+0.5;
-            pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed);
+            pipeIntakeSubsystem.setTargetVelocity(speed);
             LEDSubsystem.getInstance().setOuttake();
         }
 

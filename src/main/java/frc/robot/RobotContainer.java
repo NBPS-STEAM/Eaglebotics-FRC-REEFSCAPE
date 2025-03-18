@@ -9,20 +9,29 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakePositionConstants;
+import frc.robot.commands.oldordrivecommands.AutoCommands.WaitCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
@@ -77,13 +86,11 @@ public class RobotContainer
     registerNamedCommands();
 
     // Configure the trigger bindings
-    configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
-    //configureBindings2(); // Sequential command groups for IntakePosition set positions
-
-    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+    //configureBindings1(); // Set positions only (no command groups for IntakePosition set positions)
+    configureBindings2(); // Sequential command groups for IntakePosition set positions
 
     setAutoCommands();
-
+    
     SmartDashboard.putData("Autos", AutoChooser);
   }
   
@@ -99,16 +106,16 @@ public class RobotContainer
    */
   private void configureBindings1()
   {
-    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
-    //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, driverGamepad)));
+    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
     driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    /* driverGamepad.L1().and(driverGamepad.R1()).onTrue(Commands.runOnce(intakePosition::zeroLift));
     driverGamepad.povUp().whileTrue(intakePositionCommands.new SetLiftVelocity(0.5));
     driverGamepad.povDown().whileTrue(intakePositionCommands.new SetLiftVelocity(-0.5));
     driverGamepad.povRight().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(0.5)));
-    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5)));
+    driverGamepad.povLeft().whileTrue(Commands.run(() -> intakePosition.offsetPivotSetpoint(-0.5))); */
     
 
     //Co Driver:
@@ -127,15 +134,15 @@ public class RobotContainer
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(opCommands.getBall1Command());
-    coDriverGamepad.square().onTrue(opCommands.getBall2Command());
-    coDriverGamepad.triangle().onTrue(opCommands.getBall3Command());
-    coDriverGamepad.circle().onTrue(opCommands.getBall4Command());
+    coDriverGamepad.circle().onTrue(opCommands.getBall2Command());
+    coDriverGamepad.square().onTrue(opCommands.getBall3Command());
+    coDriverGamepad.triangle().onTrue(opCommands.getBall4Command());
 
     // Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.getPipe1Command());
-    coDriverGamepad.povRight().onTrue(opCommands.getPipe2Command());
-    coDriverGamepad.povUp().onTrue(opCommands.getPipe3Command());
-    coDriverGamepad.povLeft().onTrue(opCommands.getPipe4Command());
+    coDriverGamepad.povLeft().onTrue(opCommands.getPipe2Command());
+    coDriverGamepad.povRight().onTrue(opCommands.getPipe3Command());
+    coDriverGamepad.povUp().onTrue(opCommands.getPipe4Command());
 
 
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
@@ -154,59 +161,92 @@ public class RobotContainer
    */
   private void configureBindings2()
   {
-    //Gets the slow version (half speed) of the drive command. That way our robot can go slow. We need the repeat because
-    //while true does not repeat
-    driverGamepad.L2().whileTrue(new RepeatCommand(OpCommands.getSlowDriveCommand(drivebase, coDriverGamepad)));
-    driverGamepad.circle().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+    //Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
+    driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
+
+    driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
+    driverGamepad.circle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60));
+    driverGamepad.R1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120));
+    driverGamepad.triangle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180));
+    driverGamepad.L1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240));
+    driverGamepad.square().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300));
     
 
     //Co Driver:
+
+    // Manual lift and pivot controls
+    coDriverGamepad.R1().debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    new Trigger(() -> Math.abs(coDriverGamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY(), null));
+    new Trigger(() -> Math.abs(coDriverGamepad.getRightY()) > Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY(), null));
     
     // Pipe Intake/Outtake/Stop Controls
     coDriverGamepad.L1().onTrue(new SequentialCommandGroup(
       opCommands.getPipeIntakeCommand(),
       pipeIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
-      ));
-
-    coDriverGamepad.L2().onTrue(new SequentialCommandGroup(
-      pipeIntakeCommands. new Outtake(),
-      new StowCommand(intakePosition)
     ));
+
+    coDriverGamepad.L2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+    //coDriverGamepad.L2().onTrue(intakeNormal);
     
     
     // Ball Intake/Outtake/Stop Controls
-    coDriverGamepad.R2().onTrue(new SequentialCommandGroup(
-      ballIntakeCommands. new Outtake(),
+    Command normalBallOuttake = new SequentialCommandGroup(
+      ballIntakeCommands.new Outtake(),
       new StowCommand(intakePosition)
+    );
+
+    Command bargeOuttake = new ParallelCommandGroup(
+      ballIntakeCommands.new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
+      new InstantCommand(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
+    );
+
+    coDriverGamepad.R2().onTrue(new ConditionalCommand(
+      bargeOuttake,
+      normalBallOuttake,
+      () -> intakePosition.getPositionLevel() == 5
     ));
+
+    // Stow Position
+    coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
+  
+    // Barge Shoot Position
+    coDriverGamepad.PS().onTrue(opCommands.bargeShootCommandGroup());
   
     // Hang Control
-    coDriverGamepad.options().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
+    //coDriverGamepad.PS().whileTrue(new HangCommands.Activate(hangSubsystem, 1.0, 1.0));
   
     // Ball Set Positions
     coDriverGamepad.cross().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(1),
-      pipeIntakeCommands. new Intake(),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
-      ));
-    coDriverGamepad.square().onTrue(opCommands.ballCommandGroup(2));
-    coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
-    opCommands.ballCommandGroup(3),
-    pipeIntakeCommands. new Intake(),
+    ));
+    coDriverGamepad.circle().onTrue(new SequentialCommandGroup(
+      opCommands.ballCommandGroup(2),
+      ballIntakeCommands. new Intake(),
+      new StowCommand(intakePosition)
+    ));
+    coDriverGamepad.square().onTrue(new SequentialCommandGroup(
+      opCommands.ballCommandGroup(3),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
     coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
-    opCommands.ballCommandGroup(4),
-    pipeIntakeCommands. new Intake(),
+      opCommands.ballCommandGroup(4),
+      ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
 
     // Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
-    coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(2));
-    coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(3));
-    coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(4));
+    coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(2));
+    coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(3));
+    coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(4));
 
   }
 
@@ -219,8 +259,35 @@ public class RobotContainer
   public Command getAutonomousCommand() {
     return AutoChooser.getSelected(); 
   }
+
+  private static double normalDegrees(double deg) {
+    double mod = deg % 360.0;
+    if (mod < 0) mod += 360;
+    return mod;
+}
   
   public void setAutoCommands(){
+    PIDController turnController = new PIDController(DriveConstants.kTurningP, DriveConstants.kTurningI, DriveConstants.kTurningD);
+    turnController.setIZone(DriveConstants.kTurningIZone);
+    turnController.enableContinuousInput(0, 360);
+    turnController.setSetpoint(0);
+
+    Command pathplannerless = new SequentialCommandGroup(
+      new ParallelDeadlineGroup(
+        new WaitCommand(1),
+        drivebase.centerModulesCommand()
+      ),
+      new ParallelDeadlineGroup(
+        new WaitCommand(10),
+        opCommands.getPipe1Command(),
+        drivebase.driveCommand(() -> -0.1, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
+      ),
+      new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.k180deg))),
+      pipeIntakeCommands.new Outtake()
+    );
+
+    AutoChooser.addOption("PATHPLANNERLESS DRIVE FORWARD", pathplannerless);
+
     AutoChooser.addOption("1Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-RedSide").getStartingPose()))));
     AutoChooser.addOption("1Coral-Center", new ParallelCommandGroup(new PathPlannerAuto("1Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-Center").getStartingPose()))));
     AutoChooser.addOption("1Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-BlueSide").getStartingPose()))));
@@ -232,7 +299,7 @@ public class RobotContainer
 
   public void registerNamedCommands() {
     NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
-    NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
+    NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe1Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));

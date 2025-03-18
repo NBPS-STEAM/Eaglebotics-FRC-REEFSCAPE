@@ -21,6 +21,9 @@ public class LEDSubsystem extends SubsystemBase{
     public void setStow(){
         m_Blinken.set(0.85);//dark blue
     }
+    public void setBarge(){
+        m_Blinken.set(0.67);//gold
+    }
     public void setPlacePos(){
         m_Blinken.set(0.67);//gold
     }

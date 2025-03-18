@@ -18,7 +18,7 @@ public class PipeIntakeSubsystem extends SubsystemBase {
         // initialize motor
         m_motor = new SparkMax(Constants.IntakeConstants.kPipeMotorId, MotorType.kBrushless);
 
-        m_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_motor.configure(Constants.kBrakeInvertedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setTargetVelocity(double speed) {

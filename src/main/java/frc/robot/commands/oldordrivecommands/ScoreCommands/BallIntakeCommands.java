@@ -1,5 +1,7 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -54,15 +56,21 @@ public final class BallIntakeCommands {
     public class Outtake extends Command {
 
         private double time;
+        private final double power;
 
         public Outtake() {
+            this(Constants.IntakeConstants.kBallOuttakeSpeed);
+        }
+
+        public Outtake(double power) {
+            this.power = power;
             addRequirements(ballIntakeSubsystem);
         }
 
         @Override 
         public void initialize() {
             LEDSubsystem.getInstance().setOuttake();
-            ballIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed);
+            ballIntakeSubsystem.setTargetVelocity(power);
             time=Timer.getFPGATimestamp()+0.5;
         }
 

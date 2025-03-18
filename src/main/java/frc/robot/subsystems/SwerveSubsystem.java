@@ -38,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -72,9 +74,9 @@ public class SwerveSubsystem extends SubsystemBase
    */
   private final boolean             visionDriveTest     = false;
   public Pigeon2 pigeon;
-  /**
-   * PhotonVision class to keep an accurate odometry.
-   */
+  
+  /** A multiplier applied to the input axes of drive commands. */
+  public double driveMultiplier = DriveConstants.speedFull;
 
 
   /**
@@ -84,9 +86,15 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
-    // ---- Swerve fix 3 part 1 ----
-    // double flAbs = new CANCoderSwerve(0, "bus").encoder.get;
-    // double frAbs = new CanAndMagSwerve(0);
+    // ---- Swerve fix 4 part 1 ----
+    /* CANCoderSwerve cancoderEnc = new CANCoderSwerve(30);
+    CanAndMagSwerve canmagEnc1 = new CanAndMagSwerve(31);
+    CanAndMagSwerve canmagEnc2 = new CanAndMagSwerve(32);
+    CanAndMagSwerve canmagEnc3 = new CanAndMagSwerve(33);
+    //double cancoderAbs = cancoderEnc.encoder.getAbsolutePosition();
+    double canmagAbs1 = canmagEnc1.encoder.getAbsPosition();
+    double canmagAbs2 = canmagEnc2.encoder.getAbsPosition();
+    double canmagAbs3 = canmagEnc3.encoder.getAbsPosition(); */
     // ---- End fix ----
 
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -120,7 +128,14 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     //swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
+    // Swerve fix 1 or 2
     //fixEncoders();
+
+    // Swerve fix 4 (part 2)
+    /* cancoderEnc.setAbsoluteEncoderOffset(0);
+    canmagEnc1.encoder.setAbsPosition(canmagAbs1);
+    canmagEnc2.encoder.setAbsPosition(canmagAbs2);
+    canmagEnc3.encoder.setAbsPosition(canmagAbs3); */
     
     setupPathPlanner();
     pigeon=(Pigeon2)swerveDrive.swerveDriveConfiguration.imu.getIMU();
@@ -466,9 +481,9 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
-                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
+                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier,
+                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier), 0.8),
+                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
                         true,
                         false);
     });
@@ -489,13 +504,13 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
     return run(() -> {
 
-      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                                                 translationY.getAsDouble()), 0.8);
+      Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble() * driveMultiplier,
+                                                                                 translationY.getAsDouble() * driveMultiplier), 0.8);
 
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
-                                                                      headingX.getAsDouble(),
-                                                                      headingY.getAsDouble(),
+                                                                      headingX.getAsDouble() * driveMultiplier,
+                                                                      headingY.getAsDouble() * driveMultiplier,
                                                                       swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });

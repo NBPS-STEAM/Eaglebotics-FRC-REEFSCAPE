@@ -75,8 +75,8 @@ public class TelePathingCommands {
 
         //finDist is the distance from the final point of the path to the center of the reef
         //waypntDist is the distance from the waypoints the robot uses to circle the reef from the center of the reef
-        double finDist = 1.75;
-        double waypntDist = 2.15;
+        double finDist = 1.65;
+        double waypntDist = 2.0;
      
 
         //The current position of the robot
