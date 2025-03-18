@@ -214,9 +214,9 @@ public class OpCommands {
      */
     public SequentialCommandGroup bargeShootCommandGroup() {
         return new SequentialCommandGroup(
-            new InstantCommand(()->LEDSubsystem.getInstance().setBarge()),
+            //new InstantCommand(()->LEDSubsystem.getInstance().setBarge()),
             intakePositionCommand.new SetIntakePositionSetpoints(Constants.IntakePositionConstants.bargeLift, Constants.IntakePositionConstants.bargePivotTravel, 5),
-            intakePositionCommand.new SetPivotSetpoint(Constants.IntakePositionConstants.bargePivot, 5)
+            new InstantCommand(() -> intakePositionSubsystem.setPivotSetpoint(Constants.IntakePositionConstants.bargePivot, 5))
         );
     }
 
