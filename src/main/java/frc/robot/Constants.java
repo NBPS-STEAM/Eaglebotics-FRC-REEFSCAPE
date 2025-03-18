@@ -29,7 +29,11 @@ public final class Constants {
 
     public static final double Ball4Lift = 4.75; //BALL LEVEL 2
     public static final double Ball4Pivot = 0.17; //CIRCLE
+
+    public static final double Ball5Lift = 10.57; //Barge
+    public static final double Ball5Pivot = 0.32; 
   }
+
 
   public static final class OpConstantsForPipe {
     public static final double Pipe1Lift = 0.65; //DDown

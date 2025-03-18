@@ -299,7 +299,12 @@ public class OpCommands {
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball4Lift, 4),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball4Pivot, 4)
                 );
-                
+            case 5:
+                command= new SequentialCommandGroup(
+                    intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball5Lift),
+                    intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball5Pivot)
+                );
+        
                 break;
             default:
                 command= new StowCommand(intakePositionSubsystem);

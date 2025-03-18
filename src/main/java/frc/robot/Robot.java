@@ -7,12 +7,17 @@ package frc.robot;
 import java.io.File;
 import java.io.IOException;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
+
+
+
+
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SensorSubsystem;
@@ -183,13 +188,11 @@ public class Robot extends TimedRobot
   {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    try
-    {
-      new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve"));
-    } catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
+    m_robotContainer.setMotorBrake(true);
+    m_robotContainer.maxCurrentElevator[0]=0;
+    m_robotContainer.maxCurrentElevator[1]=0;
+    m_robotContainer.maxCurrentElevator[2]=0;//reset max current
+    CommandScheduler.getInstance().schedule(m_robotContainer.test);//run testing routine
   }
 
   /**
@@ -198,6 +201,20 @@ public class Robot extends TimedRobot
   @Override
   public void testPeriodic()
   {
+    double[] current=m_robotContainer.intakePosition.getCurrent();//save max current
+    for(int i=0;i<m_robotContainer.maxCurrentElevator.length;i++){
+        if(current[i]>m_robotContainer.maxCurrentElevator[i]){
+          m_robotContainer.maxCurrentElevator[i]=current[i];
+        }
+    }
+  }
+  public void printCurrentTest(){//print max current from testing mode
+    System.out.println("Max Current for 1. elevator motor 1, 2. elevator motor 2, 3. pivot motor");
+    for(double i:m_robotContainer.maxCurrentElevator){
+      System.out.print(i+" ");
+    }
+    SmartDashboard.putNumberArray("Max Current for 1. elevator motor 1, 2. elevator motor 2, 3. pivot motor",m_robotContainer.maxCurrentElevator);
+    System.out.println("");
   }
 
   /**

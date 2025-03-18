@@ -60,7 +60,6 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
         m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
         // Configure Pivot Motor
         m_pivotMotor1 = new SparkMax(IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
@@ -171,6 +170,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     public boolean atTargetPos() {
         return liftAtTargetPos() && pivotAtTargetPos();
+    }
+    public double[] getCurrent(){
+        double[] out={m_liftMotor1.getOutputCurrent(),m_liftMotor2.getOutputCurrent(),m_pivotMotor1.getOutputCurrent()};
+        return out;
     }
 
 }

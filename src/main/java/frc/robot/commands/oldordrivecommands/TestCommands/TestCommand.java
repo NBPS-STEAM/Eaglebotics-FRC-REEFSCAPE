@@ -1,0 +1,77 @@
+package frc.robot.commands.oldordrivecommands.TestCommands;
+
+import java.io.File;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
+import frc.robot.subsystems.BallIntakeSubsystem;
+import frc.robot.subsystems.HangSubsystem;
+import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.PipeIntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+
+public class TestCommand extends SequentialCommandGroup{
+  private final SwerveSubsystem drive;
+  private final PipeIntakeSubsystem pipeIntake;
+  private final IntakePositionSubsystem intakePosition;
+  private final BallIntakeSubsystem ballIntake;
+  private OpCommands opCommands;
+  
+  
+
+  public TestCommand(SwerveSubsystem drive, PipeIntakeSubsystem pipeIntake, IntakePositionSubsystem intakePosition,BallIntakeSubsystem ballIntake){
+    this.drive=drive;
+    this.ballIntake=ballIntake;
+    this.intakePosition=intakePosition;
+    this.pipeIntake=pipeIntake;
+    opCommands=new OpCommands(intakePosition);
+    addRequirements(drive,ballIntake,intakePosition,pipeIntake);
+    addCommands(group0());
+  }
+
+  public Command[] group0(){
+    Command[] commands={
+    new StowCommand(intakePosition),//stow
+    drive.driveCommand(//make sure robot is pointing forwards
+            () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+            () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+            () -> 0,
+            ()->1),
+    new WaitCommand(3),
+    drive.driveCommand(//point robot 90 degrees
+                () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+                () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+                () -> -1,
+                () -> 0),
+    new WaitCommand(3),
+    opCommands.pipeCommandGroup(3),//test pivot and elevator
+    new WaitCommand(1),
+    new StowCommand(intakePosition),//back to stow
+    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed)),//pipe intake test
+    new WaitCommand(0.5),
+    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed)),//outtake
+    new WaitCommand(0.5),
+    new InstantCommand(()->pipeIntake.setTargetVelocity(0)),
+    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallIntakeSpeed)),//ball intake
+    new WaitCommand(0.5),
+    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed)),//ball outtake
+    new WaitCommand(0.5),
+    new InstantCommand(()->ballIntake.setTargetVelocity(0)),
+    new InstantCommand(()->Robot.getInstance().printCurrentTest())//print max current to console
+    };
+    return commands;
+  }
+}

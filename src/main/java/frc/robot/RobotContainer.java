@@ -39,6 +39,7 @@ import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
+import frc.robot.commands.oldordrivecommands.TestCommands.TestCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
@@ -53,6 +54,7 @@ import swervelib.SwerveModule;
  */
 public class RobotContainer
 {
+  public double[] maxCurrentElevator={0,0,0};
   // The robot's subsystems and commands are defined here...
   public final VisionSubsystem vision=new VisionSubsystem();
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -68,6 +70,7 @@ public class RobotContainer
   IntakePositionCommand intakePositionCommands = new IntakePositionCommand(intakePosition);
   HangCommands hangCommands = new HangCommands(hangSubsystem);
   OpCommands opCommands = new OpCommands(intakePosition);
+  public final TestCommand test=new TestCommand(drivebase, pipeIntake, intakePosition, ballIntake);
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -241,6 +244,7 @@ public class RobotContainer
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
+    coDriverGamepad.PS().onTrue(opCommands.ballCommandGroup(5));
 
     // Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
@@ -335,6 +339,9 @@ public class RobotContainer
 
     SmartDashboard.putNumber("Lift target", intakePosition.getLiftSetpoint());
     SmartDashboard.putNumber("Pivot target", intakePosition.getPivotSetpoint());
+
+    SmartDashboard.putNumberArray("Lift Currents", intakePosition.getCurrent());
+
     int i=1;
     for (SwerveModule module : drivebase.swerveDrive.swerveDriveConfiguration.modules) {
       SmartDashboard.putNumber("module absolute "+i, module.getAbsoluteEncoder().getAbsolutePosition());
