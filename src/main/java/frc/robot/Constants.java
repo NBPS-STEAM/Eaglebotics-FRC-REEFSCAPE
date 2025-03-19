@@ -17,42 +17,44 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
   public static final SparkBaseConfig kBrakeInvertedConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
+  static final double ratio = 1.0;
+
   public static final class OpConstantsForBall {
-    public static final double Ball1Lift = 0.0; //GROUND BALL
+    public static final double Ball1Lift = 0.0 * ratio; //GROUND BALL
     public static final double Ball1Pivot = 0.05; //CROSS (X)
 
-    public static final double Ball2Lift = 1.75; //PROCESSOR BALL
+    public static final double Ball2Lift = 1.75 * ratio; //PROCESSOR BALL
     public static final double Ball2Pivot = 0.18; //SQUARE
 
-    public static final double Ball3Lift = 1.75; //BALL LEVEL 1
+    public static final double Ball3Lift = 1.75 * ratio; //BALL LEVEL 1
     public static final double Ball3Pivot = 0.18; //TRIANGLE
 
-    public static final double Ball4Lift = 4.75; //BALL LEVEL 2
+    public static final double Ball4Lift = 4.75 * ratio; //BALL LEVEL 2
     public static final double Ball4Pivot = 0.17; //CIRCLE
 
-    public static final double Ball5Lift = 10.57; //Barge
+    public static final double Ball5Lift = 10.57 * ratio; //Barge
     public static final double Ball5Pivot = 0.32; 
   }
 
 
   public static final class OpConstantsForPipe {
-    public static final double Pipe1Lift = 0.65; //DDown
+    public static final double Pipe1Lift = 0.65 * ratio; //DDown
     public static final double Pipe1Pivot = 0.35; //TROUGH
 
-    public static final double Pipe2Lift = 3.57; //DRight
+    public static final double Pipe2Lift = 3.57 * ratio; //DRight
     public static final double Pipe2Pivot = 0.21; //LEVEL 1
 
-    public static final double Pipe3Lift = 5.75; //DUp
+    public static final double Pipe3Lift = 5.75 * ratio; //DUp
     public static final double Pipe3Pivot = 0.255; //LEVEL 2
 
-    public static final double Pipe4Lift = 10.32; //DLeft
+    public static final double Pipe4Lift = 10.32 * ratio; //DLeft
     public static final double Pipe4Pivot = 0.25; //HIGHEST
     public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
-    public static final double PipeRetLift = 3.0;
+    public static final double PipeRetLift = 3.0 * ratio;
     public static final double PipeRetPivot = 0.33;
 
-    public static final double PipeIntakeLift = 3.2; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakeLift = 3.2 * ratio; //REDUNDENT WITH PipeRetLift
     public static final double PipeIntakePivot = 0.345; //REDUNDENT WITH PipeRetPivot
   }
 
@@ -109,12 +111,12 @@ public final class Constants {
     public static final double kPivotTolerance = 0.01;
 
     public static final double stowPivot = 0.32;
-    public static final double stowLift = 0.9;
+    public static final double stowLift = 0.9 * ratio;
 
     public static final double bargePivotTravel = 0.32; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
     public static final double bargePivotShove = 0.3; // applied while depositing barge
-    public static final double bargeLift = 10.57;
+    public static final double bargeLift = 10.57 * ratio;
   }
 
   public static final class HangConstants {
