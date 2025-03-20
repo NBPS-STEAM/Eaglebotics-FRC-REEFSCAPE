@@ -17,7 +17,7 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
   public static final SparkBaseConfig kBrakeInvertedConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
-  static final double ratio = 1.0;
+  static final double ratio = 4.0;
 
   public static final class OpConstantsForBall {
     public static final double Ball1Lift = 0.0 * ratio; //GROUND BALL
