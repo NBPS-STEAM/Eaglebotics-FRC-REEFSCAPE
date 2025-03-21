@@ -37,25 +37,34 @@ public class LEDSubsystem extends SubsystemBase{
 
 
     public void setAlgaeMode(){
-        m_Blinken.set(0.79); //Green-Blue
+        if (m_Blinken.get() == 0.07 || m_Blinken.get() == 0.27) {
+            m_Blinken.set(0.07); //Fast heartbeat for color 1, which should be Blue-Green
+        } else {
+            m_Blinken.set(0.79); //Green-Blue
+        }
     }
+
     public void setCoralMode(){
-        m_Blinken.set(0.63); //Red-Blue
+        if (m_Blinken.get() == 0.07 || m_Blinken.get() == 0.27) {
+            m_Blinken.set(0.27); //Fast heartbeat for color 2, which should be Red-Orange
+        } else {
+            m_Blinken.set(0.63); //Red-Orange
+        }
     }
 
     //Called when the robot begins traveling to a set position, blinks whichever color the robot was already in
     public void setGoingToPos(){
-        if (m_Blinken.get() == 0.79 || m_Blinken.get() == 0.07) {
-
-            m_Blinken.set(0.07); //Fast heartbeat for color 1 which should be Blue-Green
-
-        } else if (m_Blinken.get() == 0.63 || m_Blinken.get() == 0.27) {
-
-            m_Blinken.set(0.27); //Fast heatbeat for color 2 which should be Red-Orange
-
-        } else {
-
-            m_Blinken.set(-0.87); //If the other two for some reason fail, Confetti!!
+        if (m_Blinken.get() == 0.79 || m_Blinken.get() == 0.07)
+        {
+            m_Blinken.set(0.07); //Fast heartbeat for color 1, which should be Blue-Green
+        }
+        else if (m_Blinken.get() == 0.63 || m_Blinken.get() == 0.27)
+        {
+            m_Blinken.set(0.27); //Fast heatbeat for color 2, which should be Red-Orange
+        }
+        else
+        {
+            m_Blinken.set(-0.87); //If the other two fail for some reason, Confetti Pattern!!!
         }
     }
     
