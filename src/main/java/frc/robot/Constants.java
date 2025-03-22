@@ -99,7 +99,8 @@ public final class Constants {
     public static final double kLiftPosD = 0.0001;
     public static final double kLiftNegD = 0.003;
     public static final double kLiftIZone = 0.5;
-    public static final double kLiftTolerance = 0.05;
+    public static final double kLiftLoopTolerance = 0.05; // Tolerance for the closed loop
+    public static final double kLiftTolerance = 0.1; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
     public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
@@ -108,7 +109,8 @@ public final class Constants {
     public static final double kPivotI = 0.005;
     public static final double kPivotD = 0.0;
     public static final double kPivotIZone = 0.03;
-    public static final double kPivotTolerance = 0.01;
+    public static final double kPivotLoopTolerance = 0.01; // Tolerance for the closed loop
+    public static final double kPivotTolerance = 0.02; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
 
     public static final double stowPivot = 0.32;
     public static final double stowLift = 0.9 * ratio;
