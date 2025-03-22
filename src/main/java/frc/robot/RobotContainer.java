@@ -190,21 +190,25 @@ public class RobotContainer
     coDriverGamepad.PS().onTrue(opCommands.bargeShootCommandGroup());
   
     //Buttons - Ball Set Positions
+    //X/Cross - Ground Ball
     coDriverGamepad.cross().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(1),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
+    //Cirlce - Processor Ball
     coDriverGamepad.circle().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(2),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
+    //Square - Low Reef Ball
     coDriverGamepad.square().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(3),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
+    //Triangle - High Reef Ball
     coDriverGamepad.triangle().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(4),
       ballIntakeCommands. new Intake(),
