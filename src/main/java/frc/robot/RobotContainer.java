@@ -342,8 +342,6 @@ public class RobotContainer
       new StowCommand(intakePosition)
     ));
 
-    coDriverGamepad.PS().onTrue(opCommands.ballCommandGroup(5));
-
     // Pipe Set Positions
     coDriverGamepad.cross().and(inPipeMode).onTrue(opCommands.pipeCommandGroup(1));
     coDriverGamepad.circle().and(inPipeMode).onTrue(opCommands.pipeCommandGroup(2));
