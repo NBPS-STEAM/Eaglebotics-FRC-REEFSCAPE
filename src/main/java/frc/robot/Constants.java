@@ -141,8 +141,8 @@ public final class Constants {
 
   public static final class DriveConstants {
     //controls speed for telop
-    public static final double speedFull = 0.5;
-    public static final double speedSlow = 1.0;
+    public static final double speedFull = 1.0;
+    public static final double speedSlow = 0.5;
 
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss

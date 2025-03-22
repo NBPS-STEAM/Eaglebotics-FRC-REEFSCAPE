@@ -39,6 +39,7 @@ import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
+import frc.robot.commands.oldordrivecommands.ScoreCommands.TelePathingCommands;
 import frc.robot.commands.oldordrivecommands.TestCommands.TestCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
@@ -70,6 +71,7 @@ public class RobotContainer
   IntakePositionCommand intakePositionCommands = new IntakePositionCommand(intakePosition);
   HangCommands hangCommands = new HangCommands(hangSubsystem);
   OpCommands opCommands = new OpCommands(intakePosition);
+  TelePathingCommands telePathingCommands = new TelePathingCommands(drivebase);
   public final TestCommand test=new TestCommand(drivebase, pipeIntake, intakePosition, ballIntake);
 
 
@@ -112,27 +114,41 @@ public class RobotContainer
   //configureBindings2 is the bindings with sequential command groups and no coral/ball mode
   private void configureBindings2()
   {
-    //NON-CONTROLLER THINGS
-    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
-
-
-
 
     // DRIVER CONTROLS:
 
+    //Joysticks (Default) - Drive the robot
+    Command driveCommand = OpCommands.getDriveCommand(drivebase, driverGamepad);
+    drivebase.setDefaultCommand(driveCommand);
+    sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
+
     //L2 - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
-    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
+    //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
 
     //Options - Zeros the robot
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    //Many Buttons - Auto Turn
-    driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
-    driverGamepad.circle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60));
-    driverGamepad.R1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120));
-    driverGamepad.triangle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180));
-    driverGamepad.L1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240));
-    driverGamepad.square().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300));
+    //Many Buttons - Auto Drive
+    driverGamepad.povLeft().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(-1)));
+    driverGamepad.povDown().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(0)));
+    driverGamepad.povRight().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(1)));
+
+    driverGamepad.triangle().onTrue(telePathingCommands.goToReefFullCommand(0));
+    driverGamepad.L1().onTrue(telePathingCommands.goToReefFullCommand(1));
+    driverGamepad.square().onTrue(telePathingCommands.goToReefFullCommand(2));
+    driverGamepad.cross().onTrue(telePathingCommands.goToReefFullCommand(3));
+    driverGamepad.circle().onTrue(telePathingCommands.goToReefFullCommand(4));
+    driverGamepad.R1().onTrue(telePathingCommands.goToReefFullCommand(5));
+
+    driverGamepad.L2().onTrue(new ParallelCommandGroup(
+      telePathingCommands.goToCoralStationSmartRelativeCommand(0),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
+
+    driverGamepad.R2().onTrue(new ParallelCommandGroup(
+      telePathingCommands.goToCoralStationSmartRelativeCommand(1),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
     
 
 
@@ -146,11 +162,7 @@ public class RobotContainer
 
 
     //L1 - Pipe Intake
-    coDriverGamepad.L1().onTrue(new SequentialCommandGroup(
-      opCommands.getPipeIntakeCommand(),
-      pipeIntakeCommands. new Intake(),
-      new StowCommand(intakePosition)
-    ));
+    coDriverGamepad.L1().onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
 
     //L2 - Pipe Outtake
     coDriverGamepad.L2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
@@ -262,17 +274,34 @@ public class RobotContainer
 
     // Driver:
 
-    drivebase.setDefaultCommand(OpCommands.getDriveCommand(drivebase, driverGamepad));
+    Command driveCommand = OpCommands.getDriveCommand(drivebase, driverGamepad);
+    drivebase.setDefaultCommand(driveCommand);
+    sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
     //Gets the slow version (half speed) of the drive command. That way our robot can go slow.
-    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
+    //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    driverGamepad.cross().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0));
-    driverGamepad.circle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60));
-    driverGamepad.R1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120));
-    driverGamepad.triangle().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180));
-    driverGamepad.L1().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240));
-    driverGamepad.square().whileTrue(OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300));
+    // Auto Drive
+    driverGamepad.povLeft().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(-1)));
+    driverGamepad.povDown().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(0)));
+    driverGamepad.povRight().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(1)));
+
+    driverGamepad.triangle().onTrue(telePathingCommands.goToReefFullCommand(0));
+    driverGamepad.L1().onTrue(telePathingCommands.goToReefFullCommand(1));
+    driverGamepad.square().onTrue(telePathingCommands.goToReefFullCommand(2));
+    driverGamepad.cross().onTrue(telePathingCommands.goToReefFullCommand(3));
+    driverGamepad.circle().onTrue(telePathingCommands.goToReefFullCommand(4));
+    driverGamepad.R1().onTrue(telePathingCommands.goToReefFullCommand(5));
+
+    driverGamepad.L2().onTrue(new ParallelCommandGroup(
+      telePathingCommands.goToCoralStationSmartRelativeCommand(0),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
+
+    driverGamepad.R2().onTrue(new ParallelCommandGroup(
+      telePathingCommands.goToCoralStationSmartRelativeCommand(1),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
     
 
     //Co Driver:
@@ -288,11 +317,7 @@ public class RobotContainer
     coDriverGamepad.povRight().onTrue(toggleControlMode);
     
     // Pipe Intake/Outtake/Stop Controls
-    coDriverGamepad.L1().and(inPipeMode).onTrue(new SequentialCommandGroup(
-      opCommands.getPipeIntakeCommand(),
-      pipeIntakeCommands. new Intake(),
-      new StowCommand(intakePosition)
-    ));
+    coDriverGamepad.L1().and(inPipeMode).onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
 
     coDriverGamepad.L2().and(inPipeMode).onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
     //inPipeMode.and(coDriverGamepad.L2()).onTrue(intakeNormal);
@@ -352,6 +377,13 @@ public class RobotContainer
     coDriverGamepad.square().and(inPipeMode).onTrue(opCommands.pipeCommandGroup(3));
     coDriverGamepad.triangle().and(inPipeMode).onTrue(opCommands.pipeCommandGroup(4));
 
+  }
+
+
+  public Trigger sticksInUseTrigger(CommandPS5Controller gamepad) {
+    return new Trigger(() -> Math.abs(gamepad.getLeftX()) > Constants.OIConstants.kDriveDeadband
+                          || Math.abs(gamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband
+                          || Math.abs(gamepad.getRightX()) > Constants.OIConstants.kDriveDeadband);
   }
 
 
