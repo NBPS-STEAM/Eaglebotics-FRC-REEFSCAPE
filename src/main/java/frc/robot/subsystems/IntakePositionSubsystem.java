@@ -66,7 +66,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
                                     .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
                                     .pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftPosD)
                                     .iZone(IntakePositionConstants.kLiftIZone)
-                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftTolerance);
+                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftLoopTolerance);
 
         m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
@@ -82,7 +82,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
                                     .iZone(IntakePositionConstants.kPivotIZone)
                                     .positionWrappingInputRange(0, 1.0)
                                     .positionWrappingEnabled(true)
-                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kPivotTolerance);
+                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kPivotLoopTolerance);
 
         m_pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
