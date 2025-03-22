@@ -1,11 +1,11 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
@@ -17,8 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class TelePathingCommands {
@@ -31,9 +30,9 @@ public class TelePathingCommands {
 
 
 
-    /** Same as goToReefSmartRelativeCommand(), but uses the subPos that can be changed on-the-fly by setPreferredSubPos(). */
-    public Command goToReefFullCommand(int index) {
-        return goToReefSmartRelativeCommand(index, this::getPreferredSubPos);
+    /** Same as {@link #goToReefSmartRelativeDeferredCommand(int, IntSupplier)}, but uses the subPos that can be changed on-the-fly by setPreferredSubPos(). */
+    public Command goToPreferredReefDeferredCommand(int index) {
+        return goToReefSmartRelativeDeferredCommand(index, this::getPreferredSubPos);
     }
 
     private int preferredSubPos = 0;
@@ -51,45 +50,67 @@ public class TelePathingCommands {
 
 
     /**
-     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
-     * 1/2 are on the left side, and 4/5 are on the right side
-     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
-     * -1 is to the left of the driver, and 1 is to the right of the driver
-     */
-    public Command goToReefSmartRelativeCommand(int index, IntSupplier subPosSupplier) {
-        // This is dumb. I don't know whether to blame WPILib or Java.
-        return new SelectCommand<>(new HashMap<>(){{
-            put(-1, goToReefSmartRelativeCommand(index, -1));
-            put(0, goToReefSmartRelativeCommand(index, 0));
-            put(1, goToReefSmartRelativeCommand(index, 1));
-        }}, subPosSupplier::getAsInt);
+     * Generates the path for {@link #goToReefSmartRelativeDeferredCommand(int, int)} and {@link #goToReefSmartRelativeDeferredCommand(int, IntSupplier)}.
+    */
+    private Command goToReefSmartRelativeCommand(int index, int subPos) {
+        if (index == 0 || index == 1 || index == 5) subPos *= -1;
+        if (getAllianceSimple()) {
+            return GoToReefSmartCommand((6 - index) % 6, -subPos);
+        } else {
+            return GoToReefSmartCommand(index, subPos);
+        }
     }
 
     /**
-     * @see #goToReefSmartRelativeCommand(int, IntSupplier)
-    */
-    public Command goToReefSmartRelativeCommand(int index, int subPos) {
-        if (index == 0 || index == 1 || index == 5) subPos *= -1;
-        return new ConditionalCommand(
-            GoToReefSmartCommand((6 - index) % 6, -subPos),
-            GoToReefSmartCommand(index, subPos),
-            TelePathingCommands::getAllianceSimple
-        );
+     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
+     * 1/2 are on the left side, and 4/5 are on the right side.
+     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
+     * -1 is to the left of the driver, and 1 is to the right of the driver.
+     * <p>The path-follow command is generated every time this command initializes, not when it is first created.
+     * Requires the swerve subsystem.</p>
+     */
+    public Command goToReefSmartRelativeDeferredCommand(int index, int subPos) {
+        return new DeferredCommand(() -> goToReefSmartRelativeCommand(index, subPos), Set.of(swerve));
     }
 
-    /** 0 is left side, 1 is right side. */
-    public Command goToCoralStationSmartRelativeCommand(int side) {
-        return new ConditionalCommand(
-            goToCoralStationSmartCommand(side),
-            goToCoralStationSmartCommand((side + 1) % 2),
-            TelePathingCommands::getAllianceSimple
-        );
+    /** Same as {@link #goToReefSmartRelativeDeferredCommand(int, int)}, but takes a supplier for subPos that may provide different values between initializations. */
+    public Command goToReefSmartRelativeDeferredCommand(int index, IntSupplier subPosSupplier) {
+        return new DeferredCommand(() -> goToReefSmartRelativeCommand(index, subPosSupplier.getAsInt()), Set.of(swerve));
     }
+
+
+
+
+    /**
+     * Generates the path for {@link #goToCoralStationSmartRelativeDeferredCommand(int)}.
+    */
+    public Command goToCoralStationSmartRelativeCommand(int side) {
+        if (getAllianceSimple()) {
+            return goToCoralStationSmartCommand(side);
+        } else {
+            return goToCoralStationSmartCommand((side + 1) % 2);
+        }
+    }
+
+    /**
+     * 0 is left side, 1 is right side.
+     * <p>The path-follow command is generated every time this command initializes, not when it is first created.
+     * Requires the swerve subsystem.</p>
+     */
+    public Command goToCoralStationSmartRelativeDeferredCommand(int side) {
+        return new DeferredCommand(() -> goToCoralStationSmartRelativeCommand(side), Set.of(swerve));
+    }
+
+
+
+
+
 
     /**
      * @return true if on red alliance (path will be flipped), false if on blue or invalid alliance
      */
     private static boolean getAllianceSimple() {
+        // Why in the world does DriverStation.getAlliance() return an enum wrapped in an Optional???
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent())
         {

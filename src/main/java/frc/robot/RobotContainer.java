@@ -133,20 +133,20 @@ public class RobotContainer
     driverGamepad.povDown().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(0)));
     driverGamepad.povRight().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(1)));
 
-    driverGamepad.triangle().onTrue(telePathingCommands.goToReefFullCommand(0));
-    driverGamepad.L1().onTrue(telePathingCommands.goToReefFullCommand(1));
-    driverGamepad.square().onTrue(telePathingCommands.goToReefFullCommand(2));
-    driverGamepad.cross().onTrue(telePathingCommands.goToReefFullCommand(3));
-    driverGamepad.circle().onTrue(telePathingCommands.goToReefFullCommand(4));
-    driverGamepad.R1().onTrue(telePathingCommands.goToReefFullCommand(5));
+    driverGamepad.triangle().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(0));
+    driverGamepad.L1().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(1));
+    driverGamepad.square().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(2));
+    driverGamepad.cross().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(3));
+    driverGamepad.circle().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(4));
+    driverGamepad.R1().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(5));
 
     driverGamepad.L2().onTrue(new ParallelCommandGroup(
-      telePathingCommands.goToCoralStationSmartRelativeCommand(0),
+      telePathingCommands.goToCoralStationSmartRelativeDeferredCommand(0),
       opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
     ));
 
     driverGamepad.R2().onTrue(new ParallelCommandGroup(
-      telePathingCommands.goToCoralStationSmartRelativeCommand(1),
+      telePathingCommands.goToCoralStationSmartRelativeDeferredCommand(1),
       opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
     ));
     
@@ -286,20 +286,22 @@ public class RobotContainer
     driverGamepad.povDown().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(0)));
     driverGamepad.povRight().onTrue(new InstantCommand(() -> telePathingCommands.setPreferredSubPos(1)));
 
-    driverGamepad.triangle().onTrue(telePathingCommands.goToReefFullCommand(0));
-    driverGamepad.L1().onTrue(telePathingCommands.goToReefFullCommand(1));
-    driverGamepad.square().onTrue(telePathingCommands.goToReefFullCommand(2));
-    driverGamepad.cross().onTrue(telePathingCommands.goToReefFullCommand(3));
-    driverGamepad.circle().onTrue(telePathingCommands.goToReefFullCommand(4));
-    driverGamepad.R1().onTrue(telePathingCommands.goToReefFullCommand(5));
+    // Unlike all other commands, these "deferred" commands are generated on command initialization, not instantiation.
+    // In other words, these path-following commands won't be generated until the command starts running.
+    driverGamepad.triangle().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(0));
+    driverGamepad.L1().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(1));
+    driverGamepad.square().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(2));
+    driverGamepad.cross().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(3));
+    driverGamepad.circle().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(4));
+    driverGamepad.R1().onTrue(telePathingCommands.goToPreferredReefDeferredCommand(5));
 
     driverGamepad.L2().onTrue(new ParallelCommandGroup(
-      telePathingCommands.goToCoralStationSmartRelativeCommand(0),
+      telePathingCommands.goToCoralStationSmartRelativeDeferredCommand(0),
       opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
     ));
 
     driverGamepad.R2().onTrue(new ParallelCommandGroup(
-      telePathingCommands.goToCoralStationSmartRelativeCommand(1),
+      telePathingCommands.goToCoralStationSmartRelativeDeferredCommand(1),
       opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
     ));
     
