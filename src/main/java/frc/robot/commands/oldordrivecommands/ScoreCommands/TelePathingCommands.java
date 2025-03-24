@@ -306,12 +306,22 @@ public class TelePathingCommands {
             //Creates a list of poses from each angle from sortedAngleList
             //as well as adding the final point
             ArrayList<Pose2d> poseList = new ArrayList<>();
+            if (goCounterCW) {
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
                     waypntDist * Math.cos(ang) + 4.5,
                     waypntDist * Math.sin(ang) + 4.0,
                     Rotation2d.fromRadians(ang + Math.PI/2)
                 ));
+            }
+            } else {
+                for (Double ang : sortedAngleList) {
+                    poseList.add(new Pose2d(
+                        waypntDist * Math.cos(ang) + 4.5,
+                        waypntDist * Math.sin(ang) + 4.0,
+                        Rotation2d.fromRadians(ang - Math.PI/2)
+                    ));
+                }
             }
             poseList.add(new Pose2d(
                 finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
