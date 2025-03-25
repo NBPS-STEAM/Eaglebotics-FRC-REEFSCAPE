@@ -3,6 +3,7 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 import java.util.List;
 import java.util.Set;
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class TelePathingCommands {
@@ -30,28 +32,45 @@ public class TelePathingCommands {
 
 
 
-    /** Same as {@link #goToReefSmartRelativeDeferredCommand(int, IntSupplier)}, but uses the subPos that can be changed on-the-fly by setPreferredSubPos(). */
-    public Command goToPreferredReefDeferredCommand(int index) {
-        return goToReefSmartRelativeDeferredCommand(index, this::getPreferredSubPos);
+    private Supplier<Command> autoDriveCommandSupplier = () -> new InstantCommand();
+    private int autoDriveReefSubPos = 0;
+    private int autoDriveCoralSide = 0;
+
+    /**
+     * The path-follow command is generated every time this command initializes, not when it is first created.
+     * Requires the swerve subsystem.
+     */
+    public Command getAutoDriveDeferredCommand() {
+        // this::getAutoDriveCommand is used instead of autoDriveCommandSupplier because the value of autoDriveCommandSupplier may change after this runs.
+        return new DeferredCommand(this::getAutoDriveCommand, Set.of(swerve));
     }
 
-    private int preferredSubPos = 0;
-
-    /** Get the subPos used by goToReefFullCommand(). */
-    public int getPreferredSubPos() {
-        return preferredSubPos;
+    public Command getAutoDriveCommand() {
+        return autoDriveCommandSupplier.get();
+    }
+    
+    public void setAutoDriveGoToReef(int index) {
+        autoDriveCommandSupplier = () -> goToReefSmartRelativeCommand(index, autoDriveReefSubPos);
     }
 
-    /** Set the subPos used by goToReefFullCommand(). */
-    public void setPreferredSubPos(int subPos) {
-        preferredSubPos = subPos;
+    public void setAutoDriveGoToCoralStation() {
+        autoDriveCommandSupplier = () -> goToCoralStationSmartRelativeCommand(autoDriveCoralSide);
+    }
+
+    public void setAutoDriveSide(int side) {
+        autoDriveReefSubPos = side;
+        if (side == 1) autoDriveCoralSide = 1;
+        else if (side == -1) autoDriveCoralSide = 0;
     }
 
 
 
     /**
-     * Generates the path for {@link #goToReefSmartRelativeDeferredCommand(int, int)} and {@link #goToReefSmartRelativeDeferredCommand(int, IntSupplier)}.
-    */
+     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
+     * 1/2 are on the left side, and 4/5 are on the right side.
+     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
+     * -1 is to the left of the driver, and 1 is to the right of the driver.
+     */
     private Command goToReefSmartRelativeCommand(int index, int subPos) {
         if (index == 0 || index == 1 || index == 5) subPos *= -1;
         if (getAllianceSimple()) {
@@ -61,44 +80,18 @@ public class TelePathingCommands {
         }
     }
 
+
+
+
     /**
-     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
-     * 1/2 are on the left side, and 4/5 are on the right side.
-     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
-     * -1 is to the left of the driver, and 1 is to the right of the driver.
-     * <p>The path-follow command is generated every time this command initializes, not when it is first created.
-     * Requires the swerve subsystem.</p>
+     * 0 is left side, 1 is right side.
      */
-    public Command goToReefSmartRelativeDeferredCommand(int index, int subPos) {
-        return new DeferredCommand(() -> goToReefSmartRelativeCommand(index, subPos), Set.of(swerve));
-    }
-
-    /** Same as {@link #goToReefSmartRelativeDeferredCommand(int, int)}, but takes a supplier for subPos that may provide different values between initializations. */
-    public Command goToReefSmartRelativeDeferredCommand(int index, IntSupplier subPosSupplier) {
-        return new DeferredCommand(() -> goToReefSmartRelativeCommand(index, subPosSupplier.getAsInt()), Set.of(swerve));
-    }
-
-
-
-
-    /**
-     * Generates the path for {@link #goToCoralStationSmartRelativeDeferredCommand(int)}.
-    */
     public Command goToCoralStationSmartRelativeCommand(int side) {
         if (getAllianceSimple()) {
             return goToCoralStationSmartCommand(side);
         } else {
             return goToCoralStationSmartCommand((side + 1) % 2);
         }
-    }
-
-    /**
-     * 0 is left side, 1 is right side.
-     * <p>The path-follow command is generated every time this command initializes, not when it is first created.
-     * Requires the swerve subsystem.</p>
-     */
-    public Command goToCoralStationSmartRelativeDeferredCommand(int side) {
-        return new DeferredCommand(() -> goToCoralStationSmartRelativeCommand(side), Set.of(swerve));
     }
 
 
