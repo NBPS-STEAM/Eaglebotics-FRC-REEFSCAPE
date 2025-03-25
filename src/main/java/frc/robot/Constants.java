@@ -21,16 +21,16 @@ public final class Constants {
 
   public static final class OpConstantsForBall {
     public static final double Ball1Lift = 0.0 * ratio; //GROUND BALL
-    public static final double Ball1Pivot = 0.05; //CROSS (X)
+    public static final double Ball1Pivot = 0.05;
 
     public static final double Ball2Lift = 1.75 * ratio; //PROCESSOR BALL
-    public static final double Ball2Pivot = 0.18; //SQUARE
+    public static final double Ball2Pivot = 0.18;
 
     public static final double Ball3Lift = 1.75 * ratio; //BALL LEVEL 1
-    public static final double Ball3Pivot = 0.18; //TRIANGLE
+    public static final double Ball3Pivot = 0.18;
 
     public static final double Ball4Lift = 4.75 * ratio; //BALL LEVEL 2
-    public static final double Ball4Pivot = 0.17; //CIRCLE
+    public static final double Ball4Pivot = 0.17;
 
     public static final double Ball5Lift = 10.57 * ratio; //Barge
     public static final double Ball5Pivot = 0.32; 
@@ -38,17 +38,17 @@ public final class Constants {
 
 
   public static final class OpConstantsForPipe {
-    public static final double Pipe1Lift = 0.65 * ratio; //DDown
-    public static final double Pipe1Pivot = 0.35; //TROUGH
+    public static final double Pipe1Lift = 0.65 * ratio; //TROUGH (LEVEL 1)
+    public static final double Pipe1Pivot = 0.35;
 
-    public static final double Pipe2Lift = 3.57 * ratio; //DRight
-    public static final double Pipe2Pivot = 0.21; //LEVEL 1
+    public static final double Pipe2Lift = 3.57 * ratio; //LEVEL 2
+    public static final double Pipe2Pivot = 0.21;
 
-    public static final double Pipe3Lift = 5.75 * ratio; //DUp
-    public static final double Pipe3Pivot = 0.255; //LEVEL 2
+    public static final double Pipe3Lift = 5.75 * ratio; //LEVEL 3
+    public static final double Pipe3Pivot = 0.255;
 
-    public static final double Pipe4Lift = 10.32 * ratio; //DLeft
-    public static final double Pipe4Pivot = 0.25; //HIGHEST
+    public static final double Pipe4Lift = 10.32 * ratio; //LEVEL 4
+    public static final double Pipe4Pivot = 0.25;
     public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
     public static final double PipeRetLift = 3.0 * ratio;
@@ -64,24 +64,20 @@ public final class Constants {
     
     // Pipe Intake:
 
-    // TODO: TUNE
     public static final double kPipeIntakeSpeed = 0.75;
     public static final double kPipeOuttakeSpeed = -0.4;
     public static final double kPipeOuttakeL1Speed = -0.2;
 
-    // TODO: SET TO REAL MOTOR ID
     public static final int kPipeMotorId = 4; // CAN OK
     public static final int kPipeSensorChannel = 1; // CAN OK
 
 
     // Ball Intake:
 
-    // TODO: TUNE
     public static final double kBallIntakeSpeed = 1;
     public static final double kBallOuttakeSpeed = -0.5;
     public static final double kBallOuttakeBargeSpeed = -1.0;
 
-    // TODO: SET TO REAL MOTOR ID
     public static final int kBallMotorId1 = 12; // CAN OK
     public static final int kBallMotorId2 = 13; // CAN OK
     public static final int kBallSensorChannel = 0; // CAN OK
@@ -124,15 +120,9 @@ public final class Constants {
   public static final class HangConstants {
     // Parameters related to the Hang Subsystem
 
-    // TODO: TUNE
-    public static final double kHangTwistPosition = 10.0;
+    public static final double kHangUnlockPos = 1.0; // UNTUNED
+    public static final double kHangTwistPower = 1.0; // UNTUNED
 
-    public static final double kHangP = 5e-5;
-    public static final double kHangI = 0;
-    public static final double kHangD = 0;
-    public static final double kHangIz = 0;
-
-    // TODO: SET TO REAL MOTOR ID
     public static final int kHangMotor1Id = 6; // CAN OK
     public static final int kHangMotor2Id = 7; // CAN OK
     public static final int kServo1Channel = 0; // CAN OK

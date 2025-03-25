@@ -3,17 +3,15 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.IntakePositionConstants;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.utils.Gamepieces;
+import frc.utils.IntakeState;
 
 public final class PipeIntakeCommands {
 
@@ -22,6 +20,18 @@ public final class PipeIntakeCommands {
 
     public PipeIntakeCommands(PipeIntakeSubsystem pipeIntakeSubsystem) {
         this.pipeIntakeSubsystem = pipeIntakeSubsystem;
+    }
+
+
+
+    /** Produces a command that will toggle the intake, starting to intake if not already or stopping if so. */
+    public Command toggleIntake() {
+        return new ConditionalCommand(new StopIntake(), new Intake(), () -> pipeIntakeSubsystem.isInState(IntakeState.INTAKE));
+    }
+
+    /** Produces a command that will toggle the outtake, starting to outtake if not already or stopping if so. */
+    public Command toggleOuttake() {
+        return new ConditionalCommand(new StopIntake(), new Outtake(), () -> pipeIntakeSubsystem.isInState(IntakeState.OUTTAKE));
     }
 
 
@@ -65,13 +75,13 @@ public final class PipeIntakeCommands {
 
         @Override 
         public void initialize() {
-            pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed);
+            pipeIntakeSubsystem.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed, IntakeState.INTAKE);
             LEDSubsystem.getInstance().setIntake();
         }
 
         @Override
         public void end(boolean interrupted){
-            pipeIntakeSubsystem.setTargetVelocity(0);
+            pipeIntakeSubsystem.setTargetVelocity(0, IntakeState.STOP);
             LEDSubsystem.getInstance().setPlacePos();
         }
 
@@ -105,13 +115,13 @@ public final class PipeIntakeCommands {
         @Override 
         public void initialize() {
             time=Timer.getFPGATimestamp()+0.5;
-            pipeIntakeSubsystem.setTargetVelocity(speed);
+            pipeIntakeSubsystem.setTargetVelocity(speed, IntakeState.OUTTAKE);
             LEDSubsystem.getInstance().setOuttake();
         }
 
         @Override
         public void end(boolean interrupted){
-            pipeIntakeSubsystem.setTargetVelocity(0);
+            pipeIntakeSubsystem.setTargetVelocity(0, IntakeState.STOP);
             LEDSubsystem.getInstance().setPlacePos();
         }
 
@@ -132,7 +142,7 @@ public final class PipeIntakeCommands {
 
         @Override 
         public void initialize() {
-            pipeIntakeSubsystem.setTargetVelocity(0);
+            pipeIntakeSubsystem.setTargetVelocity(0, IntakeState.STOP);
         }
 
         @Override 

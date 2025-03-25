@@ -22,6 +22,7 @@ import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.utils.IntakeState;
 
 public class TestCommand extends SequentialCommandGroup{
   private final SwerveSubsystem drive;
@@ -60,16 +61,16 @@ public class TestCommand extends SequentialCommandGroup{
     opCommands.pipeCommandGroup(3),//test pivot and elevator
     new WaitCommand(1),
     new StowCommand(intakePosition),//back to stow
-    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed)),//pipe intake test
+    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeIntakeSpeed, IntakeState.INTAKE)),//pipe intake test
     new WaitCommand(0.5),
-    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed)),//outtake
+    new InstantCommand(()->pipeIntake.setTargetVelocity(Constants.IntakeConstants.kPipeOuttakeSpeed, IntakeState.OUTTAKE)),//outtake
     new WaitCommand(0.5),
-    new InstantCommand(()->pipeIntake.setTargetVelocity(0)),
-    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallIntakeSpeed)),//ball intake
+    new InstantCommand(()->pipeIntake.setTargetVelocity(0, IntakeState.STOP)),
+    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallIntakeSpeed, IntakeState.INTAKE)),//ball intake
     new WaitCommand(0.5),
-    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed)),//ball outtake
+    new InstantCommand(()->ballIntake.setTargetVelocity(Constants.IntakeConstants.kBallOuttakeSpeed, IntakeState.OUTTAKE)),//ball outtake
     new WaitCommand(0.5),
-    new InstantCommand(()->ballIntake.setTargetVelocity(0)),
+    new InstantCommand(()->ballIntake.setTargetVelocity(0, IntakeState.STOP)),
     new InstantCommand(()->Robot.getInstance().printCurrentTest())//print max current to console
     };
     return commands;

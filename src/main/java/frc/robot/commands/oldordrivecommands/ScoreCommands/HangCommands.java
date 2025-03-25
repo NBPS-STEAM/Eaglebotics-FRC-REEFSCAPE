@@ -35,15 +35,13 @@ public final class HangCommands {
 
 
     //Activates the hang routine
-    public static class Activate extends Command {
+    public class Activate extends Command {
 
         private final double targetPower;
         private double position;
-        private final HangSubsystem hangSubsystem;
         private boolean toggleState = false;
 
-        public Activate(HangSubsystem hangSubsystem, double power, double position){
-            this.hangSubsystem = hangSubsystem;
+        public Activate(double power, double position){
             this.targetPower = power;
             this.position = position;
             addRequirements(hangSubsystem);

@@ -7,12 +7,15 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.utils.IntakeState;
 
 public class BallIntakeSubsystem extends SubsystemBase {
 
     // Instance
     public final SparkMax m1_motor;
     public final SparkMax m2_motor;
+
+    private IntakeState state = IntakeState.STOP;
 
     public BallIntakeSubsystem() {
         // initialize motor
@@ -23,11 +26,24 @@ public class BallIntakeSubsystem extends SubsystemBase {
         m2_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
-    public void setTargetVelocity(double speed) {
+    /** Set the target velocity of the intake and the state that the intake is now considered to be in. Pass {@code IntakeState.NONE} to avoid changing the state. */
+    public void setTargetVelocity(double speed, IntakeState state) {
         m1_motor.set(-speed);
         m2_motor.set(speed);
+        if (state != IntakeState.NONE) this.state = state;
     }
 
+    /** Get the state of the intake (i.e. stopped, intaking, outtaking). */
+    public IntakeState getState() {
+        return state;
+    }
+
+    /** Whether the intake is in a particular state. Shorthand for {@code getState() == state} */
+    public boolean isInState(IntakeState state) {
+        return getState() == state;
+    }
+    
+    /** Get whether the ball sensor is triggered. Shorthand for {@code SensorSubsystem.getInstance().ball} */
     public boolean getHasBall(){
         return SensorSubsystem.getInstance().ball;
     }
