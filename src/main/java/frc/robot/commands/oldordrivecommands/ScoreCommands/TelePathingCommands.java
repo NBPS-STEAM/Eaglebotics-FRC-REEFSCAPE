@@ -1,6 +1,9 @@
 package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,7 +16,10 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class TelePathingCommands {
@@ -23,6 +29,91 @@ public class TelePathingCommands {
     public TelePathingCommands(SwerveSubsystem swerve) {
         this.swerve = swerve;
     }
+
+
+
+    private Supplier<Command> autoDriveCommandSupplier = () -> new InstantCommand();
+    private int autoDriveReefSubPos = 0;
+    private int autoDriveCoralSide = 0;
+
+    /**
+     * The path-follow command is generated every time this command initializes, not when it is first created.
+     * Requires the swerve subsystem.
+     */
+    public Command getAutoDriveDeferredCommand() {
+        // this::getAutoDriveCommand is used instead of autoDriveCommandSupplier because the value of autoDriveCommandSupplier may change after this runs.
+        return new DeferredCommand(this::getAutoDriveCommand, Set.of(swerve));
+    }
+
+    public Command getAutoDriveCommand() {
+        return autoDriveCommandSupplier.get();
+    }
+    
+    public void setAutoDriveGoToReef(int index) {
+        autoDriveCommandSupplier = () -> goToReefSmartRelativeCommand(index, autoDriveReefSubPos);
+    }
+
+    public void setAutoDriveGoToCoralStation() {
+        autoDriveCommandSupplier = () -> goToCoralStationSmartRelativeCommand(autoDriveCoralSide);
+    }
+
+    public void setAutoDriveSide(int side) {
+        autoDriveReefSubPos = side;
+        if (side == 1) autoDriveCoralSide = 1;
+        else if (side == -1) autoDriveCoralSide = 0;
+    }
+
+
+
+    /**
+     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
+     * 1/2 are on the left side, and 4/5 are on the right side.
+     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
+     * -1 is to the left of the driver, and 1 is to the right of the driver.
+     */
+    private Command goToReefSmartRelativeCommand(int index, int subPos) {
+        if (index == 0 || index == 1 || index == 5) subPos *= -1;
+        if (getAllianceSimple()) {
+            return GoToReefSmartCommand((6 - index) % 6, -subPos);
+        } else {
+            return GoToReefSmartCommand(index, subPos);
+        }
+    }
+
+
+
+
+    /**
+     * 0 is left side, 1 is right side.
+     */
+    public Command goToCoralStationSmartRelativeCommand(int side) {
+        if (getAllianceSimple()) {
+            return goToCoralStationSmartCommand(side);
+        } else {
+            return goToCoralStationSmartCommand((side + 1) % 2);
+        }
+    }
+
+
+
+
+
+
+    /**
+     * @return true if on red alliance (path will be flipped), false if on blue or invalid alliance
+     */
+    private static boolean getAllianceSimple() {
+        // Why in the world does DriverStation.getAlliance() return an enum wrapped in an Optional???
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent())
+        {
+            return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+    }
+
+
+
 
     public Command GoToReefCommand(int index) {
 
@@ -52,23 +143,24 @@ public class TelePathingCommands {
     }
 
 
-    //It looks really bad and complex, because it is
-    //but basically it takes the target point, the robot position, and determines
-    //whether or not to go in a straight line (canGoStraight).
-    //If it can't go straight, it will determine the fastest direction to go around the reef (goCounterCW)
-    //After determining the direction, it loops through the corners of the reef to see which are
-    //between the current angle from the reef and the target angle
-    //then sorts them into a list by distance from the robot
-    //then creates a list of poses (I'm not sure but the robot might end up backwards as it circles the reef)
-
-    //index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
-    //1/2 are on the blue-side, and 4/5 are on the red side
-    //subPos is where on the edge of the reef the robot will go, where 0 is the center,
-    //1 is the coral pole in the positive direction (index 1 to 2 to 3 etc)
-
-    //There's probably a mistake, but I did test it in IntelliJ and it seemed alright
-    //There was also probably a simpler way but oh well
-    
+    /**
+     * It looks really bad and complex, because it is
+     * but basically it takes the target point, the robot position, and determines
+     * whether or not to go in a straight line (canGoStraight).
+     * If it can't go straight, it will determine the fastest direction to go around the reef (goCounterCW)
+     * After determining the direction, it loops through the corners of the reef to see which are
+     * between the current angle from the reef and the target angle
+     * then sorts them into a list by distance from the robot
+     * then creates a list of poses (I'm not sure but the robot might end up backwards as it circles the reef)
+     *
+     * index is which side of the reef the robot is going to, where 0 is the barge-side, 3 is the far-side,
+     * 1/2 are on the blue-side, and 4/5 are on the red side
+     * subPos is where on the edge of the reef the robot will go, where 0 is the center,
+     * 1 is the coral pole in the positive direction (index 1 to 2 to 3 etc)
+     *
+     * There's probably a mistake, but I did test it in IntelliJ and it seemed alright
+     * There was also probably a simpler way but oh well
+     */
     public Command GoToReefSmartCommand(int index, int subPos) {
 
         PathPlannerPath path;
@@ -207,12 +299,22 @@ public class TelePathingCommands {
             //Creates a list of poses from each angle from sortedAngleList
             //as well as adding the final point
             ArrayList<Pose2d> poseList = new ArrayList<>();
+            if (goCounterCW) {
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
                     waypntDist * Math.cos(ang) + 4.5,
                     waypntDist * Math.sin(ang) + 4.0,
                     Rotation2d.fromRadians(ang + Math.PI/2)
                 ));
+            }
+            } else {
+                for (Double ang : sortedAngleList) {
+                    poseList.add(new Pose2d(
+                        waypntDist * Math.cos(ang) + 4.5,
+                        waypntDist * Math.sin(ang) + 4.0,
+                        Rotation2d.fromRadians(ang - Math.PI/2)
+                    ));
+                }
             }
             poseList.add(new Pose2d(
                 finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
@@ -254,8 +356,8 @@ public class TelePathingCommands {
 
     
     
-    //Index 0 is the red-side processor, 1 is the blue-side processor
-    public Command goToProcessorSmartCommand(int ind) {
+    /** Index 0 is the red-side coral station, 1 is the blue-side coral station */
+    public Command goToCoralStationSmartCommand(int ind) {
 
         PathPlannerPath path;
 
@@ -323,7 +425,7 @@ public class TelePathingCommands {
 
         }
 
-        //This is always added, whether or not it can go straight, as its the processor position
+        //This is always added, whether or not it can go straight, as its the coral station position
         poseList.add(new Pose2d(
             targX,
             targY,

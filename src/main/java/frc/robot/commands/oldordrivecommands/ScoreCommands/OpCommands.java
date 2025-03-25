@@ -67,8 +67,8 @@ public class OpCommands {
         turnController.setSetpoint(degrees);
 
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband), 3),
-            () -> Math.pow(MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband), 3),
+            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
+            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
             () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
 
         return driveFieldOrientedAnglularVelocity;
@@ -164,6 +164,15 @@ public class OpCommands {
         return new SequentialCommandGroup(
         intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.PipeIntakeLift, 0),
         intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.PipeIntakePivot, 0)
+        );
+    }
+
+    /** Same as getPipeIntakeCommand(), but afterwards runs the pipe intake and then stows. */
+    public SequentialCommandGroup getPipeIntakeFullCommand(PipeIntakeCommands pipeIntakeCommands) {
+        return new SequentialCommandGroup(
+            getPipeIntakeCommand(),
+            pipeIntakeCommands. new Intake(),
+            new StowCommand(intakePositionSubsystem)
         );
     }
 
