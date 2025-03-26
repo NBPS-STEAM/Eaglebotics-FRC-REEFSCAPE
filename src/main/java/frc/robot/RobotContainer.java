@@ -508,11 +508,12 @@ public class RobotContainer
     //Joysticks:C2:R1 - Toggle Ball Outtake
     buttonPanel.button(1).onTrue(ballIntakeCommands.toggleOuttake());
 
-    //Joysticks - Manual Lift/Pivot
-    buttonPanel.axisMagnitudeGreaterThan(0, Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(0), null));
-            buttonPanel.axisMagnitudeGreaterThan(2, Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(() -> -buttonPanel.getRawAxis(2), null));
+    //Joysticks:Left - Manual Pivot
+    buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(1), null));
+    //Joysticks:Right - Manual Lift
+    buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveDeadband)
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -buttonPanel.getRawAxis(5), null));
     
     //Gamepad:R1 (hold for 0.25s) - Zero Lift
     coDriverGamepad.R1().debounce(0.25).onTrue(Commands.runOnce(intakePosition::zeroLift));
@@ -597,6 +598,10 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public void stopIntakePosition() {
+    intakePosition.stopIntakePosition();
   }
 
 

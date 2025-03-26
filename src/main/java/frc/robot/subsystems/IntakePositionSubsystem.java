@@ -87,7 +87,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Go to Stow Position
-        setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot, 0);
+        //setIntakePositionSetpoints(IntakePositionConstants.stowLift, IntakePositionConstants.stowPivot, 0);
     }
     
     public void OverrideTempLimit(){
@@ -186,6 +186,11 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void setIntakePositionSetpoints(double liftSetpoint, double pivotSetpoint, Integer forLevel) {
         setLiftSetpoint(liftSetpoint, forLevel);
         setPivotSetpoint(pivotSetpoint, forLevel);
+    }
+
+    public void stopIntakePosition() {
+        setLiftSpeed(0);
+        setPivotSpeed(0);
     }
 
     public int getPositionLevel() {
