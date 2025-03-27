@@ -221,8 +221,13 @@ public final class Constants {
   }
 
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = .1;
+    /* public static final int kDriverGamepadPort = 0;
+    public static final int kCoDriverGamepadPort = 1;
+    public static final int kButtonPanelPort = 2; */
+
+    // This deadband is too narrow for most joysticks, including stock PS5 controllers. For future years, you may need to make this bigger.
+    public static final double kDriveDeadband = 0.05;
+    public static final double kDriveLargeDeadband = 0.1; // This deadband is typical.
   }
 
   public static final class AutoConstants {

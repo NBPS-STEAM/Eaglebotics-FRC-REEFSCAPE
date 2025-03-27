@@ -509,10 +509,10 @@ public class RobotContainer
     buttonPanel.button(2).onTrue(ballIntakeCommands.toggleOuttake());
 
     //Joysticks:Left - Manual Lift
-    buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveDeadband)
+    buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveLargeDeadband)
             .whileTrue(intakePositionCommands.new AdjustLift(() -> buttonPanel.getRawAxis(1)));
     //Joysticks:Right - Manual Pivot
-    buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveDeadband)
+    buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveLargeDeadband)
             .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(5)));
     
     //Gamepad:R1 (hold for 0.25s) - Zero Lift
