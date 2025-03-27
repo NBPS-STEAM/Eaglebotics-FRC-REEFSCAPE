@@ -17,7 +17,7 @@ public final class Constants {
   public static final SparkBaseConfig kBrakeConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake);
   public static final SparkBaseConfig kBrakeInvertedConfig = new SparkMaxConfig().idleMode(IdleMode.kBrake).inverted(true);
 
-  static final double ratio = 4.0;
+  static final double ratio = 1.0;
 
   public static final class OpConstantsForBall {
     public static final double Ball1Lift = 0.0 * ratio; //GROUND BALL
@@ -89,15 +89,15 @@ public final class Constants {
     public static final int kLiftMotor1Id = 5; // CAN OK (NO ENCODER, FOLLOWER MOTOR)
     public static final int kLiftMotor2Id = 11; // CAN OK (HAS ALTERNATE ENCODER, LEADING MOTOR)
 
-    public static final double kLiftPosP = 1.75; // Used when the lift is going up (error is positive)
-    public static final double kLiftNegP = 0.3; // Used when the lift is going down (error is negative)
-    public static final double kLiftI = 0.0015;
-    public static final double kLiftPosD = 0.0001;
-    public static final double kLiftNegD = 0.003;
-    public static final double kLiftIZone = 0.5;
+    public static final double kLiftPosP = 0.4; // Used when the lift is going up (error is positive)
+    public static final double kLiftNegP = 0.4; // Used when the lift is going down (error is negative)
+    public static final double kLiftI = 0.005;//0.0015;
+    public static final double kLiftPosD = 0;//0.0001;
+    public static final double kLiftNegD = 0;//0.003;
+    public static final double kLiftIZone = 0.2;
     public static final double kLiftLoopTolerance = 0.05; // Tolerance for the closed loop
     public static final double kLiftTolerance = 0.1; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
-    public static final double kLiftAntigrav = 0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
+    public static final double kLiftAntigrav = 0;//0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
 
     public static final int kPivotMotor1Id = 27; // CAN OK (HAS ABSOLUTE ENCODER)
 

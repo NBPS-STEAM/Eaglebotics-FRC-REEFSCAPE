@@ -422,21 +422,21 @@ public class RobotContainer
     //CODRIVER CONTROLS:
 
     //C3:R4 - Stow Position
-    buttonPanel.button(7).onTrue(opCommands.getStowParallelCommand());
+    buttonPanel.button(8).onTrue(opCommands.getStowParallelCommand());
 
 
 
     //C3:R3 - Pipe Intake
-    buttonPanel.button(6).onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
+    buttonPanel.button(7).onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
 
     //C3:R2 - Pipe Outtake
-    buttonPanel.button(5).onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+    buttonPanel.button(6).onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
     //C1:R1-4 - Pipe Set Positions
-    buttonPanel.button(15).onTrue(opCommands.pipeCommandGroup(1));
-    buttonPanel.button(14).onTrue(opCommands.pipeCommandGroup(2));
-    buttonPanel.button(13).onTrue(opCommands.pipeCommandGroup(3));
-    buttonPanel.button(12).onTrue(opCommands.pipeCommandGroup(4));
+    buttonPanel.button(16).onTrue(opCommands.pipeCommandGroup(1));
+    buttonPanel.button(15).onTrue(opCommands.pipeCommandGroup(2));
+    buttonPanel.button(14).onTrue(opCommands.pipeCommandGroup(3));
+    buttonPanel.button(13).onTrue(opCommands.pipeCommandGroup(4));
 
     
 
@@ -455,7 +455,7 @@ public class RobotContainer
     );
 
     //C3:R1 - Ball Outtake
-    buttonPanel.button(4).onTrue(new ConditionalCommand(
+    buttonPanel.button(5).onTrue(new ConditionalCommand(
       bargeOuttake,
       normalBallOuttake,
       () -> intakePosition.getPositionLevel() == 5
@@ -465,25 +465,25 @@ public class RobotContainer
 
     // -- Ball Set Positions --
     //C2:R4 - Ground Ball
-    buttonPanel.button(11).onTrue(new SequentialCommandGroup(
+    buttonPanel.button(12).onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(1),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
     //C2:R3 - Low Reef Ball
-    buttonPanel.button(10).onTrue(new SequentialCommandGroup(
+    buttonPanel.button(11).onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(3),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
     //C2:R2 - High Reef Ball
-    buttonPanel.button(9).onTrue(new SequentialCommandGroup(
+    buttonPanel.button(10).onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(4),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
     ));
     //C2:R1 - Barge Shoot Position
-    buttonPanel.button(8).onTrue(opCommands.bargeShootCommandGroup());
+    buttonPanel.button(9).onTrue(opCommands.bargeShootCommandGroup());
 
     //Gamepad:Square - Processor Ball
     coDriverGamepad.square().onTrue(new SequentialCommandGroup(
@@ -500,13 +500,13 @@ public class RobotContainer
 
     // -- Manual Control Overrides --
     //Joysticks:C1:R2 - Toggle Pipe Intake
-    buttonPanel.button(2).onTrue(pipeIntakeCommands.toggleIntake());
+    buttonPanel.button(3).onTrue(pipeIntakeCommands.toggleIntake());
     //Joysticks:C1:R1 - Toggle Pipe Outtake
-    buttonPanel.button(0).onTrue(pipeIntakeCommands.toggleOuttake());
+    buttonPanel.button(1).onTrue(pipeIntakeCommands.toggleOuttake());
     //Joysticks:C2:R2 - Toggle Ball Intake
-    buttonPanel.button(3).onTrue(ballIntakeCommands.toggleIntake());
+    buttonPanel.button(4).onTrue(ballIntakeCommands.toggleIntake());
     //Joysticks:C2:R1 - Toggle Ball Outtake
-    buttonPanel.button(1).onTrue(ballIntakeCommands.toggleOuttake());
+    buttonPanel.button(2).onTrue(ballIntakeCommands.toggleOuttake());
 
     //Joysticks:Left - Manual Pivot
     buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveDeadband)

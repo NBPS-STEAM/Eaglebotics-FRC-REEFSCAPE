@@ -21,12 +21,12 @@ public class PipeIntakeSubsystem extends SubsystemBase {
         // initialize motor
         m_motor = new SparkMax(Constants.IntakeConstants.kPipeMotorId, MotorType.kBrushless);
 
-        m_motor.configure(Constants.kBrakeInvertedConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /** Set the target velocity of the intake and the state that the intake is now considered to be in. Pass {@code IntakeState.NONE} to avoid changing the state. */
     public void setTargetVelocity(double speed, IntakeState state) {
-        m_motor.set(speed);
+        m_motor.set(-speed);
         if (state != IntakeState.NONE) this.state = state;
     }
 
