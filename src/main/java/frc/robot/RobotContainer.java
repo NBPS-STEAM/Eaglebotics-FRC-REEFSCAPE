@@ -500,13 +500,13 @@ public class RobotContainer
 
     // -- Manual Control Overrides --
     //Joysticks:C1:R2 - Toggle Pipe Intake
-    buttonPanel.button(3).onTrue(pipeIntakeCommands.toggleIntake());
+    buttonPanel.button(3).toggleOnTrue(pipeIntakeCommands.new Intake());
     //Joysticks:C1:R1 - Toggle Pipe Outtake
-    buttonPanel.button(1).onTrue(pipeIntakeCommands.toggleOuttake());
+    buttonPanel.button(1).toggleOnTrue(pipeIntakeCommands.new Outtake());
     //Joysticks:C2:R2 - Toggle Ball Intake
-    buttonPanel.button(4).onTrue(ballIntakeCommands.toggleIntake());
+    buttonPanel.button(4).toggleOnTrue(ballIntakeCommands.new Intake());
     //Joysticks:C2:R1 - Toggle Ball Outtake
-    buttonPanel.button(2).onTrue(ballIntakeCommands.toggleOuttake());
+    buttonPanel.button(2).toggleOnTrue(ballIntakeCommands.new Outtake());
 
     //Joysticks:Left - Manual Lift
     buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveLargeDeadband)

@@ -20,12 +20,12 @@ public final class BallIntakeCommands {
 
 
 
-    /** Produces a command that will toggle the intake, starting to intake if not already or stopping if so. */
+    /** Produces a command that will toggle the intake, starting to intake if not already or stopping if so. <b>May be bugged.</b> */
     public Command toggleIntake() {
         return new ConditionalCommand(new StopIntake(), new Intake(), () -> ballIntakeSubsystem.isInState(IntakeState.INTAKE));
     }
 
-    /** Produces a command that will toggle the outtake, starting to outtake if not already or stopping if so. */
+    /** Produces a command that will toggle the outtake, starting to outtake if not already or stopping if so. <b>May be bugged.</b> */
     public Command toggleOuttake() {
         return new ConditionalCommand(new StopIntake(), new Outtake(), () -> ballIntakeSubsystem.isInState(IntakeState.OUTTAKE));
     }
