@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -36,9 +37,10 @@ public class OpCommands {
         // left stick controls translation
         // right stick controls the angular velocity of the robot
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
-            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
-            () -> gamepad.getRightX());
+            () -> gamepad.getLeftY(),
+            () -> gamepad.getLeftX(),
+            () -> gamepad.getRightX(),
+            OIConstants.kDriveDeadband, OIConstants.kDriveDeadband);
 
         return driveFieldOrientedAnglularVelocity;
 
@@ -48,9 +50,10 @@ public class OpCommands {
     /* public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
         // same as above but half as fast
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
-            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband) * Constants.DriveConstants.speedFactor,
-            () -> gamepad.getRightX() * Constants.DriveConstants.speedFactor);
+            () -> gamepad.getLeftY() * Constants.DriveConstants.speedFactor,
+            () -> gamepad.getLeftX() * Constants.DriveConstants.speedFactor,
+            () -> gamepad.getRightX() * Constants.DriveConstants.speedFactor,
+            OIConstants.kDriveDeadband, OIConstants.kDriveDeadband);
 
         return driveFieldOrientedAnglularVelocity;
 
@@ -59,6 +62,7 @@ public class OpCommands {
 
     /**
      * A command that will strafe from the gamepad's left stick and turn to face an angle specified in degrees: [0, 360).
+     * <p><b>Might cause a memory leak.</b> Whoops!</p>
      */
     public static Command getAutoTurnDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad, double degrees) {
         PIDController turnController = new PIDController(DriveConstants.kTurningP, DriveConstants.kTurningI, DriveConstants.kTurningD);
@@ -67,9 +71,10 @@ public class OpCommands {
         turnController.setSetpoint(degrees);
 
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(gamepad.getLeftY(),  Constants.OIConstants.kDriveDeadband),
-            () -> MathUtil.applyDeadband(gamepad.getLeftX(),  Constants.OIConstants.kDriveDeadband),
-            () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())));
+            () -> gamepad.getLeftY(),
+            () -> gamepad.getLeftX(),
+            () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())),
+            OIConstants.kDriveDeadband, 0);
 
         return driveFieldOrientedAnglularVelocity;
 

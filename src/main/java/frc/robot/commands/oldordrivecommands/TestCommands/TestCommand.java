@@ -47,14 +47,14 @@ public class TestCommand extends SequentialCommandGroup{
     Command[] commands={
     new StowCommand(intakePosition),//stow
     drive.driveCommand(//make sure robot is pointing forwards
-            () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
-            () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+            () -> 0,
+            () -> 0,
             () -> 0,
             ()->1),
     new WaitCommand(3),
     drive.driveCommand(//point robot 90 degrees
-                () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
-                () -> MathUtil.applyDeadband(0,  Constants.OIConstants.kDriveDeadband),
+                () -> 0,
+                () -> 0,
                 () -> -1,
                 () -> 0),
     new WaitCommand(3),

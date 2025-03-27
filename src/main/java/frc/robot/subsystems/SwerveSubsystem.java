@@ -20,6 +20,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -468,22 +469,34 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(kS, kV, kA));
   }
 
+  /** Same as {@link #driveCommand(DoubleSupplier, DoubleSupplier, DoubleSupplier, double, double)}, but without input deadband (deadbands set to 0). */
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  {
+    return driveCommand(translationX, translationY, angularRotationX, 0, 0);
+  }
+
   /**
    * Command to drive the robot using translative values and heading as angular velocity.
    *
-   * @param translationX     Translation in the X direction. Cubed for smoother controls.
-   * @param translationY     Translation in the Y direction. Cubed for smoother controls.
+   * @param translationX     Translation in the X direction.
+   * @param translationY     Translation in the Y direction.
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
+   * @param translationDeadband Circular deadband radius to be applied to the translation input.
+   * @param rotationDeadband    Deadband range around zero to be applied to the rotation input.
    * @return Drive command.
+   * @see MathUtil#applyDeadband(double, double)
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX,
+                              double translationDeadband, double rotationDeadband)
   {
     return run(() -> {
       // Make the robot move
+      double[] transV = deadband2d(translationX.getAsDouble(), translationY.getAsDouble(), translationDeadband);
+      double angRot = MathUtil.applyDeadband(angularRotationX.getAsDouble(), rotationDeadband);
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier,
-                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity() * driveMultiplier), 0.8),
-                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
+                        transV[0] * swerveDrive.getMaximumChassisVelocity() * driveMultiplier,
+                        transV[1] * swerveDrive.getMaximumChassisVelocity() * driveMultiplier), 0.8),
+                        (angRot*angRot*angRot) * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
                         true,
                         false);
     });
@@ -492,8 +505,8 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
    *
-   * @param translationX Translation in the X direction. Cubed for smoother controls.
-   * @param translationY Translation in the Y direction. Cubed for smoother controls.
+   * @param translationX Translation in the X direction.
+   * @param translationY Translation in the Y direction.
    * @param headingX     Heading X to calculate angle of the joystick.
    * @param headingY     Heading Y to calculate angle of the joystick.
    * @return Drive command.
@@ -514,6 +527,17 @@ public class SwerveSubsystem extends SubsystemBase
                                                                       swerveDrive.getOdometryHeading().getRadians(),
                                                                       swerveDrive.getMaximumChassisVelocity()));
     });
+  }
+
+  private static double[] deadband2d(double x, double y, double deadband) {
+    double mag = Math.hypot(x, y);
+    double newMagFactor = 0;
+    if (mag >= 1.0) {
+      newMagFactor = 1.0 / mag;
+    } else if (mag >= deadband) {
+      newMagFactor = ((mag - deadband) / (1 - deadband)) / mag;
+    }
+    return new double[]{x * newMagFactor, y * newMagFactor};
   }
 
   /**
