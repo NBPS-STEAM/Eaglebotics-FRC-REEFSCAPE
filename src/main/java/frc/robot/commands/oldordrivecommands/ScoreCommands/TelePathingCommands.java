@@ -57,6 +57,10 @@ public class TelePathingCommands {
         autoDriveCommandSupplier = () -> goToCoralStationSmartRelativeCommand(autoDriveCoralSide);
     }
 
+    public void setAutoDriveNone() {
+        autoDriveCommandSupplier = () -> new InstantCommand();
+    }
+
     public void setAutoDriveSide(int side) {
         autoDriveReefSubPos = side;
         if (side == 1) autoDriveCoralSide = 1;

@@ -234,9 +234,9 @@ public class RobotContainer
 
     //Joysticks - Manual Lift/Pivot
     new Trigger(() -> Math.abs(coDriverGamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY(), null));
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY()));
     new Trigger(() -> Math.abs(coDriverGamepad.getRightY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY(), null));
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY()));
 
   }
 
@@ -305,9 +305,9 @@ public class RobotContainer
     // Manual lift and pivot controls
     coDriverGamepad.R1().debounce(0.5).onTrue(Commands.runOnce(intakePosition::zeroLift));
     new Trigger(() -> Math.abs(coDriverGamepad.getLeftY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY(), null));
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -coDriverGamepad.getLeftY()));
     new Trigger(() -> Math.abs(coDriverGamepad.getRightY()) > Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY(), null));
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -coDriverGamepad.getRightY()));
 
     // Toggle Control Mode
     coDriverGamepad.povRight().onTrue(toggleControlMode);
@@ -485,8 +485,8 @@ public class RobotContainer
     //C2:R1 - Barge Shoot Position
     buttonPanel.button(9).onTrue(opCommands.bargeShootCommandGroup());
 
-    //Gamepad:Square - Processor Ball
-    coDriverGamepad.square().onTrue(new SequentialCommandGroup(
+    //Gamepad:Dpad Up - Processor Ball
+    coDriverGamepad.povUp().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(2),
       ballIntakeCommands. new Intake()
     ));
@@ -508,15 +508,18 @@ public class RobotContainer
     //Joysticks:C2:R1 - Toggle Ball Outtake
     buttonPanel.button(2).onTrue(ballIntakeCommands.toggleOuttake());
 
-    //Joysticks:Left - Manual Pivot
+    //Joysticks:Left - Manual Lift
     buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(1), null));
-    //Joysticks:Right - Manual Lift
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> buttonPanel.getRawAxis(1)));
+    //Joysticks:Right - Manual Pivot
     buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(() -> -buttonPanel.getRawAxis(5), null));
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(5)));
     
     //Gamepad:R1 (hold for 0.25s) - Zero Lift
     coDriverGamepad.R1().debounce(0.25).onTrue(Commands.runOnce(intakePosition::zeroLift));
+
+    //Gamepad:Circle - Unset Auto Drive
+    coDriverGamepad.povUp().onTrue(Commands.runOnce(telePathingCommands::setAutoDriveNone));
 
   }
 

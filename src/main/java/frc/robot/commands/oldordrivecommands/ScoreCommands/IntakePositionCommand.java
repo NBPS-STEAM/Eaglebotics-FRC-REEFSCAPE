@@ -110,33 +110,25 @@ public final class IntakePositionCommand {
     public class AdjustLift extends Command {
 
         private DoubleSupplier rateSupplier;
-        private DoubleConsumer positionConsumer;
 
-        public AdjustLift(DoubleSupplier rateSupplier, DoubleConsumer positionConsumer) {
+        public AdjustLift(DoubleSupplier rateSupplier) {
             this.rateSupplier = rateSupplier;
-            this.positionConsumer = positionConsumer;
             addRequirements(intakePositionSubsystem);
         }
 
         @Override
         public void execute() {
             intakePositionSubsystem.setLiftSpeed(rateSupplier.getAsDouble());
-            updateConsumer();
         }
 
         @Override
         public void end(boolean interrupted) {
-            updateConsumer();
             intakePositionSubsystem.setLiftSetpoint(intakePositionSubsystem.getLiftPosition(), null); // also cancels setting velocity
         }
 
         @Override
         public boolean isFinished() {
             return false;
-        }
-
-        private void updateConsumer() {
-            if (positionConsumer != null) positionConsumer.accept(intakePositionSubsystem.getLiftPosition());
         }
     }
 
@@ -150,33 +142,25 @@ public final class IntakePositionCommand {
     public class AdjustPivot extends Command {
 
         private DoubleSupplier rateSupplier;
-        private DoubleConsumer positionConsumer;
 
-        public AdjustPivot(DoubleSupplier rateSupplier, DoubleConsumer positionConsumer) {
+        public AdjustPivot(DoubleSupplier rateSupplier) {
             this.rateSupplier = rateSupplier;
-            this.positionConsumer = positionConsumer;
             addRequirements(intakePositionSubsystem);
         }
 
         @Override
         public void execute() {
             intakePositionSubsystem.setPivotSpeed(rateSupplier.getAsDouble());
-            updateConsumer();
         }
 
         @Override
         public void end(boolean interrupted) {
-            updateConsumer();
             intakePositionSubsystem.setPivotSetpoint(intakePositionSubsystem.getPivotPosition(), null); // also cancels setting velocity
         }
 
         @Override
         public boolean isFinished() {
             return false;
-        }
-
-        private void updateConsumer() {
-            if (positionConsumer != null) positionConsumer.accept(intakePositionSubsystem.getPivotPosition());
         }
     }
 
