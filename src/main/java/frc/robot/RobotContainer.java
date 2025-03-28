@@ -168,34 +168,14 @@ public class RobotContainer
     //L2 - Pipe Outtake
     coDriverGamepad.L2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
+    //R2 - Ball Outtake
+    coDriverGamepad.R2().onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+
     //DPad - Pipe Set Positions
     coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
     coDriverGamepad.povLeft().onTrue(opCommands.pipeCommandGroup(2));
     coDriverGamepad.povRight().onTrue(opCommands.pipeCommandGroup(3));
     coDriverGamepad.povUp().onTrue(opCommands.pipeCommandGroup(4));
-
-    
-
-
-    
-    //Command for typical ball outtaking
-    Command normalBallOuttake = new SequentialCommandGroup(
-      ballIntakeCommands.new Outtake(),
-      new StowCommand(intakePosition)
-    );
-
-    //Command for barge ball outtaking
-    Command bargeOuttake = new ParallelCommandGroup(
-      ballIntakeCommands.new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
-      Commands.runOnce(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
-    );
-
-    //R2 - Ball Outtake
-    coDriverGamepad.R2().onTrue(new ConditionalCommand(
-      bargeOuttake,
-      normalBallOuttake,
-      () -> intakePosition.getPositionLevel() == 5
-    ));
 
 
 
@@ -320,21 +300,7 @@ public class RobotContainer
     
     
     // Ball Intake/Outtake/Stop Controls
-    Command normalBallOuttake = new SequentialCommandGroup(
-      ballIntakeCommands.new Outtake(),
-      new StowCommand(intakePosition)
-    );
-
-    Command bargeOuttake = new ParallelCommandGroup(
-      ballIntakeCommands.new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
-      Commands.runOnce(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
-    );
-
-    coDriverGamepad.L2().and(inBallMode).onTrue(new ConditionalCommand(
-      bargeOuttake,
-      normalBallOuttake,
-      () -> intakePosition.getPositionLevel() == 5
-    ));
+    coDriverGamepad.L2().and(inBallMode).onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
     // Stow Position
     coDriverGamepad.options().onTrue(opCommands.getStowParallelCommand());
@@ -432,34 +398,14 @@ public class RobotContainer
     //C3:R2 - Pipe Outtake
     buttonPanel.button(6).onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
+    //C3:R1 - Ball Outtake
+    buttonPanel.button(5).onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+
     //C1:R1-4 - Pipe Set Positions
     buttonPanel.button(16).onTrue(opCommands.pipeCommandGroup(1));
     buttonPanel.button(15).onTrue(opCommands.pipeCommandGroup(2));
     buttonPanel.button(14).onTrue(opCommands.pipeCommandGroup(3));
     buttonPanel.button(13).onTrue(opCommands.pipeCommandGroup(4));
-
-    
-
-
-    
-    //Command for typical ball outtaking
-    Command normalBallOuttake = new SequentialCommandGroup(
-      ballIntakeCommands.new Outtake(),
-      new StowCommand(intakePosition)
-    );
-
-    //Command for barge ball outtaking
-    Command bargeOuttake = new ParallelCommandGroup(
-      ballIntakeCommands.new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
-      Commands.runOnce(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
-    );
-
-    //C3:R1 - Ball Outtake
-    buttonPanel.button(5).onTrue(new ConditionalCommand(
-      bargeOuttake,
-      normalBallOuttake,
-      () -> intakePosition.getPositionLevel() == 5
-    ));
 
 
 

@@ -50,11 +50,10 @@ public final class PipeIntakeCommands {
         Command outtakeAndBack = new SequentialCommandGroup(
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    new WaitCommand(0.25),
                     intakePositionCommands.new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4PivotOut, null),
-                    new WaitCommand(0.3)
+                    new WaitCommand(0.5)
                 ),
-                new Outtake()
+                new Outtake(Constants.IntakeConstants.kPipeOuttakeL4Speed)
             ),
             new StowCommand(intakePosition)
         );
