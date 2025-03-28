@@ -93,17 +93,21 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void OverrideTempLimit(){
         OverrideTempLimit=true;
     }
+
+
     public void updateAll() {
         if((Tempfilter1.calculate(m_liftMotor1.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp||Tempfilter2.calculate(m_liftMotor2.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp)&&!OverrideTempLimit){
+            System.out.println("WARNING LIFT MAX TEMP EXCEEDED");
+            System.out.println("ELEVATOR WILL ATTEMPT TO STOW THEN DISABLE");
             CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                new ParallelRaceGroup(new StowCommand(this), new WaitCommand(3)),
+                new ParallelRaceGroup(new StowCommand(this), new WaitCommand(2)),
                 new InstantCommand(()->{
                     m_liftMotor1.disable();
                     m_liftMotor2.disable();
                 })
             ));
-            System.out.println("WARNING LIFT MAX TEMP EXCEEDED");
-            System.out.println("ELEVATOR WILL ATTEMPT TO STOW THEN DISABLE");
+            System.out.println("Good luck");
+           
         }
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
