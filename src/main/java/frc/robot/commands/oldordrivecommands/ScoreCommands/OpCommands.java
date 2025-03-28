@@ -183,6 +183,15 @@ public class OpCommands {
             new StowCommand(intakePositionSubsystem)
         );
     }
+    //TODO: test if needed
+    /** theoretically should bring pivot back in range, if it passes 0*/
+    public SequentialCommandGroup getPivotRangeFixCommand() {
+        return new SequentialCommandGroup(
+            new InstantCommand(()->intakePositionSubsystem.setPivotSpeed(-0.75)),
+            new WaitCommand(0.5),
+            new InstantCommand(()->intakePositionSubsystem.setPivotSpeed(0))
+        );
+    }
 
     /**
      * Move lift and pivot simultaneously to the pipe level 1 score position.
