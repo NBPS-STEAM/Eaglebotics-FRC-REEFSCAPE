@@ -495,20 +495,21 @@ public class RobotContainer
    * The gamepad is intended to be layed out sideways against the left side of either panel with the triggers pointing out.
    * Controls follow this layout on the button panel:
    *  _1__2__3_
-   * 1|P4    B3
-   * 2|P3    B2
-   * 3|P2 DR S.
-   * 4|DR DC DR
-   * 5|DR DM DR
-   * 6|DL DR DR
+   * 1|P4    BH
+   * 2|P3    BL
+   * 3|P2 AD BB
+   * 4|AD ST AD
+   * 5|AD DM AD
+   * 6|DL AD DR
    * There are some additional inputs on the gamepad.
    *
-   * S. - Go to stow position
-   * PX - Go to pipe scoring position level X
-   * BX - Go to ball scoring position level X
-   * DR - Set auto drive destination to corresponding reef side
-   * DC - Set auto drive destination to coral station
-   * D* - Set auto drive side
+   * ST - Go to stow position
+   * P2,P3,P4 - Go to pipe scoring position level 2, 3, or 4
+   * BL - Go to low ball scoring position
+   * BH - Go to high ball scoring position
+   * BB - Go to barge ball scoring position
+   * AD - Set auto drive destination to corresponding reef side
+   * DL,DM,DR - Set auto drive side (left, middle, right)
    */
   private void configureBindingsPanel2()
   {
@@ -523,22 +524,34 @@ public class RobotContainer
     //L2 (disabled) - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
     //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
 
-    //Options - Zeros the robot
+    //Options - Zeros the robot heading
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    //R2 - Activate Auto Drive (while held)
+    //L2 - Activate Auto Drive (while held)
     // Unlike all other commands, this "deferred" command is generated on command initialization, not instantiation.
     // In other words, this path-following command won't be generated until the command starts running.
-    driverGamepad.R2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
+    driverGamepad.L2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
 
-    //L2 - Pipe Intake
-    driverGamepad.L2().onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
+    //R2 - Pipe Outtake
+    driverGamepad.R2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
-    //L1 - Pipe Outtake
-    driverGamepad.L1().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+    //Circle - Ball Outtake
+    driverGamepad.circle().onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
 
-    //R1 - Ball Outtake
-    driverGamepad.R1().onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+    // -- Pipe Intake --
+    //L1 - Pipe Intake, Left Coral Station (set position and auto drive destination)
+    driverGamepad.L1().onTrue(new ParallelCommandGroup(
+      Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(-1)),
+      Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToCoralStation()),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
+
+    //R1 - Pipe Intake, Right Coral Station (set position and auto drive destination)
+    driverGamepad.R1().onTrue(new ParallelCommandGroup(
+      Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(1)),
+      Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToCoralStation()),
+      opCommands.getPipeIntakeFullCommand(pipeIntakeCommands)
+    ));
     
 
 
@@ -546,15 +559,15 @@ public class RobotContainer
 
     //CODRIVER CONTROLS:
 
-    //C3:R3 - Stow Position
-    buttonPanel.button(5).onTrue(opCommands.getStowParallelCommand());
+    //C2:R4 - Stow Position
+    buttonPanel.button(10).onTrue(opCommands.getStowParallelCommand());
 
     //C1:R1-3 - Pipe Set Positions 2-4
     buttonPanel.button(1).onTrue(opCommands.pipeCommandGroup(4));
     buttonPanel.button(3).onTrue(opCommands.pipeCommandGroup(3));
     buttonPanel.button(13).onTrue(opCommands.pipeCommandGroup(2));
 
-    //Gamepad:Dpad Down
+    //Gamepad:Dpad Down - Pipe Set Position 1
     coDriverGamepad.povDown().onTrue(opCommands.pipeCommandGroup(1));
 
 
@@ -573,8 +586,8 @@ public class RobotContainer
       new StowCommand(intakePosition)
     ));
 
-    //Gamepad:Dpad Right - Barge Shoot Position
-    coDriverGamepad.povRight().onTrue(opCommands.bargeShootCommandGroup());
+    //C3:R3 - Barge Shoot Position
+    buttonPanel.button(5).onTrue(opCommands.bargeShootCommandGroup());
 
     //Gamepad:Dpad Up - Processor Ball
     coDriverGamepad.povUp().onTrue(new SequentialCommandGroup(
@@ -602,8 +615,6 @@ public class RobotContainer
     buttonPanel.button(12).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(3)));
     buttonPanel.button(7).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(4)));
     buttonPanel.button(6).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(5)));
-
-    buttonPanel.button(10).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToCoralStation()));
 
 
 
@@ -693,6 +704,7 @@ public class RobotContainer
     AutoChooser.addOption("2Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-RedSide").getStartingPose()))));
     AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-BlueSide").getStartingPose()))));
     AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-Center").getStartingPose()))));
+    AutoChooser.addOption("EmptyTestAuto", new ParallelCommandGroup(new PathPlannerAuto("EmptyTestAuto"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("EmptyTestAuto").getStartingPose()))));
     //AutoChooser.addOption("3Coral-RedSide", new PathPlannerAuto("3Coral-RedSide"));
   }
 

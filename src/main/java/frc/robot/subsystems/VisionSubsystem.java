@@ -9,6 +9,7 @@ import java.util.Optional;
 // import edu.wpi.first.math.VecBuilder;
 // import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.math.geometry.Translation2d;
 // import edu.wpi.first.math.numbers.N3;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +42,8 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
     public void updateAll(){//update all cameras
         updateFromLimeF();
         updateFromLimeB();
+        SmartDashboard.putNumberArray("robot pos", new double[]{sd.swerveDrive.getPose().getX(),sd.swerveDrive.getPose().getY(),sd.swerveDrive.getPose().getRotation().getDegrees()});
+       SmartDashboard.updateValues();
         //updatePhotonL();
         //updatePhotonR();
     }
