@@ -2,7 +2,6 @@ package frc.robot.commands.oldordrivecommands.ScoreCommands;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.TelePathingConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class TelePathingCommands {
@@ -55,6 +55,10 @@ public class TelePathingCommands {
 
     public void setAutoDriveGoToCoralStation() {
         autoDriveCommandSupplier = () -> goToCoralStationSmartRelativeCommand(autoDriveCoralSide);
+    }
+
+    public void setAutoDriveGoToBarge() {
+        autoDriveCommandSupplier = () -> goToBargeSmartCommand();
     }
 
     public void setAutoDriveNone() {
@@ -130,13 +134,13 @@ public class TelePathingCommands {
                 Rotation2d.fromDegrees(180 + index*60))
         );
 
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+        //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
         // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
 
         // Create the path using the waypoints created above
         PathPlannerPath path = new PathPlannerPath(
                 waypoints,
-                constraints,
+                TelePathingConstants.kDefaultConstraints,
                 null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
                 new GoalEndState(0.0, Rotation2d.fromDegrees(180 + index*60)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
         );
@@ -214,13 +218,13 @@ public class TelePathingCommands {
                     Rotation2d.fromDegrees(180 + index*60))
             );
 
-            PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+            //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
             // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
 
             // Create the path using the waypoints created above
             path = new PathPlannerPath(
                     waypoints,
-                    constraints,
+                    TelePathingConstants.kDefaultConstraints,
                     null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
                     new GoalEndState(0.0, Rotation2d.fromDegrees(180 + index*60)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
             );
@@ -328,13 +332,13 @@ public class TelePathingCommands {
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseList);
 
-            PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+            //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
             // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
     
             // Create the path using the waypoints created above
             path = new PathPlannerPath(
                     waypoints,
-                    constraints,
+                    TelePathingConstants.kDefaultConstraints,
                     null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
                     new GoalEndState(0.0, Rotation2d.fromDegrees(180 + index*60)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
             );
@@ -438,13 +442,13 @@ public class TelePathingCommands {
 
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseList);
 
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+        //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
         // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
     
         // Create the path using the waypoints created above
         path = new PathPlannerPath(
             waypoints,
-            constraints,
+            TelePathingConstants.kDefaultConstraints,
             null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
             new GoalEndState(0.0, Rotation2d.fromDegrees(-125 + 250*ind)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
         );
@@ -452,6 +456,36 @@ public class TelePathingCommands {
 
         return AutoBuilder.followPath(path);
 
+    }
+
+
+
+
+
+    /**
+     * Maintains the robot's Y position at time of call.
+     * 
+     * Drives to (flipped for alliance): X position 7.5, heading 0
+     */
+    public Command goToBargeSmartCommand() {
+        // Create a list of waypoints from poses. Each pose represents one waypoint.
+        // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+            new Pose2d(7.5, swerve.getPose().getY(), Rotation2d.fromDegrees(0))
+        );
+
+        //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+        // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+
+        // Create the path using the waypoints created above
+        PathPlannerPath path = new PathPlannerPath(
+            waypoints,
+            TelePathingConstants.kDefaultConstraints,
+            null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
+            new GoalEndState(0.0, Rotation2d.fromDegrees(0)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        );
+
+        return AutoBuilder.followPath(path);
     }
 
 }

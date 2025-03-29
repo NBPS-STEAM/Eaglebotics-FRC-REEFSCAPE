@@ -492,7 +492,8 @@ public class RobotContainer
   /**
    * Configure alternate bindings for controls on the custom button panel.
    * These bindings use a different layout of the panels than configureBindingsPanel1().
-   * The gamepad is intended to be layed out sideways against the left side of either panel with the triggers pointing out.
+   * The panels may be laid out with the stick panel either directly above the button panel or against the upper left/right side of it.
+   * The gamepad is intended to be layed out upside-down against the bottom side of either panel with the triggers pointing back.
    * Controls follow this layout on the button panel:
    *  _1__2__3_
    * 1|P4    BH
@@ -589,14 +590,14 @@ public class RobotContainer
     //C3:R3 - Barge Shoot Position
     buttonPanel.button(5).onTrue(opCommands.bargeShootCommandGroup());
 
-    //Gamepad:Dpad Up - Processor Ball
-    coDriverGamepad.povUp().onTrue(new SequentialCommandGroup(
+    //Gamepad:Dpad Left - Processor Ball
+    coDriverGamepad.povLeft().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(2),
       ballIntakeCommands. new Intake()
     ));
 
-    //Gamepad:Dpad Left - Ground Ball
-    coDriverGamepad.povLeft().onTrue(new SequentialCommandGroup(
+    //Gamepad:Dpad Up - Ground Ball
+    coDriverGamepad.povUp().onTrue(new SequentialCommandGroup(
       opCommands.ballCommandGroup(1),
       ballIntakeCommands. new Intake(),
       new StowCommand(intakePosition)
@@ -624,21 +625,22 @@ public class RobotContainer
 
 
     // -- Manual Control Overrides --
-    //Gamepad:L1 - Toggle Pipe Intake
-    coDriverGamepad.L1().toggleOnTrue(pipeIntakeCommands.new Intake());
-    //Gamepad:L2 - Toggle Pipe Outtake
-    coDriverGamepad.L2().toggleOnTrue(pipeIntakeCommands.new Outtake());
-    //Gamepad:R1 - Toggle Ball Intake
-    coDriverGamepad.R1().toggleOnTrue(ballIntakeCommands.new Intake());
-    //Gamepad:R2 - Toggle Ball Outtake
-    coDriverGamepad.R2().toggleOnTrue(ballIntakeCommands.new Outtake());
+    // Reminder: the controller is placed upside-down.
+    //Gamepad:R1 - Toggle Pipe Intake
+    //coDriverGamepad.R1().toggleOnTrue(pipeIntakeCommands.new Intake());
+    //Gamepad:R2 - Toggle Pipe Outtake
+    //coDriverGamepad.R2().toggleOnTrue(pipeIntakeCommands.new Outtake());
+    //Gamepad:L1 - Toggle Ball Intake
+    //coDriverGamepad.L1().toggleOnTrue(ballIntakeCommands.new Intake());
+    //Gamepad:L2 - Toggle Ball Outtake
+    //coDriverGamepad.L2().toggleOnTrue(ballIntakeCommands.new Outtake());
 
     //Joysticks:Left - Manual Lift
     buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveLargeDeadband)
-            .whileTrue(intakePositionCommands.new AdjustLift(() -> buttonPanel.getRawAxis(1)));
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -buttonPanel.getRawAxis(1)));
     //Joysticks:Right - Manual Pivot
     buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveLargeDeadband)
-            .whileTrue(intakePositionCommands.new AdjustPivot(() -> -buttonPanel.getRawAxis(5)));
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> buttonPanel.getRawAxis(5)));
     
     //Gamepad:Triangle+Square (hold for 0.1s) - Zero Lift
     coDriverGamepad.triangle().and(coDriverGamepad.square()).debounce(0.1).onTrue(Commands.runOnce(intakePosition::zeroLift));
@@ -692,7 +694,7 @@ public class RobotContainer
         opCommands.getPipe1Command(),
         drivebase.driveCommand(() -> -0.1, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
       ),
-      new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.k180deg))),
+      //new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.k180deg))),
       pipeIntakeCommands.new Outtake()
     );
 
@@ -752,6 +754,11 @@ public class RobotContainer
     SmartDashboard.putNumber("Pivot target", intakePosition.getPivotSetpoint());
 
     SmartDashboard.putNumberArray("Lift Currents", intakePosition.getCurrent());
+
+    Pose2d fieldPos = drivebase.getPose();
+    SmartDashboard.putNumber("Field X Position", fieldPos.getX());
+    SmartDashboard.putNumber("Field Y Position", fieldPos.getY());
+    SmartDashboard.putNumber("Field Heading", fieldPos.getRotation().getDegrees());
 
     int i=1;
     for (SwerveModule module : drivebase.swerveDrive.swerveDriveConfiguration.modules) {

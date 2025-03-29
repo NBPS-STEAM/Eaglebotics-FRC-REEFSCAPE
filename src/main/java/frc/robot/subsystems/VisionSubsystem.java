@@ -9,6 +9,7 @@ import java.util.Optional;
 // import edu.wpi.first.math.VecBuilder;
 // import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.math.geometry.Translation2d;
 // import edu.wpi.first.math.numbers.N3;
@@ -18,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase{//belive it or not, this class has no warnings
   //despite the crimes against code committed here
     //AprilTagFieldLayout aprilTagFieldLayout;//used for finding distance from 2 tags
-    public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limeF");
-    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limeB");//lime names passed here
+    public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limelight");
+    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limelight-limeb");//lime names passed here
     //public final PhotonSubsystem photonR=new PhotonSubsystem();
     //public final PhotonSubsystem photonL=new PhotonSubsystem();
 
@@ -42,18 +43,20 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
     public void updateAll(){//update all cameras
         updateFromLimeF();
         updateFromLimeB();
-        SmartDashboard.putNumberArray("robot pos", new double[]{sd.swerveDrive.getPose().getX(),sd.swerveDrive.getPose().getY(),sd.swerveDrive.getPose().getRotation().getDegrees()});
-       SmartDashboard.updateValues();
+        //SmartDashboard.putNumberArray("robot pos", new double[]{sd.swerveDrive.getPose().getX(),sd.swerveDrive.getPose().getY(),sd.swerveDrive.getPose().getRotation().getDegrees()});
+        //SmartDashboard.updateValues();
         //updatePhotonL();
         //updatePhotonR();
     }
 
     public void updateFromLimeF(){
-        if(!limeFpose().isEmpty())sd.swerveDrive.addVisionMeasurement(limeFpose().get(), limeF.time,limeF.getstdev());//add limelight in
+        Optional<Pose2d> pose = limeFpose();
+        if(!pose.isEmpty())sd.swerveDrive.addVisionMeasurement(pose.get(), Timer.getFPGATimestamp()/* limeF.time */,limeF.getstdev());//add limelight in
     }
 
     public void updateFromLimeB(){
-        if(!limeBpose().isEmpty())sd.swerveDrive.addVisionMeasurement(limeBpose().get(), limeB.time,limeB.getstdev());//add limelight
+        Optional<Pose2d> pose = limeBpose();
+        if(!pose.isEmpty())sd.swerveDrive.addVisionMeasurement(pose.get(), Timer.getFPGATimestamp()/* limeB.time */,limeB.getstdev());//add limelight
     }
 
 //commenting out photon as i do not think 4 cameras will be an advantage

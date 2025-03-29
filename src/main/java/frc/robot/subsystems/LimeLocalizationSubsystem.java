@@ -29,20 +29,20 @@ public class LimeLocalizationSubsystem{
 
 
   public  Vector<N3> getstdev() {//janky system that adjusts how much we trust cameras based on distance and number of tags seen
-    LimelightHelpers.PoseEstimate mt2=LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    LimelightHelpers.PoseEstimate mt2=LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
     if (mt2.tagCount>1) {
-      return VecBuilder.fill(0.65,0.65,0.999999);
+      return VecBuilder.fill(0.65,0.65,999999);
     }else if(mt2.avgTagDist>5){
-        return VecBuilder.fill(0.9,0.9,0.99999);
+        return VecBuilder.fill(0.9,0.9,999999);
     }else{
       if(mt2.avgTagDist>4){
-        return VecBuilder.fill(0.85,0.85,0.999999);
+        return VecBuilder.fill(0.85,0.85,999999);
       }else if(mt2.avgTagDist>3){
-          return VecBuilder.fill(0.75,0.75,0.999999);
+          return VecBuilder.fill(0.75,0.75,999999);
       }else if(mt2.avgTagDist>2){
-        return VecBuilder.fill(0.65,0.65,0.999999);
+        return VecBuilder.fill(0.65,0.65,999999);
       }else{
-        return VecBuilder.fill(0.6,0.6,0.999999);
+        return VecBuilder.fill(0.6,0.6,999999);
       }
     }
   }
@@ -50,8 +50,8 @@ public class LimeLocalizationSubsystem{
     
   public Optional<Pose2d> getPose(){
     boolean doRejectUpdate=false;
-    LimelightHelpers.SetRobotOrientation(name, sd.swerveDrive.swerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    LimelightHelpers.SetRobotOrientation(name, sd.getHeading().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
     if(Math.abs(sd.pigeon.getAngularVelocityYWorld().getValue().in(DegreesPerSecond)) > 360) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
     {
       doRejectUpdate = true;

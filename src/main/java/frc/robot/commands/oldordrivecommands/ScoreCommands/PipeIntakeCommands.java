@@ -42,24 +42,25 @@ public final class PipeIntakeCommands {
             new StowCommand(intakePosition)
         );
 
-        Command outtakeSlow = new SequentialCommandGroup(
+        Command outtakeL1 = new SequentialCommandGroup(
             new Outtake(IntakeConstants.kPipeOuttakeL1Speed),
             new StowCommand(intakePosition)
         );
 
-        Command outtakeAndBack = new SequentialCommandGroup(
+        Command outtakeL4 = new SequentialCommandGroup(
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
+                    new WaitCommand(0.2),
                     intakePositionCommands.new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4PivotOut, null),
-                    new WaitCommand(0.5)
+                    new WaitCommand(0.3)
                 ),
                 new Outtake(Constants.IntakeConstants.kPipeOuttakeL4Speed)
             ),
             new StowCommand(intakePosition)
         );
 
-        return new ConditionalCommand(outtakeAndBack, 
-                                    new ConditionalCommand(outtakeSlow, outtakeNormal, () -> intakePosition.getPositionLevel() == 1),
+        return new ConditionalCommand(outtakeL4, 
+                                    new ConditionalCommand(outtakeL1, outtakeNormal, () -> intakePosition.getPositionLevel() == 1),
                                     () -> intakePosition.getPositionLevel() == 4);
     }
 

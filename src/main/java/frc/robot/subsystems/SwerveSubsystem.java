@@ -480,7 +480,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param translationX     Translation in the X direction.
    * @param translationY     Translation in the Y direction.
-   * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
+   * @param angularRotationX Angular velocity of the robot to set.
    * @param translationDeadband Circular deadband radius to be applied to the translation input.
    * @param rotationDeadband    Deadband range around zero to be applied to the rotation input.
    * @return Drive command.
@@ -496,9 +496,9 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
                         transV[0] * swerveDrive.getMaximumChassisVelocity() * driveMultiplier,
                         transV[1] * swerveDrive.getMaximumChassisVelocity() * driveMultiplier), 0.8),
-                        (angRot*angRot*angRot) * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
+                        angRot * swerveDrive.getMaximumChassisAngularVelocity() * driveMultiplier,
                         true,
-                        false);
+                        true);
     });
   }
 
@@ -559,7 +559,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
-                      false); // Open loop is disabled since it shouldn't be used most of the time.
+                      true); // Open loop is disabled since it shouldn't be used most of the time.
   }
 
   /**

@@ -47,7 +47,7 @@ public final class BallIntakeCommands {
         );
 
         //Command for barge ball outtaking
-        Command bargeOuttake = new Outtake(-IntakeConstants.kBallOuttakeBargeSpeed).andThen(new ParallelCommandGroup(
+        Command bargeOuttake = new Outtake(-IntakeConstants.kBallOuttakeBargeSpeed).withTimeout(0.25).andThen(new ParallelCommandGroup(
             new Outtake(IntakeConstants.kBallOuttakeBargeSpeed),
             Commands.runOnce(() -> intakePosition.setPivotSetpoint(IntakePositionConstants.bargePivotShove, 5))
         ));
