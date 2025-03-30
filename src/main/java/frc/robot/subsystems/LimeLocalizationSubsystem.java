@@ -15,6 +15,7 @@ public class LimeLocalizationSubsystem{
   private String name= "";
   private String out="";
   public double time=0;
+  public double[] stdev = new double[0];
 
   public LimeLocalizationSubsystem(String name){
     this.name=name;
@@ -31,7 +32,6 @@ public class LimeLocalizationSubsystem{
   public  Vector<N3> getstdev() {//janky system that adjusts how much we trust cameras based on distance and number of tags seen
     // According to: https://docs.limelightvision.io/docs/docs-limelight/apis/json-results-specification
     // stdev_mt1 | MT1 Standard Deviation [x, y, z, roll, pitch, yaw] (meters, degrees)
-    double[] stdev = LimelightHelpers.getLimelightNTDoubleArray(name, "stdev_mt1");
     if (stdev.length >= 2) {
       return VecBuilder.fill(stdev[0], stdev[1], 9999999);
     } else {
@@ -58,25 +58,18 @@ public class LimeLocalizationSubsystem{
 
     
   public Optional<Pose2d> getPose(){
-    boolean doRejectUpdate=false;
+    // if our angular velocity is greater than 360 degrees per second, ignore vision updates
+    if(Math.abs(sd.pigeon.getAngularVelocityYWorld().getValue().in(DegreesPerSecond)) > 360) return Optional.empty();
+
     LimelightHelpers.SetRobotOrientation(name, sd.getHeading().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
-    if(Math.abs(sd.pigeon.getAngularVelocityYWorld().getValue().in(DegreesPerSecond)) > 360) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-    {
-      doRejectUpdate = true;
-    }
-    if(mt2.tagCount == 0)
-    {
-      doRejectUpdate = true;
-    }
-    if(!doRejectUpdate)
-    {
-      //SwerveDriveSubsystem.swerveDrivePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-      time=mt2.timestampSeconds;
-      SmartDashboard.putString(out, mt2.pose.toString());
-      return Optional.of(mt2.pose);
-    }
-    return Optional.empty();
+    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+    if(mt1.tagCount == 0) return Optional.empty();
+    
+    //SwerveDriveSubsystem.swerveDrivePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+    time=mt1.timestampSeconds;
+    stdev = LimelightHelpers.getLimelightNTDoubleArray(name, "stdev_mt1");
+    SmartDashboard.putString(out, mt1.pose.toString());
+    return Optional.of(mt1.pose);
   }
     
 }
