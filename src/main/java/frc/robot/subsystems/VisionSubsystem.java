@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase{//belive it or not, this class has no warnings
   //despite the crimes against code committed here
     //AprilTagFieldLayout aprilTagFieldLayout;//used for finding distance from 2 tags
-    public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limelight");
-    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limelight-limeb");//lime names passed here
+    public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limelight-limef");
+    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limelight");//lime names passed here
     //public final PhotonSubsystem photonR=new PhotonSubsystem();
     //public final PhotonSubsystem photonL=new PhotonSubsystem();
 
@@ -51,12 +51,23 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
 
     public void updateFromLimeF(){
         Optional<Pose2d> pose = limeFpose();
-        if (!pose.isEmpty()) sd.swerveDrive.addVisionMeasurement(pose.get(), limeF.time, limeF.getstdev()); //implement limelight readings
+        if (!pose.isEmpty()) {
+            sd.swerveDrive.addVisionMeasurement(pose.get(), limeF.time, limeF.getstdev()); //implement limelight readings
+            try {
+                System.out.println("pose: " + pose.get().getX() + " " + pose.get().getY() + " " + pose.get().getRotation().getDegrees());
+            } catch (Exception e) {
+                System.out.println("pose: error");
+            }
+            System.out.println("time: " + limeF.time);
+            System.out.println("stdev: " + limeF.getstdev());
+        }
     }
 
     public void updateFromLimeB(){
         Optional<Pose2d> pose = limeBpose();
-        if (!pose.isEmpty()) sd.swerveDrive.addVisionMeasurement(pose.get(), limeB.time, limeB.getstdev()); //implement limelight readings
+        if (!pose.isEmpty()) {
+            sd.swerveDrive.addVisionMeasurement(pose.get(), limeB.time, limeB.getstdev()); //implement limelight readings
+        }
         //Timer.getFPGATimestamp()
     }
 

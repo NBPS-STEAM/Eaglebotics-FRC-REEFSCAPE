@@ -8,18 +8,21 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.utils.LimelightHelpers;
 
 public class LimeLocalizationSubsystem{
   private String name= "";
   private String out="";
+  private final double timeOffset;
   public double time=0;
   public double[] stdev = new double[0];
 
   public LimeLocalizationSubsystem(String name){
     this.name=name;
     out= this.name.concat(" pose");
+    timeOffset = Timer.getFPGATimestamp() - (LimelightHelpers.getLimelightNTDouble(name, "ts") / 1000.0);
   }
 
   private SwerveSubsystem sd;
@@ -63,11 +66,12 @@ public class LimeLocalizationSubsystem{
 
     LimelightHelpers.SetRobotOrientation(name, sd.getHeading().getDegrees(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
-    if(mt1.tagCount == 0) return Optional.empty();
+    if(mt1.tagCount == 0 || (mt1.avgTagDist > 1.5 + mt1.tagCount)) return Optional.empty();
     
     //SwerveDriveSubsystem.swerveDrivePoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-    time=mt1.timestampSeconds;
-    stdev = LimelightHelpers.getLimelightNTDoubleArray(name, "stdev_mt1");
+    //time = mt1.timestampSeconds + timeOffset;
+    time = Timer.getFPGATimestamp()-0.04;
+    stdev = LimelightHelpers.getLimelightNTDoubleArray(name, "stddevs");
     SmartDashboard.putString(out, mt1.pose.toString());
     return Optional.of(mt1.pose);
   }
