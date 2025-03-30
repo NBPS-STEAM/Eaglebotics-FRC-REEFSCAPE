@@ -51,12 +51,13 @@ public class VisionSubsystem extends SubsystemBase{//belive it or not, this clas
 
     public void updateFromLimeF(){
         Optional<Pose2d> pose = limeFpose();
-        if(!pose.isEmpty())sd.swerveDrive.addVisionMeasurement(pose.get(), Timer.getFPGATimestamp()/* limeF.time */,limeF.getstdev());//add limelight in
+        if (!pose.isEmpty()) sd.swerveDrive.addVisionMeasurement(pose.get(), limeF.time, limeF.getstdev()); //implement limelight readings
     }
 
     public void updateFromLimeB(){
         Optional<Pose2d> pose = limeBpose();
-        if(!pose.isEmpty())sd.swerveDrive.addVisionMeasurement(pose.get(), Timer.getFPGATimestamp()/* limeB.time */,limeB.getstdev());//add limelight
+        if (!pose.isEmpty()) sd.swerveDrive.addVisionMeasurement(pose.get(), limeB.time, limeB.getstdev()); //implement limelight readings
+        //Timer.getFPGATimestamp()
     }
 
 //commenting out photon as i do not think 4 cameras will be an advantage

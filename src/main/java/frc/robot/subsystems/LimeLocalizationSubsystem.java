@@ -29,7 +29,16 @@ public class LimeLocalizationSubsystem{
 
 
   public  Vector<N3> getstdev() {//janky system that adjusts how much we trust cameras based on distance and number of tags seen
-    LimelightHelpers.PoseEstimate mt2=LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+    // According to: https://docs.limelightvision.io/docs/docs-limelight/apis/json-results-specification
+    // stdev_mt1 | MT1 Standard Deviation [x, y, z, roll, pitch, yaw] (meters, degrees)
+    double[] stdev = LimelightHelpers.getLimelightNTDoubleArray(name, "stdev_mt1");
+    if (stdev.length >= 2) {
+      return VecBuilder.fill(stdev[0], stdev[1], 9999999);
+    } else {
+      return VecBuilder.fill(0.9, 0.9, 9999999);
+    }
+    
+    /* LimelightHelpers.PoseEstimate mt2=LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
     if (mt2.tagCount>1) {
       return VecBuilder.fill(0.65,0.65,999999);
     }else if(mt2.avgTagDist>5){
@@ -44,7 +53,7 @@ public class LimeLocalizationSubsystem{
       }else{
         return VecBuilder.fill(0.6,0.6,999999);
       }
-    }
+    } */
   }
 
     
