@@ -262,7 +262,7 @@ public class OpCommands {
                 break;
             case 2:
                 command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(2),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe2Lift, 2),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe2Pivot, 2)
                 );
@@ -270,7 +270,7 @@ public class OpCommands {
                 break;
             case 3:
                  command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(3),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe3Lift, 3),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe3Pivot, 3)
                 );
@@ -278,7 +278,7 @@ public class OpCommands {
                 break;
             case 4:
                 command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(4),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForPipe.Pipe4Lift, 4),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForPipe.Pipe4Pivot, 4)
                 );
@@ -313,7 +313,7 @@ public class OpCommands {
                 break;
             case 2:
                 command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(2),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball2Lift, 2),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball2Pivot, 2)
                 );
@@ -321,7 +321,7 @@ public class OpCommands {
                 break;
             case 3:
                  command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(3),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball3Lift, 3),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball3Pivot, 3)
                 );
@@ -329,13 +329,13 @@ public class OpCommands {
                 break;
             case 4:
                 command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(4),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball4Lift, 4),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball4Pivot, 4)
                 );
             case 5:
                 command= new SequentialCommandGroup(
-                    quickStowPivot(1),
+                    quickStowPivot(5),
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball5Lift,5),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball5Pivot,5)
                 );
