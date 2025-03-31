@@ -444,17 +444,18 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /**
-   * Returns a Command that drives the swerve drive to a specific distance at a given speed.
+   * Returns a Command that drives the swerve drive to a specific distance relative to the robot's starting position at a given speed.
    *
    * @param distanceInMeters       the distance to drive in meters
    * @param speedInMetersPerSecond the speed at which to drive in meters per second
    * @return a Command that drives the swerve drive to a specific distance at a given speed
    */
-  public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond)
+  public Command driveDistanceCommand(Translation2d distanceInMeters, double speedInMetersPerSecond)
   {
-    return run(() -> drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
-        .until(() -> swerveDrive.getPose().getTranslation().getDistance(new Translation2d(0, 0)) >
-                     distanceInMeters);
+    final Translation2d start = swerveDrive.getPose().getTranslation();
+    final Translation2d speed = distanceInMeters.times(speedInMetersPerSecond / distanceInMeters.getNorm());
+    return run(() -> drive(new ChassisSpeeds(speed.getX(), speed.getY(), 0)))
+        .until(() -> swerveDrive.getPose().getTranslation().getDistance(start) > distanceInMeters.getNorm());
   }
 
   /**

@@ -11,14 +11,18 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -677,6 +681,7 @@ public class RobotContainer
     turnController.setSetpoint(0);
 
     Command pathplannerless = new SequentialCommandGroup(
+      new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), Rotation2d.k180deg))),
       new ParallelDeadlineGroup(
         new WaitCommand(1),
         drivebase.centerModulesCommand()
@@ -684,13 +689,29 @@ public class RobotContainer
       new ParallelDeadlineGroup(
         new WaitCommand(10),
         opCommands.getPipe1Command(),
-        drivebase.driveCommand(() -> -0.1, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
+        drivebase.driveCommand(() -> 0.1, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
       ),
-      //new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(0, 0, Rotation2d.k180deg))),
       pipeIntakeCommands.new Outtake()
     );
 
-    autoChooser.addOption("PATHPLANNERLESS DRIVE FORWARD", pathplannerless);
+    Command pathplannerless2 = new SequentialCommandGroup(
+      new InstantCommand(() -> drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), Rotation2d.k180deg))),
+      new ParallelDeadlineGroup(
+        new WaitCommand(0.5),
+        drivebase.centerModulesCommand()
+      ),
+      new ParallelDeadlineGroup(
+        new WaitCommand(5),
+        opCommands.getPipe4Command(),
+        drivebase.driveCommand(() -> 0.2, () -> 0.0, () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())))
+      ),
+      drivebase.driveDistanceCommand(new Translation2d(0, -0.5), 0.1),
+      drivebase.driveDistanceCommand(new Translation2d(-0.1, 0), 0.1),
+      pipeIntakeCommands.new Outtake()
+    );
+
+    autoChooser.addOption("PPLESS DRIVE FORWARD", pathplannerless);
+    autoChooser.addOption("PPLESS L4 SCORE", pathplannerless2);
 
     //AutoChooser.addOption("1Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-RedSide").getStartingPose()))));
     //AutoChooser.addOption("1Coral-Center", new ParallelCommandGroup(new PathPlannerAuto("1Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-Center").getStartingPose()))));
