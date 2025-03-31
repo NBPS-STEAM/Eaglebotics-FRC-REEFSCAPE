@@ -627,13 +627,13 @@ public class RobotContainer
     // -- Manual Control Overrides --
     // Reminder: the controller is placed upside-down.
     //Gamepad:R1 - Toggle Pipe Intake
-    //coDriverGamepad.R1().toggleOnTrue(pipeIntakeCommands.new Intake());
+    coDriverGamepad.R1().toggleOnTrue(pipeIntakeCommands.new Intake());
     //Gamepad:R2 - Toggle Pipe Outtake
-    //coDriverGamepad.R2().toggleOnTrue(pipeIntakeCommands.new Outtake());
+    coDriverGamepad.R2().toggleOnTrue(pipeIntakeCommands.new Outtake());
     //Gamepad:L1 - Toggle Ball Intake
-    //coDriverGamepad.L1().toggleOnTrue(ballIntakeCommands.new Intake());
+    coDriverGamepad.L1().toggleOnTrue(ballIntakeCommands.new Intake());
     //Gamepad:L2 - Toggle Ball Outtake
-    //coDriverGamepad.L2().toggleOnTrue(ballIntakeCommands.new Outtake());
+    coDriverGamepad.L2().toggleOnTrue(ballIntakeCommands.new Outtake());
 
     //Joysticks:Left - Manual Lift
     buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveLargeDeadband)

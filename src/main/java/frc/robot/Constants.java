@@ -29,7 +29,7 @@ public final class Constants {
     public static final double Ball4Lift = 4.75 * ratio; //BALL LEVEL 2
     public static final double Ball4Pivot = 0.17;
 
-    public static final double Ball5Lift = 10.45 * ratio; //Barge
+    public static final double Ball5Lift = 10.80 * ratio; //Barge
     public static final double Ball5Pivot = 0.32; 
   }
 
@@ -44,7 +44,7 @@ public final class Constants {
     public static final double Pipe3Lift = 5.75 * ratio; //LEVEL 3
     public static final double Pipe3Pivot = 0.255;
 
-    public static final double Pipe4Lift = 10.45 * ratio; //LEVEL 4
+    public static final double Pipe4Lift = 10.80 * ratio; //LEVEL 4
     public static final double Pipe4Pivot = 0.25;
     public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
@@ -112,7 +112,7 @@ public final class Constants {
     public static final double bargePivotTravel = 0.30; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
     public static final double bargePivotShove = 0.3; // applied while depositing barge
-    public static final double bargeLift = 10.45 * ratio;
+    public static final double bargeLift = 10.80 * ratio;
   }
 
   public static final class HangConstants {
