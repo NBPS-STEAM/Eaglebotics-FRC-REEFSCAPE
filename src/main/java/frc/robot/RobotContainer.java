@@ -60,9 +60,9 @@ public class RobotContainer
 {//test
   public double[] maxCurrentElevator={0,0,0};
   // The robot's subsystems and commands are defined here...
-  public final VisionSubsystem vision=new VisionSubsystem();
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
+  public final VisionSubsystem vision = new VisionSubsystem(drivebase);
   public final PipeIntakeSubsystem pipeIntake = new PipeIntakeSubsystem();
   public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 

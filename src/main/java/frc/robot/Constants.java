@@ -1,13 +1,17 @@
 package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units; 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.LinearVelocity; 
 
 public final class Constants {
 
@@ -140,6 +144,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speedss
     public static  double kMaxSpeedMetersPerSecond = 5.6;
+    public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(5.6); // Used in vision recognition
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration

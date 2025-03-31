@@ -4,24 +4,14 @@
 
 package frc.robot;
 
-import java.io.File;
-import java.io.IOException;
-
-
-
-
-
 import com.pathplanner.lib.commands.PathfindingCommand;
 
-import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SensorSubsystem;
-import swervelib.parser.SwerveParser;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -46,7 +36,6 @@ public class Robot extends TimedRobot
     m_gcTimer.start();
     addPeriodic(()->{
       m_robotContainer.intakePosition.updateAll();
-      m_robotContainer.vision.updateAll();
       SensorSubsystem.getInstance().updateAll();//all susbsystems that need pid should have the methods that
     }, 0.01,0.005);//update pid here to make sure they run as fast as possible, ONLY PID, nothing else
     instance = this;//it wont be stable then
@@ -87,7 +76,6 @@ public class Robot extends TimedRobot
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_robotContainer.vision.init(m_robotContainer.drivebase);
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();

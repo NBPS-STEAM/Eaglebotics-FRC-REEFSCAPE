@@ -1,125 +1,224 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
+import com.ctre.phoenix6.Utils;
 
-// import org.photonvision.EstimatedRobotPose;
-// import org.photonvision.targeting.PhotonTrackedTarget;
-
-//import edu.wpi.first.apriltag.AprilTagFieldLayout;
-// import edu.wpi.first.math.VecBuilder;
-// import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.math.geometry.Translation2d;
-// import edu.wpi.first.math.numbers.N3;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
+import frc.utils.LimelightHelpers;
 
-public class VisionSubsystem extends SubsystemBase{//belive it or not, this class has no warnings
-  //despite the crimes against code committed here
-    //AprilTagFieldLayout aprilTagFieldLayout;//used for finding distance from 2 tags
-    public final LimeLocalizationSubsystem limeF= new LimeLocalizationSubsystem("limelight-limef");
-    public final LimeLocalizationSubsystem limeB= new LimeLocalizationSubsystem("limelight");//lime names passed here
-    //public final PhotonSubsystem photonR=new PhotonSubsystem();
-    //public final PhotonSubsystem photonL=new PhotonSubsystem();
-
-    private Optional<Pose2d> limeFpose(){
-        return limeF.getPose();//getter method for limelight subsystem
-    }
-    private Optional<Pose2d> limeBpose(){
-        return limeB.getPose();//getter method for limelight subsystem
+/**
+ * Massive credit to team 4253 Raid Zero.
+ * Code modified from their repository:
+ * https://github.com/TASRobotics/RaidZero-FRC-2025/blob/main/src/main/java/raidzero/robot/subsystems/drivetrain/Limelight.java
+ */
+public class VisionSubsystem extends SubsystemBase{
+    public enum LED_MODE {
+        PIPELINE, OFF, BLINK, ON
     }
 
-    private SwerveSubsystem sd;
-    public void init(SwerveSubsystem sd){
-        this.sd=sd;
-        limeF.init(sd);
-        limeB.init(sd);//gives swerve subsystem bc it needs imu measurements
-       // //photonR.init("camR");
-        //photonR.init("camL");//camera names for photon
+    public enum STREAM_MODE {
+        STANDARD, PIP_MAIN, PIP_SECOND
     }
 
-    public void updateAll(){//update all cameras
-        updateFromLimeF();
-        updateFromLimeB();
-        //SmartDashboard.putNumberArray("robot pos", new double[]{sd.swerveDrive.getPose().getX(),sd.swerveDrive.getPose().getY(),sd.swerveDrive.getPose().getRotation().getDegrees()});
-        //SmartDashboard.updateValues();
-        //updatePhotonL();
-        //updatePhotonR();
+    private static final String fLimeName = "limelight-limef";
+    private static final String bLimeName = "limelight-limeb";
+
+    private static final String fPoseName = "FLpose";
+    private static final String bPoseName = "BLpose";
+
+    private boolean ignoreFlLime = false;
+    private boolean ignoreBlLime = false;
+    private boolean ignoreAllLimes = false;
+
+    private StructPublisher<Pose2d> flNT = NetworkTableInstance.getDefault().getStructTopic("flNT", Pose2d.struct).publish();
+    private StructPublisher<Pose2d> blNT = NetworkTableInstance.getDefault().getStructTopic("blNT", Pose2d.struct).publish();
+
+    private LimelightHelpers.PoseEstimate limeF, limeB;
+    private LimelightHelpers.PoseEstimate limeFPrev, limeBPrev;
+
+    private Notifier notifier;
+
+    private SwerveSubsystem swerve;
+
+    /**
+     * Constructs a {@link VisionSubsystem} instance
+     */
+    public VisionSubsystem(SwerveSubsystem swerve) {
+        this.swerve = swerve;
+        this.startThread();
     }
 
-    public void updateFromLimeF(){
-        Optional<Pose2d> pose = limeFpose();
-        if (!pose.isEmpty()) {
-            sd.swerveDrive.addVisionMeasurement(pose.get(), limeF.time, limeF.getstdev()); //implement limelight readings
-            try {
-                System.out.println("pose: " + pose.get().getX() + " " + pose.get().getY() + " " + pose.get().getRotation().getDegrees());
-            } catch (Exception e) {
-                System.out.println("pose: error");
+    /**
+     * Sets the stream mode of the limelight
+     *
+     * @param limelightName The name of the limelight
+     * @param mode {@link STREAM_MODE} of the limelight
+     */
+    public void setStreamMode(String limelightName, STREAM_MODE mode) {
+        if (mode == STREAM_MODE.STANDARD) {
+            LimelightHelpers.setStreamMode_Standard(limelightName);
+        } else if (mode == STREAM_MODE.PIP_MAIN) {
+            LimelightHelpers.setStreamMode_PiPMain(limelightName);
+        } else if (mode == STREAM_MODE.PIP_SECOND) {
+            LimelightHelpers.setStreamMode_PiPSecondary(limelightName);
+        }
+    }
+
+    /**
+     * Sets the pipeline of the limelight
+     *
+     * @param limelightName The name of the limelight
+     * @param pipeline The pipeline index
+     */
+    public void setPipeline(String limelightName, int pipeline) {
+        LimelightHelpers.setPipelineIndex(limelightName, pipeline);
+    }
+
+    /**
+     * Sets the LED mode of the limelight
+     *
+     * @param limelightName The name of the limelight
+     * @param mode The LED mode
+     */
+    public void setLedMode(String limelightName, LED_MODE mode) {
+        if (mode == LED_MODE.PIPELINE) {
+            LimelightHelpers.setLEDMode_PipelineControl(limelightName);
+        } else if (mode == LED_MODE.OFF) {
+            LimelightHelpers.setLEDMode_ForceOff(limelightName);
+        } else if (mode == LED_MODE.BLINK) {
+            LimelightHelpers.setLEDMode_ForceBlink(limelightName);
+        } else if (mode == LED_MODE.ON) {
+            LimelightHelpers.setLEDMode_ForceOn(limelightName);
+        }
+    }
+
+    /**
+     * Starts the Limelight odometry thread
+     */
+    private void startThread() {
+        notifier = new Notifier(this::loop);
+        notifier.startPeriodic(0.02);
+    }
+
+    /**
+     * The main loop of the Limelight odometry thread
+     */
+    private void loop() {
+        if (swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble() > 720) {
+            ignoreAllLimes = true;
+        } else {
+            ignoreAllLimes = false;
+        }
+
+        updateFrontLime();
+        updateBackLime();
+    }
+
+    /**
+     * Updates the odometry for the front limelight
+     */
+    private void updateFrontLime() {
+        LimelightHelpers.SetRobotOrientation(
+            fLimeName,
+            swerve.getPose().getRotation().getDegrees(),
+            swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble(),
+            0,
+            0,
+            0,
+            0
+        );
+        limeF = LimelightHelpers.getBotPoseEstimate_wpiBlue(fLimeName);
+
+        if (limeF != null && limeF.pose != null) {
+            ignoreFlLime = !poseInField(limeF.pose) ||
+                (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(fLimeName).getZ()) > 0.4) ||
+                (LimelightHelpers.getTA(fLimeName) < 0.1) ||
+                (limeFPrev != null && (limeF.pose.getTranslation().getDistance(limeFPrev.pose.getTranslation()) /
+                    (limeF.timestampSeconds - limeFPrev.timestampSeconds)) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude()) ||
+                (limeFPrev != null && (limeF.pose.getTranslation()
+                    .getDistance(limeFPrev.pose.getTranslation()) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)) ||
+                (limeF.rawFiducials.length > 0 && limeF.rawFiducials[0].ambiguity > 0.5 &&
+                    limeF.rawFiducials[0].distToCamera > 4.0) ||
+                limeF.pose.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+
+            if (!ignoreAllLimes && !ignoreFlLime) {
+                SmartDashboard.putBoolean(fPoseName, true);
+                flNT.set(limeF.pose);
+
+                swerve.swerveDrive.addVisionMeasurement(
+                    limeF.pose,
+                    Utils.fpgaToCurrentTime(limeF.timestampSeconds),
+                    VecBuilder.fill(0.5, 0.5, 5).div(LimelightHelpers.getTA(fLimeName))
+                );
+            } else {
+                SmartDashboard.putBoolean(fPoseName, false);
             }
-            System.out.println("time: " + limeF.time);
-            System.out.println("stdev: " + limeF.getstdev());
+
+            limeFPrev = limeF;
         }
     }
 
-    public void updateFromLimeB(){
-        Optional<Pose2d> pose = limeBpose();
-        if (!pose.isEmpty()) {
-            sd.swerveDrive.addVisionMeasurement(pose.get(), limeB.time, limeB.getstdev()); //implement limelight readings
+    /**
+     * Updates the odometry for the back limelight
+     */
+    private void updateBackLime() {
+        LimelightHelpers.SetRobotOrientation(
+            bLimeName,
+            swerve.getPose().getRotation().getDegrees(),
+            swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble(),
+            0,
+            0,
+            0,
+            0
+        );
+        limeB = LimelightHelpers.getBotPoseEstimate_wpiBlue(bLimeName);
+
+        if (limeB != null && limeB.pose != null) {
+            ignoreBlLime = !poseInField(limeB.pose) ||
+                (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(bLimeName).getZ()) > 0.4) ||
+                (LimelightHelpers.getTA(bLimeName) < 0.1) ||
+                (limeBPrev != null && (limeB.pose.getTranslation().getDistance(limeBPrev.pose.getTranslation()) /
+                    (limeB.timestampSeconds - limeBPrev.timestampSeconds)) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude()) ||
+                (limeBPrev != null && (limeB.pose.getTranslation()
+                    .getDistance(limeBPrev.pose.getTranslation()) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)) ||
+                (limeB.rawFiducials.length > 0 && limeB.rawFiducials[0].ambiguity > 0.5 &&
+                    limeB.rawFiducials[0].distToCamera > 4.0) ||
+                limeB.pose.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+
+            if (!ignoreAllLimes && !ignoreBlLime) {
+                SmartDashboard.putBoolean(bPoseName, true);
+                blNT.set(limeB.pose);
+
+                swerve.swerveDrive.addVisionMeasurement(
+                    limeB.pose,
+                    Utils.fpgaToCurrentTime(limeB.timestampSeconds),
+                    VecBuilder.fill(0.75, 0.75, 5).div(LimelightHelpers.getTA(bLimeName))
+                );
+            } else {
+                SmartDashboard.putBoolean(bPoseName, false);
+            }
+
+            limeBPrev = limeB;
         }
-        //Timer.getFPGATimestamp()
     }
 
-//commenting out photon as i do not think 4 cameras will be an advantage
-//also comments out some of the worst code if done that badly needs organizing to keep using
-    // public void updatePhotonL(){
-    //     Optional<EstimatedRobotPose> data=photonL.photonPose.update();
-    // if(!data.isEmpty()){//if there is data from photon vision this runs and updates the odometry with its pose
-    //   double sum=0;
-    //   for (PhotonTrackedTarget target :data.get().targetsUsed) {//complicated thing to find avg tag distance
-    //       Translation2d tagPosition = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
-    //               .getTranslation().toTranslation2d();
-    //       sum += data.get().estimatedPose.toPose2d().getTranslation().getDistance(tagPosition);
-    //   }
-    //   sum/=data.get().targetsUsed.size();
-    //   SmartDashboard.putString("PhotonL pose",data.get().estimatedPose.toPose2d().toString());//for testing
-    //   sd.SwerveDriveSubsystem.addVisionMeasurement(data.get().estimatedPose.toPose2d(),data.get().timestampSeconds,getstdev(data.get().targetsUsed.size(), sum));//adds in vision
-    // }
-    // }
-
-    // public void updatePhotonR(){
-    //     Optional<EstimatedRobotPose> data=photonR.photonPose.update();
-    // if(!data.isEmpty()){//if there is data from photon vision this runs and updates the odometry with its pose
-    //   double sum=0;
-    //     for (PhotonTrackedTarget target :data.get().targetsUsed) {//complicated thing to find avg tag distance
-    //         Translation2d tagPosition = aprilTagFieldLayout.getTagPose(target.getFiducialId()).get()
-    //                 .getTranslation().toTranslation2d();
-    //         sum += data.get().estimatedPose.toPose2d().getTranslation().getDistance(tagPosition);
-    //     }
-    //     sum/=data.get().targetsUsed.size();
-    //   SmartDashboard.putString("PhotonRmm pose",data.get().estimatedPose.toPose2d().toString());//for testing
-    //   sd.SwerveDriveSubsystem.addVisionMeasurement(data.get().estimatedPose.toPose2d(),data.get().timestampSeconds,getstdev(data.get().targetsUsed.size(), sum));//adds in vision
-    // }
-    // }
-
-    // public  Vector<N3> getstdev(double tags, double avgDistance) {//kinda janky system to hopefully tune out noisy measurements
-    //   if (tags>1) {//if there is more than one tag we just trust the localization beacause
-    //     return VecBuilder.fill(0.65,0.65,0.999999);//i think it should be good enough
-    //   }else if(avgDistance>5){
-    //       return VecBuilder.fill(0.9,0.9,0.99999);//if its over 5 meters out we dont trust vision very much
-    //     }else{
-    //       if(avgDistance>4){
-    //         return VecBuilder.fill(0.85,0.85,0.999999);//over 4 we trust a little
-    //       }else if(avgDistance>3){
-    //           return VecBuilder.fill(0.725,0.725,0.999999);//over 3 a decent amount of trust
-    //       }else if(avgDistance>2){
-    //         return VecBuilder.fill(0.65,0.65,0.999999);//almost full trust if over 2
-    //       }else{
-    //         return VecBuilder.fill(0.6,0.6,0.999999);//below 2 is the maximum trust im putting in our cameras
-    //       }//this whole thing might be lowkey useless
-    //     }
-    //   }
-
-
+    /**
+     * Checks if a pose is inside the field dimensions
+     *
+     * @param pose The {@link Pose2d} to check
+     * @return True if the pose is inside the field dimensions, false otherwise
+     */
+    private boolean poseInField(Pose2d pose) {
+        return pose.getTranslation().getX() > 0 &&
+            pose.getTranslation().getX() < 17.55 &&
+            pose.getTranslation().getY() > 0 &&
+            pose.getTranslation().getY() < 8.05;
+    }
 }
