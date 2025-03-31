@@ -6,49 +6,39 @@ package frc.robot;
 
 import java.io.File;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.HangConstants;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.IntakePositionConstants;
 import frc.robot.commands.oldordrivecommands.AutoCommands.WaitCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.BallIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.HangCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.IntakePositionCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.OpCommands;
-import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.PipeIntakeCommands;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.StowCommand;
 import frc.robot.commands.oldordrivecommands.ScoreCommands.TelePathingCommands;
 import frc.robot.commands.oldordrivecommands.TestCommands.TestCommand;
 import frc.robot.subsystems.BallIntakeSubsystem;
 import frc.robot.subsystems.HangSubsystem;
+import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.utils.IntakeState;
 import swervelib.SwerveModule;
 
 /**
@@ -98,7 +88,7 @@ public class RobotContainer
    * 16 12  8
    */
 
-  SendableChooser<Command> AutoChooser = new SendableChooser<>();
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
   /**
@@ -118,7 +108,7 @@ public class RobotContainer
 
     setAutoCommands();
     
-    SmartDashboard.putData("Autos", AutoChooser);
+    SmartDashboard.putData("Autos", autoChooser);
   }
 
   
@@ -669,16 +659,18 @@ public class RobotContainer
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return AutoChooser.getSelected(); 
+    return autoChooser.getSelected(); 
   }
 
   private static double normalDegrees(double deg) {
     double mod = deg % 360.0;
     if (mod < 0) mod += 360;
     return mod;
-}
+  }
   
   public void setAutoCommands(){
+    autoChooser = AutoBuilder.buildAutoChooser();
+
     PIDController turnController = new PIDController(DriveConstants.kTurningP, DriveConstants.kTurningI, DriveConstants.kTurningD);
     turnController.setIZone(DriveConstants.kTurningIZone);
     turnController.enableContinuousInput(0, 360);
@@ -698,15 +690,15 @@ public class RobotContainer
       pipeIntakeCommands.new Outtake()
     );
 
-    AutoChooser.addOption("PATHPLANNERLESS DRIVE FORWARD", pathplannerless);
+    autoChooser.addOption("PATHPLANNERLESS DRIVE FORWARD", pathplannerless);
 
-    AutoChooser.addOption("1Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-RedSide").getStartingPose()))));
-    AutoChooser.addOption("1Coral-Center", new ParallelCommandGroup(new PathPlannerAuto("1Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-Center").getStartingPose()))));
-    AutoChooser.addOption("1Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-BlueSide").getStartingPose()))));
-    AutoChooser.addOption("2Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-RedSide").getStartingPose()))));
-    AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-BlueSide").getStartingPose()))));
-    AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-Center").getStartingPose()))));
-    AutoChooser.addOption("EmptyTestAuto", new ParallelCommandGroup(new PathPlannerAuto("EmptyTestAuto"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("EmptyTestAuto").getStartingPose()))));
+    //AutoChooser.addOption("1Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-RedSide").getStartingPose()))));
+    //AutoChooser.addOption("1Coral-Center", new ParallelCommandGroup(new PathPlannerAuto("1Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-Center").getStartingPose()))));
+    //AutoChooser.addOption("1Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("1Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("1Coral-BlueSide").getStartingPose()))));
+    //AutoChooser.addOption("2Coral-RedSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-RedSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-RedSide").getStartingPose()))));
+    //AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-BlueSide"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-BlueSide").getStartingPose()))));
+    //AutoChooser.addOption("2Coral-BlueSide", new ParallelCommandGroup(new PathPlannerAuto("2Coral-Center"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("2Coral-Center").getStartingPose()))));
+    //AutoChooser.addOption("EmptyTestAuto", new ParallelCommandGroup(new PathPlannerAuto("EmptyTestAuto"),new InstantCommand(()->drivebase.swerveDrive.resetOdometry(new PathPlannerAuto("EmptyTestAuto").getStartingPose()))));
     //AutoChooser.addOption("3Coral-RedSide", new PathPlannerAuto("3Coral-RedSide"));
   }
 
