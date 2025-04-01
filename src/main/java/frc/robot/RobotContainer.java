@@ -611,6 +611,8 @@ public class RobotContainer
     buttonPanel.button(7).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(4)));
     buttonPanel.button(6).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(5)));
 
+    coDriverGamepad.povRight().onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToBarge()));
+
 
 
     //Gamepad:PS+Options (hold for 0.1s) - Activate Then Move Hang
