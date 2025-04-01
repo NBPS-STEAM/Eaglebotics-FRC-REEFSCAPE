@@ -213,6 +213,7 @@ public class TelePathingCommands {
 
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                    swerve.getPose(),
                     new Pose2d(
                     finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*adjustDist*Math.sin(index * Math.PI/3),
                     finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
@@ -396,6 +397,8 @@ public class TelePathingCommands {
 
 
         ArrayList<Pose2d> poseList = new ArrayList<>();
+        poseList.add(swerve.getPose());
+
         if (!canGoStraight) {
             //If its left of the the center of the reef, it will go around it on the non-barge-side
             if (roboX < 4.5) { 
