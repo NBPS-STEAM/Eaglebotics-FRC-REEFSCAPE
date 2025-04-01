@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -26,6 +27,9 @@ public class VisionSubsystem extends SubsystemBase{
     public enum STREAM_MODE {
         STANDARD, PIP_MAIN, PIP_SECOND
     }
+
+    /** If greater than current time, the next vision scan will also reset swerve drive odometry to the vision results. Probably don't use this in a match. */
+    public double resetOdomAt = -10;
 
     private static final String fLimeName = "limelight-limef";
     private static final String bLimeName = "limelight-limeb";
@@ -100,6 +104,19 @@ public class VisionSubsystem extends SubsystemBase{
     }
 
     /**
+     * Flag the next vision scan to directly reset the swerve pose estimator's pose to the vision results.
+     * <p>This is useful for when localization gets messed up due to too much desync between odometry and vision results.</p>
+     * <p>Times out if no vision scan occurs within 0.4 seconds of call.</p>
+     */
+    public void resetOdometry() {
+        resetOdomAt = Timer.getFPGATimestamp() + 0.4;
+    }
+
+    private boolean doResetOdom() {
+        return resetOdomAt > Timer.getFPGATimestamp();
+    }
+
+    /**
      * Starts the Limelight odometry thread
      */
     private void startThread() {
@@ -138,6 +155,11 @@ public class VisionSubsystem extends SubsystemBase{
 
         if (limeF != null && limeF.pose != null) {
             SmartDashboard.putString("LimeF pose", limeF.pose.toString());
+            if (doResetOdom()) {
+                swerve.swerveDrive.resetOdometry(limeF.pose);
+                resetOdomAt = -10;
+            }
+
             ignoreFlLime = !poseInField(limeF.pose) ||
                 (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(fLimeName).getZ()) > 0.4) ||
                 (LimelightHelpers.getTA(fLimeName) < 0.1) ||
@@ -183,6 +205,11 @@ public class VisionSubsystem extends SubsystemBase{
 
         if (limeB != null && limeB.pose != null) {
             SmartDashboard.putString("LimeB pose", limeB.pose.toString());
+            if (doResetOdom()) {
+                swerve.swerveDrive.resetOdometry(limeB.pose);
+                resetOdomAt = -10;
+            }
+
             ignoreBlLime = !poseInField(limeB.pose) ||
                 (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(bLimeName).getZ()) > 0.4) ||
                 (LimelightHelpers.getTA(bLimeName) < 0.1) ||

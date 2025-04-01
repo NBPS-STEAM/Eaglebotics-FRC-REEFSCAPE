@@ -644,6 +644,9 @@ public class RobotContainer
     //Gamepad:Circle - Unset Auto Drive
     coDriverGamepad.circle().onTrue(Commands.runOnce(telePathingCommands::setAutoDriveNone));
 
+    //Gamepad:Cross (hold for 0.5s) - Reset Odometry from Vision
+    coDriverGamepad.cross().debounce(0.5).onTrue(Commands.runOnce(vision::resetOdometry));
+
   }
 
 
