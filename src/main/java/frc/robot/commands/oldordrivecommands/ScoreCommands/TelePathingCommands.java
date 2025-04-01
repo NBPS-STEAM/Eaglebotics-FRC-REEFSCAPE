@@ -15,6 +15,7 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
@@ -127,11 +128,13 @@ public class TelePathingCommands {
 
         // Create a list of waypoints from poses. Each pose represents one waypoint.
         // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        Pose2d dest = new Pose2d(
+            1.75*Math.cos(index * Math.PI/3) + 4.5,
+            1.75*Math.sin(index * Math.PI/3) + 4.0,
+            Rotation2d.fromDegrees(180 + index*60));
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                new Pose2d(
-                1.75*Math.cos(index * Math.PI/3) + 4.5,
-                1.75*Math.sin(index * Math.PI/3) + 4.0,
-                Rotation2d.fromDegrees(180 + index*60))
+                getRobotPose(dest.getTranslation()),
+                dest
         );
 
         //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
@@ -212,12 +215,14 @@ public class TelePathingCommands {
         if (canGoStraight) {
 
 
+            Pose2d dest = new Pose2d(
+                finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*adjustDist*Math.sin(index * Math.PI/3),
+                finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
+                Rotation2d.fromDegrees(180 + index*60));
+
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                    swerve.getPose(),
-                    new Pose2d(
-                    finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*adjustDist*Math.sin(index * Math.PI/3),
-                    finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
-                    Rotation2d.fromDegrees(180 + index*60))
+                    getRobotPose(dest.getTranslation()),
+                    dest
             );
 
             //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
@@ -309,7 +314,6 @@ public class TelePathingCommands {
             //Creates a list of poses from each angle from sortedAngleList
             //as well as adding the final point
             ArrayList<Pose2d> poseList = new ArrayList<>();
-            poseList.add(swerve.getPose()); // LOOK! THIS MAY BE THE THING TO FIX THE CRASHING
             if (goCounterCW) {
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
@@ -332,6 +336,9 @@ public class TelePathingCommands {
                 finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
                 Rotation2d.fromDegrees(180 + index*60))
             );
+
+            //This is always added, as it's the robot's starting pose
+            poseList.add(0, getRobotPose(poseList.get(0).getTranslation()));
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseList);
 
@@ -397,7 +404,6 @@ public class TelePathingCommands {
 
 
         ArrayList<Pose2d> poseList = new ArrayList<>();
-        poseList.add(swerve.getPose());
 
         if (!canGoStraight) {
             //If its left of the the center of the reef, it will go around it on the non-barge-side
@@ -445,6 +451,9 @@ public class TelePathingCommands {
             Rotation2d.fromDegrees(-125 + 250*ind))
         );
 
+        //This is always added, as it's the robot's starting pose
+        poseList.add(0, getRobotPose(poseList.get(0).getTranslation()));
+
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poseList);
 
         //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
@@ -475,8 +484,10 @@ public class TelePathingCommands {
     public Command goToBargeSmartCommand() {
         // Create a list of waypoints from poses. Each pose represents one waypoint.
         // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        Translation2d dest = new Translation2d(7.5, swerve.getPose().getY());
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-            new Pose2d(7.5, swerve.getPose().getY(), Rotation2d.fromDegrees(0))
+            getRobotPose(dest),
+            new Pose2d(dest, Rotation2d.fromDegrees(0))
         );
 
         //PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
@@ -491,6 +502,17 @@ public class TelePathingCommands {
         );
 
         return AutoBuilder.followPath(path);
+    }
+
+
+
+
+
+
+
+    private Pose2d getRobotPose(Translation2d pointingTowards) {
+        Translation2d robotPos = swerve.getPose().getTranslation();
+        return new Pose2d(robotPos, pointingTowards.minus(robotPos).getAngle());
     }
 
 }
