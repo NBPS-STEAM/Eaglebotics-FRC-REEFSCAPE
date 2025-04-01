@@ -733,6 +733,7 @@ public class RobotContainer
     NamedCommands.registerCommand("L4 Group", opCommands.pipeCommandGroup(4));
     NamedCommands.registerCommand("Ball Level 2", opCommands.getBall2Command());
     NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
+    NamedCommands.registerCommand("Quick Stow", opCommands.quickStowCommand());
   }
 
   public void setDriveMode()

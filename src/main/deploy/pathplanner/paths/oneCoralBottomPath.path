@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.309049971417021,
-        "y": 2.1209496366511464
+        "x": 7.3104653952757825,
+        "y": 2.1627945677568423
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.29,
-        "y": 2.962
+        "x": 5.034405258333772,
+        "y": 2.753100650582096
       },
       "prevControl": {
-        "x": 5.526668546219059,
-        "y": 2.8814518825138844
+        "x": 5.286098214883408,
+        "y": 2.672801804934836
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,17 +31,10 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Pipe Outtake",
-      "waypointRelativePos": 0.7493150684931399,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

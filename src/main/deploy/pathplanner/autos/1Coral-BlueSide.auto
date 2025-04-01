@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Quick Stow"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "oneCoralTopPath"
@@ -13,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Pipe Level 4"
+            "name": "L4 Group"
           }
         },
         {

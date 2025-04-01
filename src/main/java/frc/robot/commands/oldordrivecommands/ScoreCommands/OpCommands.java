@@ -7,13 +7,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.SensorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class OpCommands {
@@ -129,8 +132,23 @@ public class OpCommands {
             );
     }
 
-    private Command quickStowPivot(Integer forLevel) {
+    public Command quickStowPivot(Integer forLevel) {
         return Commands.runOnce(() -> intakePositionSubsystem.setPivotSetpoint(Constants.IntakePositionConstants.stowPivot, forLevel));
+    }
+
+    public Command quickStowLift(Integer forLevel) {
+        return Commands.runOnce(() -> intakePositionSubsystem.setLiftSetpoint(Constants.IntakePositionConstants.stowLift, forLevel));
+    }
+
+    /**
+     * Signal the lift and pivot to move to stow and end immediately.
+     * Other intake position commands wait for them to make it to the destination.
+     */
+    public Command quickStowCommand() {
+        return new ParallelCommandGroup(
+            quickStowLift(0),
+            quickStowPivot(0)
+        );
     }
 
     /**
@@ -243,6 +261,19 @@ public class OpCommands {
             //new InstantCommand(()->LEDSubsystem.getInstance().setBarge()),
             intakePositionCommand.new SetIntakePositionSetpoints(Constants.IntakePositionConstants.bargeLift, Constants.IntakePositionConstants.bargePivotTravel, 5),
             new InstantCommand(() -> intakePositionSubsystem.setPivotSetpoint(Constants.IntakePositionConstants.bargePivot, 5))
+        );
+    }
+
+    /**
+     * Go to high algae intake position and sweep down to intake an algae on either L3 or L2.
+     */
+    public Command ballSweepCommand() {
+        return new SequentialCommandGroup(
+            ballCommandGroup(4),
+            new ParallelRaceGroup(
+                getBall3Command(),
+                new WaitUntilCommand(() -> SensorSubsystem.getInstance().ball)
+            )
         );
     }
 
