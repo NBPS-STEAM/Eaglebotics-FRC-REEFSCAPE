@@ -333,6 +333,8 @@ public class OpCommands {
                     intakePositionCommand. new SetLiftSetpoint(Constants.OpConstantsForBall.Ball4Lift, 4),
                     intakePositionCommand. new SetPivotSetpoint(Constants.OpConstantsForBall.Ball4Pivot, 4)
                 );
+                
+                break;
             case 5:
                 command= new SequentialCommandGroup(
                     quickStowPivot(5),
