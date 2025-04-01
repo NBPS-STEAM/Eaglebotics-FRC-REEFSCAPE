@@ -137,6 +137,7 @@ public class VisionSubsystem extends SubsystemBase{
         limeF = LimelightHelpers.getBotPoseEstimate_wpiBlue(fLimeName);
 
         if (limeF != null && limeF.pose != null) {
+            SmartDashboard.putString("LimeF pose", limeF.pose.toString());
             ignoreFlLime = !poseInField(limeF.pose) ||
                 (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(fLimeName).getZ()) > 0.4) ||
                 (LimelightHelpers.getTA(fLimeName) < 0.1) ||
@@ -181,6 +182,7 @@ public class VisionSubsystem extends SubsystemBase{
         limeB = LimelightHelpers.getBotPoseEstimate_wpiBlue(bLimeName);
 
         if (limeB != null && limeB.pose != null) {
+            SmartDashboard.putString("LimeB pose", limeB.pose.toString());
             ignoreBlLime = !poseInField(limeB.pose) ||
                 (Math.abs(LimelightHelpers.getBotPose3d_wpiBlue(bLimeName).getZ()) > 0.4) ||
                 (LimelightHelpers.getTA(bLimeName) < 0.1) ||

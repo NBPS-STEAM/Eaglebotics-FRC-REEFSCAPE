@@ -175,8 +175,9 @@ public class TelePathingCommands {
 
         //finDist is the distance from the final point of the path to the center of the reef
         //waypntDist is the distance from the waypoints the robot uses to circle the reef from the center of the reef
-        double finDist = 1.65;
+        double finDist = 1.384;
         double waypntDist = 2.0;
+        double adjustDist = 0.144;
      
 
         //The current position of the robot
@@ -213,8 +214,8 @@ public class TelePathingCommands {
 
             List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                     new Pose2d(
-                    finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
-                    finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*0.155*Math.cos(index * Math.PI/3),
+                    finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*adjustDist*Math.sin(index * Math.PI/3),
+                    finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
                     Rotation2d.fromDegrees(180 + index*60))
             );
 
@@ -307,6 +308,7 @@ public class TelePathingCommands {
             //Creates a list of poses from each angle from sortedAngleList
             //as well as adding the final point
             ArrayList<Pose2d> poseList = new ArrayList<>();
+            poseList.add(swerve.getPose()); // LOOK! THIS MAY BE THE THING TO FIX THE CRASHING
             if (goCounterCW) {
             for (Double ang : sortedAngleList) {
                 poseList.add(new Pose2d(
@@ -325,8 +327,8 @@ public class TelePathingCommands {
                 }
             }
             poseList.add(new Pose2d(
-                finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*0.155*Math.sin(index * Math.PI/3),
-                finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*0.155*Math.cos(index * Math.PI/3),
+                finDist*Math.cos(index * Math.PI/3) + 4.5 - subPos*adjustDist*Math.sin(index * Math.PI/3),
+                finDist*Math.sin(index * Math.PI/3) + 4.0 + subPos*adjustDist*Math.cos(index * Math.PI/3),
                 Rotation2d.fromDegrees(180 + index*60))
             );
 

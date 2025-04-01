@@ -38,9 +38,9 @@ public class OpCommands {
         // left stick controls translation
         // right stick controls the angular velocity of the robot
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> gamepad.getLeftY(),
-            () -> gamepad.getLeftX(),
-            () -> gamepad.getRightX(),
+            () -> -gamepad.getLeftY(),
+            () -> -gamepad.getLeftX(),
+            () -> -gamepad.getRightX(),
             OIConstants.kDriveDeadband, OIConstants.kDriveDeadband);
 
         return driveFieldOrientedAnglularVelocity;
@@ -51,9 +51,9 @@ public class OpCommands {
     /* public static Command getSlowDriveCommand(SwerveSubsystem drivebase, CommandPS5Controller gamepad) {
         // same as above but half as fast
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> gamepad.getLeftY() * Constants.DriveConstants.speedFactor,
-            () -> gamepad.getLeftX() * Constants.DriveConstants.speedFactor,
-            () -> gamepad.getRightX() * Constants.DriveConstants.speedFactor,
+            () -> -gamepad.getLeftY() * Constants.DriveConstants.speedFactor,
+            () -> -gamepad.getLeftX() * Constants.DriveConstants.speedFactor,
+            () -> -gamepad.getRightX() * Constants.DriveConstants.speedFactor,
             OIConstants.kDriveDeadband, OIConstants.kDriveDeadband);
 
         return driveFieldOrientedAnglularVelocity;
@@ -72,9 +72,9 @@ public class OpCommands {
         turnController.setSetpoint(degrees);
 
         Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
-            () -> gamepad.getLeftY(),
-            () -> gamepad.getLeftX(),
-            () -> -turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())),
+            () -> -gamepad.getLeftY(),
+            () -> -gamepad.getLeftX(),
+            () -> turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())),
             OIConstants.kDriveDeadband, 0);
 
         return driveFieldOrientedAnglularVelocity;

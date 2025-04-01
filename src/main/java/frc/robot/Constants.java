@@ -33,7 +33,7 @@ public final class Constants {
     public static final double Ball4Lift = 4.75 * ratio; //BALL LEVEL 2
     public static final double Ball4Pivot = 0.17;
 
-    public static final double Ball5Lift = 10.80 * ratio; //Barge
+    public static final double Ball5Lift = 10.45 * ratio; //Barge
     public static final double Ball5Pivot = 0.32; 
   }
 
@@ -48,8 +48,8 @@ public final class Constants {
     public static final double Pipe3Lift = 5.75 * ratio; //LEVEL 3
     public static final double Pipe3Pivot = 0.255;
 
-    public static final double Pipe4Lift = 10.80 * ratio; //LEVEL 4
-    public static final double Pipe4Pivot = 0.25;
+    public static final double Pipe4Lift = 10.45 * ratio; //LEVEL 4
+    public static final double Pipe4Pivot = 0.24;
     public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
     public static final double PipeRetLift = 2.7 * ratio;
@@ -67,7 +67,7 @@ public final class Constants {
 
     public static final double kPipeIntakeSpeed = 0.75;
     public static final double kPipeOuttakeSpeed = -0.4;
-    public static final double kPipeOuttakeL1Speed = -0.2;
+    public static final double kPipeOuttakeL1Speed = -0.3;
     public static final double kPipeOuttakeL4Speed = -0.3;
 
     public static final int kPipeMotorId = 4; // CAN OK
@@ -93,10 +93,10 @@ public final class Constants {
 
     public static final double kLiftPosP = 0.50; // Used when the lift is going up (error is positive)
     public static final double kLiftNegP = 0.40; // Used when the lift is going down (error is negative)
-    public static final double kLiftI = 0.000;//0.0015;
+    public static final double kLiftI = 0.005;//0.0015;
     public static final double kLiftPosD = 0;//0.0001;
     public static final double kLiftNegD = 0;//0.003;
-    public static final double kLiftIZone = 0.2;
+    public static final double kLiftIZone = 0.5;
     public static final double kLiftLoopTolerance = 0;//0.05; // Tolerance for the closed loop
     public static final double kLiftTolerance = 0.15; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
     public static final double kLiftAntigrav = 0;//0.1775; // Antigrav constant: an amount of power added to the PID output to counteract gravity
@@ -108,7 +108,7 @@ public final class Constants {
     public static final double kPivotD = 0.0;
     public static final double kPivotIZone = 0.03;
     public static final double kPivotLoopTolerance = 0;//0.01; // Tolerance for the closed loop
-    public static final double kPivotTolerance = 0.03; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
+    public static final double kPivotTolerance = 0.01; // Tolerance for checking whether at setpoint (i.e. checking for when to move on to next command)
 
     public static final double stowPivot = 0.30;
     public static final double stowLift = 0.9 * ratio;
@@ -116,7 +116,7 @@ public final class Constants {
     public static final double bargePivotTravel = 0.30; // pivot moves to this first before lift rises
     public static final double bargePivot = 0.4;
     public static final double bargePivotShove = 0.3; // applied while depositing barge
-    public static final double bargeLift = 10.80 * ratio;
+    public static final double bargeLift = 10.45 * ratio;
   }
 
   public static final class HangConstants {
@@ -132,7 +132,7 @@ public final class Constants {
   }
 
   public static final class TelePathingConstants {
-    public static final PathConstraints kDefaultConstraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+    public static final PathConstraints kDefaultConstraints = new PathConstraints(2.0, 1.0, 2 * Math.PI, 4 * Math.PI);
     //public static final PathConstraints kDefaultConstraints = PathConstraints.unlimitedConstraints(12.0); // You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
   }
 

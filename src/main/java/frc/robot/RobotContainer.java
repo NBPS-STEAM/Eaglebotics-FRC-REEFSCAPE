@@ -725,7 +725,8 @@ public class RobotContainer
 
   public void registerNamedCommands() {
     NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
-    NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe1Command());
+    NamedCommands.registerCommand("Pipe Level 1", opCommands.getPipe1Command());
+    NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));
