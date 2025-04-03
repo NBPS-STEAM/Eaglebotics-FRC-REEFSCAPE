@@ -32,7 +32,7 @@ public class VisionSubsystem extends SubsystemBase{
     public double resetOdomAt = -10;
 
     private static final String fLimeName = "limelight-limef";
-    private static final String bLimeName = "limelight-limeb";
+    private static final String bLimeName = "limelight";
 
     private static final String fPoseName = "FLpose";
     private static final String bPoseName = "BLpose";

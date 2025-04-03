@@ -12,35 +12,35 @@ import edu.wpi.first.wpilibj.Servo;
 public class HangSubsystem extends SubsystemBase {
 
     // Instance
-    public final SparkMax m1_motor;
-    public final SparkMax m2_motor;
+    public final SparkMax m_twistMotor;
+    public final SparkMax m_gripMotor;
     public final Servo servo1;
     public final Servo servo2;
 
 
     public HangSubsystem() {
         // initialize motor
-        m1_motor = new SparkMax(Constants.HangConstants.kHangMotor1Id, MotorType.kBrushless);
-        m2_motor = new SparkMax(Constants.HangConstants.kHangMotor2Id, MotorType.kBrushless);
+        m_twistMotor = new SparkMax(Constants.HangConstants.kHangTwistMotorId, MotorType.kBrushless);
+        m_gripMotor = new SparkMax(Constants.HangConstants.kHangGripMotorId, MotorType.kBrushless);
 
-        m1_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        m2_motor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_twistMotor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        m_gripMotor.configure(Constants.kBrakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         servo1 = new Servo(Constants.HangConstants.kServo1Channel);
         servo2 = new Servo(Constants.HangConstants.kServo2Channel);
     }
 
     public void setServoPositions(double position){
-        if (position >= 0 && position <= 1.0){
-            servo1.setPosition(position);
-            servo2.setPosition(position);
-        }
+        servo1.setPosition(position);
+        servo2.setPosition(position);
     }
 
     public void setTwistPower(double power) {
-        m1_motor.set(power);
-        m2_motor.set(power);
+        m_twistMotor.set(power);
+    }
 
+    public void setGripPower(double power) {
+        m_gripMotor.set(power);
     }
 
 }

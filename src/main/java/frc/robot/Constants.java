@@ -52,10 +52,10 @@ public final class Constants {
     public static final double Pipe4Pivot = 0.24;
     public static final double Pipe4PivotOut = 0.4; //Applied while outtaking
 
-    public static final double PipeRetLift = 2.7 * ratio;
-    public static final double PipeRetPivot = 0.33;
+    public static final double PipeRetLift = 2.72 * ratio;
+    public static final double PipeRetPivot = 0.345;
 
-    public static final double PipeIntakeLift = 2.9 * ratio; //REDUNDENT WITH PipeRetLift
+    public static final double PipeIntakeLift = 2.72 * ratio; //REDUNDENT WITH PipeRetLift
     public static final double PipeIntakePivot = 0.345; //REDUNDENT WITH PipeRetPivot
   }
 
@@ -65,10 +65,10 @@ public final class Constants {
     
     // Pipe Intake:
 
-    public static final double kPipeIntakeSpeed = 0.75;
-    public static final double kPipeOuttakeSpeed = -0.4;
-    public static final double kPipeOuttakeL1Speed = -0.3;
-    public static final double kPipeOuttakeL4Speed = -0.3;
+    public static final double kPipeIntakeSpeed = -0.75;
+    public static final double kPipeOuttakeSpeed = 0.4;
+    public static final double kPipeOuttakeL1Speed = 0.3;
+    public static final double kPipeOuttakeL4Speed = 0.3;
 
     public static final int kPipeMotorId = 4; // CAN OK
     public static final int kPipeSensorChannel = 1; // CAN OK
@@ -124,9 +124,13 @@ public final class Constants {
 
     public static final double kHangUnlockPos = 1.0; // UNTUNED
     public static final double kHangTwistPower = 1.0; // UNTUNED
+    public static final double kHangGripPower = 1.0; // UNTUNED
 
-    public static final int kHangMotor1Id = 6; // CAN OK
-    public static final int kHangMotor2Id = 7; // CAN OK
+    public static final double kHangLiftPos = 4.75 * ratio;
+    public static final double kHangPivotPos = 0.30;
+
+    public static final int kHangTwistMotorId = 6; // CAN NG
+    public static final int kHangGripMotorId = 7; // CAN NG
     public static final int kServo1Channel = 0; // CAN OK
     public static final int kServo2Channel = 1; // CAN OK
   }

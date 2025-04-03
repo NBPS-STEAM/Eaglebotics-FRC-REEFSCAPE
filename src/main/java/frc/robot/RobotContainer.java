@@ -61,12 +61,12 @@ public class RobotContainer
   public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 
   public final BallIntakeSubsystem ballIntake = new BallIntakeSubsystem();
-  public final HangSubsystem hangSubsystem = new HangSubsystem();
+  public HangSubsystem hangSubsystem = null;
 
   PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
   BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
   IntakePositionCommand intakePositionCommands = new IntakePositionCommand(intakePosition);
-  HangCommands hangCommands = new HangCommands(hangSubsystem);
+  HangCommands hangCommands = null;
   OpCommands opCommands = new OpCommands(intakePosition);
   TelePathingCommands telePathingCommands = new TelePathingCommands(drivebase);
   public final TestCommand test=new TestCommand(drivebase, pipeIntake, intakePosition, ballIntake);
@@ -100,6 +100,18 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    // Attempt to obtain hang subsystem (do not crash if failed)
+    try {
+      hangSubsystem = new HangSubsystem();
+      hangCommands = new HangCommands(hangSubsystem, intakePositionCommands);
+    } catch (Exception e) {
+      if (e.getMessage() == null) {
+        System.out.println("WARNING: FAILED TO OBTAIN HANG SUBSYSTEM");
+      } else {
+        System.out.println("WARNING: FAILED TO OBTAIN HANG SUBSYSTEM: " + e.getMessage());
+      }
+    }
+
     // Register commands for PathPlanner
     registerNamedCommands();
 
@@ -616,7 +628,9 @@ public class RobotContainer
 
 
     //Gamepad:PS+Options (hold for 0.1s) - Activate Then Move Hang
-    //coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).whileTrue(hangCommands.new Activate(HangConstants.kHangTwistPower, HangConstants.kHangUnlockPos));
+    if (hangCommands != null) {
+      coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).whileTrue(hangCommands.multiStageHangCommand());
+    }
 
 
 
