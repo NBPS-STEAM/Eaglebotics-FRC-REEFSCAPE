@@ -659,7 +659,7 @@ public class RobotContainer
     coDriverGamepad.circle().onTrue(Commands.runOnce(telePathingCommands::setAutoDriveNone));
 
     //Gamepad:Cross (hold for 0.5s) - Reset Odometry from Vision
-    coDriverGamepad.cross().debounce(0.5).onTrue(Commands.runOnce(vision::resetOdometry));
+    coDriverGamepad.cross().debounce(0.5).onTrue(Commands.runOnce(this::resetOdometryFromVision));
 
   }
 
@@ -768,6 +768,10 @@ public class RobotContainer
 
   public void stopIntakePosition() {
     intakePosition.stopIntakePosition();
+  }
+
+  public void resetOdometryFromVision() {
+    vision.resetOdometry();
   }
 
 

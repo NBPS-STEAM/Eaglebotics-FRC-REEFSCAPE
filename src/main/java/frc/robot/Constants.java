@@ -24,7 +24,7 @@ public final class Constants {
     public static final double Ball1Lift = 0.0 * ratio; //GROUND BALL
     public static final double Ball1Pivot = 0.05;
 
-    public static final double Ball2Lift = 1.75 * ratio; //PROCESSOR BALL
+    public static final double Ball2Lift = 0.0 * ratio; //PROCESSOR BALL
     public static final double Ball2Pivot = 0.18;
 
     public static final double Ball3Lift = 1.75 * ratio; //BALL LEVEL 1

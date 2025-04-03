@@ -122,6 +122,9 @@ public class Robot extends TimedRobot
     //   m_robotContainer.setMotorBrake(false);
     //   disabledTimer.stop();
     // }
+    if (disabledTimer.advanceIfElapsed(1.0)) {
+      m_robotContainer.resetOdometryFromVision();
+    }
   }
 
   /**
