@@ -31,19 +31,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Stow"
+            "name": "Pipe Retrieve"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "twoCoralTopPath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pipe Retrieve"
           }
         },
         {

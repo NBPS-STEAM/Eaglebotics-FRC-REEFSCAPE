@@ -747,6 +747,7 @@ public class RobotContainer
     NamedCommands.registerCommand("Pipe Level 1", opCommands.getPipe1Command());
     NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
+    NamedCommands.registerCommand("Quick Pipe Retrieve", opCommands.quickPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));
     NamedCommands.registerCommand("L4 Group", opCommands.pipeCommandGroup(4));

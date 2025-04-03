@@ -142,13 +142,22 @@ public class OpCommands {
 
     /**
      * Signal the lift and pivot to move to stow and end immediately.
-     * Other intake position commands wait for them to make it to the destination.
+     * Other intake position commands wait for them to make it to the destination. This one does not.
      */
     public Command quickStowCommand() {
         return new ParallelCommandGroup(
             quickStowLift(0),
             quickStowPivot(0)
         );
+    }
+
+    /**
+     * Signal the lift and pivot to move to the pipe intake position and end immediately.
+     * Other intake position commands wait for them to make it to the destination. This one does not.
+     */
+    public Command quickPipeIntakeCommand() {
+        return Commands.runOnce(() -> intakePositionSubsystem.setIntakePositionSetpoints(
+            Constants.OpConstantsForPipe.PipeIntakeLift, Constants.OpConstantsForPipe.PipeIntakePivot, 0));
     }
 
     /**

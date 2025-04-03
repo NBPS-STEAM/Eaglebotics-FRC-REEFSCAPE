@@ -68,7 +68,7 @@ public final class Constants {
     public static final double kPipeIntakeSpeed = -0.75;
     public static final double kPipeOuttakeSpeed = 0.4;
     public static final double kPipeOuttakeL1Speed = 0.3;
-    public static final double kPipeOuttakeL4Speed = 0.3;
+    public static final double kPipeOuttakeL4Speed = 0.4;
 
     public static final int kPipeMotorId = 4; // CAN OK
     public static final int kPipeSensorChannel = 1; // CAN OK
