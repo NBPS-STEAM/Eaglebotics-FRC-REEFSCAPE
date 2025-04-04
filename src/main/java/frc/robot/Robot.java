@@ -6,6 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +30,8 @@ public class Robot extends TimedRobot
 
   public RobotContainer m_robotContainer;
 
+  //public UsbCamera pipeCam = null;
+
   private Timer disabledTimer;
   Timer m_gcTimer = new Timer();
 
@@ -39,12 +45,22 @@ public class Robot extends TimedRobot
       SensorSubsystem.getInstance().updateAll();//all susbsystems that need pid should have the methods that
     }, 0.01,0.005);//update pid here to make sure they run as fast as possible, ONLY PID, nothing else
     instance = this;//it wont be stable then
+
+    //pipeCam = CameraServer.startAutomaticCapture("USB Camera 0", 0);
+    //pipeCam.setVideoMode(PixelFormat.kMJPEG, 192, 144, 15);
   }
 
   public static Robot getInstance()
   {
     return instance;
   }
+
+  /* public void stopCamera() {
+    if (pipeCam != null) {
+      pipeCam.close();
+      pipeCam = null;
+    }
+  } */
 
   /**
    * This function is run when the robot is first started up and should be used for any initialization code.
@@ -133,6 +149,8 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+    m_robotContainer.cancelResetOdometryFromVision();
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
 
@@ -153,6 +171,8 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit()
   {
+    m_robotContainer.cancelResetOdometryFromVision();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -178,6 +198,8 @@ public class Robot extends TimedRobot
   @Override
   public void testInit()
   {
+    m_robotContainer.cancelResetOdometryFromVision();
+
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
     m_robotContainer.setMotorBrake(true);

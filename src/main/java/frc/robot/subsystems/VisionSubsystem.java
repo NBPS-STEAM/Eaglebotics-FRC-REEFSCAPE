@@ -112,6 +112,13 @@ public class VisionSubsystem extends SubsystemBase{
         resetOdomAt = Timer.getFPGATimestamp() + 0.4;
     }
 
+    /**
+     * If currently holding out for a vision scan to reset odometry due to {@link #resetOdometry()}, don't.
+     */
+    public void cancelResetOdometry() {
+        resetOdomAt = -10;
+    }
+
     private boolean doResetOdom() {
         return resetOdomAt > Timer.getFPGATimestamp();
     }
