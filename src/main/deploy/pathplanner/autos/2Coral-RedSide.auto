@@ -41,9 +41,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Pipe Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pipe Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "coralApproachBottomPath"
+                }
+              }
+            ]
           }
         },
         {

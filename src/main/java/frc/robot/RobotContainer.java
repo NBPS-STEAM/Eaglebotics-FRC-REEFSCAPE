@@ -529,7 +529,7 @@ public class RobotContainer
     //sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
 
     //L2 - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
-    driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
+    //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
 
     //Options - Zeros the robot heading
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
@@ -537,7 +537,7 @@ public class RobotContainer
     //L2 (disabled) - Activate Auto Drive (while held)
     // Unlike all other commands, this "deferred" command is generated on command initialization, not instantiation.
     // In other words, this path-following command won't be generated until the command starts running.
-    //driverGamepad.L2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
+    driverGamepad.L2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
 
     //R2 - Pipe Outtake
     driverGamepad.R2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
@@ -612,14 +612,14 @@ public class RobotContainer
 
 
     // -- Auto Turn --
-    buttonPanel.button(9).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0)));
+    /* buttonPanel.button(9).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0)));
     buttonPanel.button(14).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60)));
     buttonPanel.button(15).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120)));
     buttonPanel.button(12).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180)));
     buttonPanel.button(7).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240)));
-    buttonPanel.button(6).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300)));
+    buttonPanel.button(6).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300))); */
     // -- Auto Drive Destinations --
-    /* buttonPanel.button(16).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(-1)));
+    buttonPanel.button(16).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(-1)));
     buttonPanel.button(11).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(0)));
     buttonPanel.button(8).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(1)));
 
@@ -630,7 +630,7 @@ public class RobotContainer
     buttonPanel.button(7).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(4)));
     buttonPanel.button(6).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToReef(5)));
 
-    coDriverGamepad.povRight().onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToBarge())); */
+    coDriverGamepad.povRight().onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveGoToBarge()));
 
 
 
@@ -662,7 +662,7 @@ public class RobotContainer
             .whileTrue(intakePositionCommands.new AdjustPivot(() -> buttonPanel.getRawAxis(5)));
     
     //Gamepad:Triangle - Move Lift Down
-    coDriverGamepad.triangle().whileTrue(intakePositionCommands.new AdjustLift(() -> -1));
+    coDriverGamepad.triangle().whileTrue(intakePositionCommands.new AdjustLift(() -> -0.5));
 
     //Gamepad:Square - Zero Lift
     coDriverGamepad.square().onTrue(Commands.runOnce(intakePosition::zeroLift));

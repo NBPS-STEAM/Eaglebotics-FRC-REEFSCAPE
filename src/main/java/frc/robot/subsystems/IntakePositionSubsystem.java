@@ -75,7 +75,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
         m_pivotClosedLoopController = m_pivotMotor1.getClosedLoopController();
 
-        pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(40, 40);
+        pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(45, 45);
         pivotMotor1Config.closedLoop.outputRange(-1, 1)
                                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                                     .pid(IntakePositionConstants.kPivotP, IntakePositionConstants.kPivotI, IntakePositionConstants.kPivotD)
