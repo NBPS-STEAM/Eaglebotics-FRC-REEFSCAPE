@@ -82,11 +82,11 @@ public class TelePathingCommands {
      */
     private Command goToReefSmartRelativeCommand(int index, int subPos) {
         if (index == 0 || index == 1 || index == 5) subPos *= -1;
-        if (getAllianceSimple()) {
-            return GoToReefSmartCommand((6 - index) % 6, -subPos);
-        } else {
+        //if (getAllianceSimple()) {
+        //    return GoToReefSmartCommand((6 - index) % 6, -subPos);
+        //} else {
             return GoToReefSmartCommand(index, subPos);
-        }
+        //}
     }
 
 
@@ -96,11 +96,11 @@ public class TelePathingCommands {
      * 0 is left side, 1 is right side.
      */
     public Command goToCoralStationSmartRelativeCommand(int side) {
-        if (getAllianceSimple()) {
-            return goToCoralStationSmartCommand(side);
-        } else {
+        //if (getAllianceSimple()) {
+        //    return goToCoralStationSmartCommand(side);
+        //} else {
             return goToCoralStationSmartCommand((side + 1) % 2);
-        }
+        //}
     }
 
 
