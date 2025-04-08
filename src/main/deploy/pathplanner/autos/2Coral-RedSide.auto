@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Stow"
+            "name": "Pipe Retrieve"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Pipe Retrieve"
+            "name": "Pipe Intake"
           }
         },
         {

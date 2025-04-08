@@ -46,18 +46,6 @@ public class TestCommand extends SequentialCommandGroup{
   public Command[] group0(){
     Command[] commands={
     new StowCommand(intakePosition),//stow
-    drive.driveCommand(//make sure robot is pointing forwards
-            () -> 0,
-            () -> 0,
-            () -> 0,
-            ()->1),
-    new WaitCommand(3),
-    drive.driveCommand(//point robot 90 degrees
-                () -> 0,
-                () -> 0,
-                () -> -1,
-                () -> 0),
-    new WaitCommand(3),
     opCommands.pipeCommandGroup(3),//test pivot and elevator
     new WaitCommand(1),
     new StowCommand(intakePosition),//back to stow

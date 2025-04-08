@@ -33,7 +33,7 @@ public class VisionSubsystem extends SubsystemBase{
     public double resetOdomAt = -10;
 
     private static final String fLimeName = "limelight-limef";
-    private static final String bLimeName = "limelight-limeb";
+    private static final String bLimeName = "limelight";
 
     private static final String fPoseName = "FLpose";
     private static final String bPoseName = "BLpose";
@@ -113,6 +113,13 @@ public class VisionSubsystem extends SubsystemBase{
         resetOdomAt = Timer.getFPGATimestamp() + 0.4;
     }
 
+    /**
+     * If currently holding out for a vision scan to reset odometry due to {@link #resetOdometry()}, don't.
+     */
+    public void cancelResetOdometry() {
+        resetOdomAt = -10;
+    }
+
     private boolean doResetOdom() {
         return resetOdomAt > Timer.getFPGATimestamp();
     }
@@ -136,7 +143,7 @@ public class VisionSubsystem extends SubsystemBase{
         }
 
         updateFrontLime();
-        updateBackLime();
+        //updateBackLime();
     }
 
     /**

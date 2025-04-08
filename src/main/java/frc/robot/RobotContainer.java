@@ -61,12 +61,12 @@ public class RobotContainer
   public final IntakePositionSubsystem intakePosition = new IntakePositionSubsystem();
 
   public final BallIntakeSubsystem ballIntake = new BallIntakeSubsystem();
-  public final HangSubsystem hangSubsystem = new HangSubsystem();
+  //public HangSubsystem hangSubsystem = null;
 
   PipeIntakeCommands pipeIntakeCommands = new PipeIntakeCommands(pipeIntake);
   BallIntakeCommands ballIntakeCommands = new BallIntakeCommands(ballIntake);
   IntakePositionCommand intakePositionCommands = new IntakePositionCommand(intakePosition);
-  HangCommands hangCommands = new HangCommands(hangSubsystem);
+  //HangCommands hangCommands = null;
   OpCommands opCommands = new OpCommands(intakePosition);
   TelePathingCommands telePathingCommands = new TelePathingCommands(drivebase);
   public final TestCommand test=new TestCommand(drivebase, pipeIntake, intakePosition, ballIntake);
@@ -100,6 +100,18 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    // Attempt to obtain hang subsystem (do not crash if failed)
+    /* try {
+      hangSubsystem = new HangSubsystem();
+      hangCommands = new HangCommands(hangSubsystem, intakePositionCommands);
+    } catch (Exception e) {
+      if (e.getMessage() == null) {
+        System.out.println("WARNING: FAILED TO OBTAIN HANG SUBSYSTEM");
+      } else {
+        System.out.println("WARNING: FAILED TO OBTAIN HANG SUBSYSTEM: " + e.getMessage());
+      }
+    } */
+
     // Register commands for PathPlanner
     registerNamedCommands();
 
@@ -514,15 +526,15 @@ public class RobotContainer
     //Joysticks (Default) - Drive the robot
     Command driveCommand = OpCommands.getDriveCommand(drivebase, driverGamepad);
     drivebase.setDefaultCommand(driveCommand);
-    sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
+    //sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
 
-    //L2 (disabled) - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    //L2 - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
     //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
 
     //Options - Zeros the robot heading
     driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
 
-    //L2 - Activate Auto Drive (while held)
+    //L2 (disabled) - Activate Auto Drive (while held)
     // Unlike all other commands, this "deferred" command is generated on command initialization, not instantiation.
     // In other words, this path-following command won't be generated until the command starts running.
     driverGamepad.L2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
@@ -599,6 +611,13 @@ public class RobotContainer
 
 
 
+    // -- Auto Turn --
+    /* buttonPanel.button(9).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 0)));
+    buttonPanel.button(14).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 60)));
+    buttonPanel.button(15).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 120)));
+    buttonPanel.button(12).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 180)));
+    buttonPanel.button(7).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 240)));
+    buttonPanel.button(6).onTrue(Commands.runOnce(() -> OpCommands.getAutoTurnDriveCommand(drivebase, driverGamepad, 300))); */
     // -- Auto Drive Destinations --
     buttonPanel.button(16).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(-1)));
     buttonPanel.button(11).onTrue(Commands.runOnce(() -> telePathingCommands.setAutoDriveSide(0)));
@@ -616,7 +635,12 @@ public class RobotContainer
 
 
     //Gamepad:PS+Options (hold for 0.1s) - Activate Then Move Hang
-    //coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).whileTrue(hangCommands.new Activate(HangConstants.kHangTwistPower, HangConstants.kHangUnlockPos));
+    /* if (hangCommands != null) {
+      coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).whileTrue(hangCommands.multiStageHangCommand());
+    } */
+
+    //coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).onTrue(Commands.runOnce(() -> Robot.getInstance().stopCamera()));
+    coDriverGamepad.PS().and(coDriverGamepad.options()).onTrue(intakePosition.disableLiftCommand());
 
 
 
@@ -638,14 +662,17 @@ public class RobotContainer
     buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveLargeDeadband)
             .whileTrue(intakePositionCommands.new AdjustPivot(() -> buttonPanel.getRawAxis(5)));
     
-    //Gamepad:Triangle+Square (hold for 0.1s) - Zero Lift
-    coDriverGamepad.triangle().and(coDriverGamepad.square()).debounce(0.1).onTrue(Commands.runOnce(intakePosition::zeroLift));
+    //Gamepad:Triangle - Move Lift Down
+    coDriverGamepad.triangle().whileTrue(intakePositionCommands.new AdjustLift(() -> -0.5));
+
+    //Gamepad:Square - Zero Lift
+    coDriverGamepad.square().onTrue(Commands.runOnce(intakePosition::zeroLift));
 
     //Gamepad:Circle - Unset Auto Drive
     coDriverGamepad.circle().onTrue(Commands.runOnce(telePathingCommands::setAutoDriveNone));
 
-    //Gamepad:Cross (hold for 0.5s) - Reset Odometry from Vision
-    coDriverGamepad.cross().debounce(0.5).onTrue(Commands.runOnce(vision::resetOdometry));
+    //Gamepad:Cross (hold for 0.4s) - Reset Odometry from Vision
+    coDriverGamepad.cross().debounce(0.4).onTrue(Commands.runOnce(this::resetOdometryFromVision));
 
   }
 
@@ -729,13 +756,17 @@ public class RobotContainer
   }
 
   public void registerNamedCommands() {
-    NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.new Outtake());
+    NamedCommands.registerCommand("Pipe Outtake", pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
     NamedCommands.registerCommand("Pipe Level 1", opCommands.getPipe1Command());
     NamedCommands.registerCommand("Pipe Level 4", opCommands.getPipe4Command());
     NamedCommands.registerCommand("Pipe Retrieve", opCommands.getPipeIntakeCommand());
+    NamedCommands.registerCommand("Quick Pipe Retrieve", opCommands.quickPipeIntakeCommand());
     NamedCommands.registerCommand("Pipe Intake", pipeIntakeCommands.new Intake());
     NamedCommands.registerCommand("L2 Group", opCommands.pipeCommandGroup(2));
     NamedCommands.registerCommand("L4 Group", opCommands.pipeCommandGroup(4));
+    NamedCommands.registerCommand("Low Ball Lift", intakePositionCommands.new SetLiftSetpoint(Constants.OpConstantsForBall.Ball3Lift, 3));
+    NamedCommands.registerCommand("Low Ball Pivot", intakePositionCommands.new SetPivotSetpoint(Constants.OpConstantsForBall.Ball3Pivot, 3));
+    NamedCommands.registerCommand("Ball Intake", ballIntakeCommands.new Intake());
     NamedCommands.registerCommand("Ball Level 2", opCommands.getBall2Command());
     NamedCommands.registerCommand("Stow", new StowCommand(intakePosition));
     NamedCommands.registerCommand("Quick Stow", opCommands.quickStowCommand());
@@ -753,6 +784,14 @@ public class RobotContainer
 
   public void stopIntakePosition() {
     intakePosition.stopIntakePosition();
+  }
+
+  public void resetOdometryFromVision() {
+    vision.resetOdometry();
+  }
+
+  public void cancelResetOdometryFromVision() {
+    vision.cancelResetOdometry();
   }
 
 

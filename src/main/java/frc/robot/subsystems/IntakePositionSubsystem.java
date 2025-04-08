@@ -15,6 +15,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -68,14 +69,16 @@ public class IntakePositionSubsystem extends SubsystemBase {
                                     .iZone(IntakePositionConstants.kLiftIZone)
                                     .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftLoopTolerance);
 
-        m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        for(int i=0; i<=5; i++){
+            m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+            m_liftMotor2.configure(liftMotor2Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        }
         // Configure Pivot Motor
         m_pivotMotor1 = new SparkMax(IntakePositionConstants.kPivotMotor1Id, MotorType.kBrushless);
         m_pivotEncoder = m_pivotMotor1.getAbsoluteEncoder();
         m_pivotClosedLoopController = m_pivotMotor1.getClosedLoopController();
 
-        pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(40, 40);
+        pivotMotor1Config = new SparkMaxConfig().apply(Constants.kBrakeConfig).smartCurrentLimit(45, 45);
         pivotMotor1Config.closedLoop.outputRange(-1, 1)
                                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
                                     .pid(IntakePositionConstants.kPivotP, IntakePositionConstants.kPivotI, IntakePositionConstants.kPivotD)
@@ -94,6 +97,18 @@ public class IntakePositionSubsystem extends SubsystemBase {
         OverrideTempLimit=true;
     }
 
+    public Command disableLiftCommand() {
+        return new InstantCommand(()->{
+            m_liftMotor1.disable();
+            m_liftMotor2.disable();
+        });
+    }
+
+    public Command disablePivotCommand() {
+        return new InstantCommand(()->{
+            m_pivotMotor1.disable();
+        });
+    }
 
     public void updateAll() {
         if((Tempfilter1.calculate(m_liftMotor1.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp||Tempfilter2.calculate(m_liftMotor2.getMotorTemperature())>Constants.IntakePositionConstants.kMaxLiftMotorTemp)&&!OverrideTempLimit){
@@ -101,10 +116,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
             System.out.println("ELEVATOR WILL ATTEMPT TO STOW THEN DISABLE");
             CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 new ParallelRaceGroup(new StowCommand(this), new WaitCommand(2)),
-                new InstantCommand(()->{
-                    m_liftMotor1.disable();
-                    m_liftMotor2.disable();
-                })
+                disableLiftCommand()
             ));
             System.out.println("Good luck");
            

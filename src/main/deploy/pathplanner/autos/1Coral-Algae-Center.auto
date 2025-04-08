@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "oneCoralTopPath"
+            "pathName": "oneCoralCenterPath"
           }
         },
         {
@@ -31,25 +31,44 @@
         {
           "type": "named",
           "data": {
-            "name": "Pipe Retrieve"
+            "name": "Low Ball Lift"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "twoCoralTopPath"
+            "pathName": "oneAlgaeCenterPath"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Ball Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Low Ball Pivot"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Pipe Intake"
+            "name": "Stow"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Pipe Intake"
+            "pathName": "oneBargeCenterPath"
           }
         },
         {
@@ -59,27 +78,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "twoCoralTopReturn"
+            "name": "Quick Stow"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L4 Group"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pipe Outtake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stow"
+            "name": "Quick Stow"
           }
         }
       ]
