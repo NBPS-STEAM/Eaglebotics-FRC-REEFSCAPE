@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.oldordrivecommands.AutoCommands.DriveCommand;
 import frc.utils.LimelightHelpers;
 
 /**
@@ -128,7 +129,7 @@ public class VisionSubsystem extends SubsystemBase{
      * The main loop of the Limelight odometry thread
      */
     private void loop() {
-        if (swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble() > 720) {
+        if (swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble() > 360) {
             ignoreAllLimes = true;
         } else {
             ignoreAllLimes = false;
@@ -166,7 +167,7 @@ public class VisionSubsystem extends SubsystemBase{
                 (limeFPrev != null && (limeF.pose.getTranslation().getDistance(limeFPrev.pose.getTranslation()) /
                     (limeF.timestampSeconds - limeFPrev.timestampSeconds)) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude()) ||
                 (limeFPrev != null && (limeF.pose.getTranslation()
-                    .getDistance(limeFPrev.pose.getTranslation()) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)) ||
+                    .getDistance(limeFPrev.pose.getTranslation()) > DriveConstants.MaxErrorFromBot)/*DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)*/) ||
                 (limeF.rawFiducials.length > 0 && limeF.rawFiducials[0].ambiguity > 0.5 &&
                     limeF.rawFiducials[0].distToCamera > 4.0) ||
                 limeF.pose.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
@@ -216,7 +217,7 @@ public class VisionSubsystem extends SubsystemBase{
                 (limeBPrev != null && (limeB.pose.getTranslation().getDistance(limeBPrev.pose.getTranslation()) /
                     (limeB.timestampSeconds - limeBPrev.timestampSeconds)) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude()) ||
                 (limeBPrev != null && (limeB.pose.getTranslation()
-                    .getDistance(limeBPrev.pose.getTranslation()) > DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)) ||
+                    .getDistance(limeBPrev.pose.getTranslation()) > DriveConstants.MaxErrorFromBot)/*DriveConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.02)*/) ||
                 (limeB.rawFiducials.length > 0 && limeB.rawFiducials[0].ambiguity > 0.5 &&
                     limeB.rawFiducials[0].distToCamera > 4.0) ||
                 limeB.pose.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
