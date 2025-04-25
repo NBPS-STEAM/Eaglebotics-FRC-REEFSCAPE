@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,6 +51,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     private int positionLevel = 0;
 
     private boolean liftAscending = true;
+    public boolean TempError=false;
 
 
     public IntakePositionSubsystem() {
@@ -67,7 +69,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
                                     .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
                                     .pid(IntakePositionConstants.kLiftPosP, IntakePositionConstants.kLiftI, IntakePositionConstants.kLiftPosD)
                                     .iZone(IntakePositionConstants.kLiftIZone)
-                                    .maxMotion.allowedClosedLoopError(IntakePositionConstants.kLiftLoopTolerance);
+                                    .maxMotion.maxAcceleration(4800*2)
+                                    .maxVelocity(4500)
+                                    .allowedClosedLoopError(IntakePositionConstants.kLiftLoopTolerance);
+                                    
 
         for(int i=0; i<=5; i++){
             m_liftMotor1.configure(liftMotor1Config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
@@ -119,7 +124,9 @@ public class IntakePositionSubsystem extends SubsystemBase {
                 disableLiftCommand()
             ));
             System.out.println("Good luck");
-           
+           TempError=true;
+        }else{
+            TempError=false;
         }
         // Change lift P when changing between ascending/descending
         boolean liftAscendingNow = getLiftError() >= 0;
@@ -149,7 +156,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void setLiftSetpoint(double setpoint, Integer forLevel) {
         if (forLevel != null) positionLevel = forLevel;
         liftClosedLoopReference = setpoint;
-        m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition, ClosedLoopSlot.kSlot0, IntakePositionConstants.kLiftAntigrav, ArbFFUnits.kPercentOut);
+        m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0, IntakePositionConstants.kLiftAntigrav, ArbFFUnits.kPercentOut);
         //m_liftClosedLoopController.setReference(liftClosedLoopReference, ControlType.kPosition);
     }
 

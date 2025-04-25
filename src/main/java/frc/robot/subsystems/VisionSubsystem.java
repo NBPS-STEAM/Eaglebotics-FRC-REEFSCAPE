@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.oldordrivecommands.AutoCommands.DriveCommand;
 import frc.utils.LimelightHelpers;
+import frc.utils.LimelightHelpers.PoseEstimate;
 
 /**
  * Massive credit to team 4253 Raid Zero.
@@ -142,8 +144,9 @@ public class VisionSubsystem extends SubsystemBase{
             ignoreAllLimes = false;
         }
 
-        updateFrontLime();
+        //updateFrontLime();
         //updateBackLime();
+        updateAllLimes();
     }
 
     /**
@@ -245,6 +248,58 @@ public class VisionSubsystem extends SubsystemBase{
             limeBPrev = limeB;
         }
     }
+     /**
+     * Updates the odometry for the back limelight,using another method
+     */
+    private void updateAllLimes() {//new test vision method
+        double r=swerve.getPose().getRotation().getDegrees();
+        LimelightHelpers.SetRobotOrientation(
+            bLimeName,
+            r,
+            swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble(),
+            0,
+            0,
+            0,
+            0
+        );
+        LimelightHelpers.SetRobotOrientation(
+            fLimeName,
+            r,
+            swerve.pigeon.getAngularVelocityZWorld().getValueAsDouble(),
+            0,
+            0,
+            0,
+            0
+        );
+       
+        limeB = LimelightHelpers.getBotPoseEstimate_wpiBlue(bLimeName);
+        limeF = LimelightHelpers.getBotPoseEstimate_wpiBlue(fLimeName);
+            if (!ignoreAllLimes) {
+                SmartDashboard.putBoolean(bPoseName, true);
+                limeB = validatePoseEstimate(limeB);
+                SmartDashboard.putBoolean(fPoseName, true);
+                limeF = validatePoseEstimate(limeF);//makes sure pose is valid
+
+                PoseEstimate bestPose;
+            if (limeF!= null && limeB != null) {
+                bestPose = (limeF.avgTagArea >= limeB.avgTagArea) ? limeF : limeB;
+         } else if (limeF != null) {//tries to get the best pose
+              bestPose = limeF;
+            } else {
+            bestPose = limeB;
+            }
+                
+            if (bestPose != null) {
+                swerve.swerveDrive.addVisionMeasurement(
+                    bestPose.pose,
+                    bestPose.timestampSeconds,
+                    VecBuilder.fill(0.75, 0.75, 50));
+            } 
+        }
+    
+    }
+    
+
 
     /**
      * Checks if a pose is inside the field dimensions
@@ -258,4 +313,20 @@ public class VisionSubsystem extends SubsystemBase{
             pose.getTranslation().getY() > 0 &&
             pose.getTranslation().getY() < 8.05;
     }
+
+    public PoseEstimate validatePoseEstimate(PoseEstimate poseEstimate) {
+        if (poseEstimate == null) return null;
+            
+            double tagMin = 1;
+            double tagMax = 2;
+            double minArea = 0.08;
+            if (poseEstimate.tagCount == 1) minArea = 0.18;
+            if (poseEstimate.tagCount > tagMax || poseEstimate.tagCount < tagMin) return null;
+            if (poseEstimate.avgTagArea < minArea) return null;
+            if (poseEstimate.avgTagDist > 4) return null;
+            if(poseEstimate.rawFiducials[0].ambiguity > .7)return null;
+            return poseEstimate;
+        
+}
+
 }
