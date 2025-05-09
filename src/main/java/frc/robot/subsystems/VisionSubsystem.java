@@ -293,7 +293,7 @@ public class VisionSubsystem extends SubsystemBase{
                 swerve.swerveDrive.addVisionMeasurement(
                     bestPose.pose,
                     bestPose.timestampSeconds,
-                    VecBuilder.fill(0.75, 0.75, 50));
+                    VecBuilder.fill(0.75, 0.75, 45));
             } 
         }
     
@@ -323,8 +323,8 @@ public class VisionSubsystem extends SubsystemBase{
             if (poseEstimate.tagCount == 1) minArea = 0.18;
             if (poseEstimate.tagCount > tagMax || poseEstimate.tagCount < tagMin) return null;
             if (poseEstimate.avgTagArea < minArea) return null;
-            if (poseEstimate.avgTagDist > 4) return null;
-            if(poseEstimate.rawFiducials[0].ambiguity > .7)return null;
+            if (poseEstimate.avgTagDist > 3.25) return null;
+            if(poseEstimate.rawFiducials[0].ambiguity > .65)return null;
             return poseEstimate;
         
 }

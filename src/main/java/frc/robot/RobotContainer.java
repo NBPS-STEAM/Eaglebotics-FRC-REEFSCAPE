@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.nio.channels.IllegalBlockingModeException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -43,6 +44,7 @@ import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.PipeIntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.IntakePositionSubsystem.Posistions;
 import swervelib.SwerveModule;
 
 /**
@@ -120,7 +122,8 @@ public class RobotContainer
     //configureBindings2(); // Sequential command groups for IntakePosition set positions
     //configureBindings3(); // Toggleable pipe/ball mode with sequential command groups for IntakePosition set positions
     //configureBindingsPanel1(); // Co-driver controls on the custom button panel with sequential command groups for IntakePosition set positions
-    configureBindingsPanel2(); // Alternate co-driver controls on the custom button panel with sequential command groups for IntakePosition set positions
+    //configureBindingsPanel2(); // Alternate co-driver controls on the custom button panel with sequential command groups for IntakePosition set positions
+    configureBindingsPanel3(); // pirates pillage control scheme
 
     setAutoCommands();
     
@@ -675,7 +678,152 @@ public class RobotContainer
     coDriverGamepad.cross().debounce(0.4).onTrue(Commands.runOnce(this::resetOdometryFromVision));
 
   }
+  private SequentialCommandGroup getSetposCommand(){
+    IntakePositionSubsystem.Posistions posistion=intakePosition.targetpos;
+    if(posistion==Posistions.L4){
+      return new SequentialCommandGroup(opCommands.pipeCommandGroup(4));
+    } else if(posistion==Posistions.L3){
+      return new SequentialCommandGroup(opCommands.pipeCommandGroup(3));
+    } else if(posistion==Posistions.L2){
+      return new SequentialCommandGroup(opCommands.pipeCommandGroup(2));
+    } else if(posistion==Posistions.L1){
+      return new SequentialCommandGroup(opCommands.pipeCommandGroup(1));
+    } else if(posistion==Posistions.Ground_Ball){
+      return new SequentialCommandGroup(
+        opCommands.ballCommandGroup(1),
+        ballIntakeCommands. new Intake(),
+        new StowCommand(intakePosition)
+      );
+    } else if(posistion==Posistions.High_Algae){
+      return new SequentialCommandGroup(
+        opCommands.ballCommandGroup(4),
+        ballIntakeCommands. new Intake(),
+        new StowCommand(intakePosition)
+      );
+    } else if(posistion==Posistions.Low_Algae){
+      return new SequentialCommandGroup(
+        opCommands.ballCommandGroup(3),
+        ballIntakeCommands. new Intake(),
+        new StowCommand(intakePosition)
+      );
+    } else if(posistion==Posistions.Processor){
+      return new SequentialCommandGroup(
+        opCommands.ballCommandGroup(2),
+        ballIntakeCommands. new Intake()
+      );
+    } else if(posistion==Posistions.Barge){
+      return opCommands.bargeShootCommandGroup();
+    } else{
+      return new SequentialCommandGroup(opCommands.getStowParallelCommand());
+    }
+  }
 
+  private void configureBindingsPanel3()
+  {
+    
+
+    // DRIVER CONTROLS:
+
+    //Joysticks (Default) - Drive the robot
+    Command driveCommand = OpCommands.getDriveCommand(drivebase, driverGamepad);
+    drivebase.setDefaultCommand(driveCommand);
+    //sticksInUseTrigger(driverGamepad).whileTrue(driveCommand); // to interrupt other commands when the sticks are in use
+
+    //L2 - Gets the slow version (half speed) of the drive command. That way our robot can go slow.
+    //driverGamepad.L2().whileTrue(OpCommands.getTemporarySlowSpeedCommand(drivebase));
+
+    //Options - Zeros the robot heading
+    driverGamepad.options().onTrue(Commands.runOnce(drivebase::zeroGyro));
+
+    //L2 (disabled) - Activate Auto Drive (while held)
+    // Unlike all other commands, this "deferred" command is generated on command initialization, not instantiation.
+    // In other words, this path-following command won't be generated until the command starts running.
+    //driverGamepad.L2().whileTrue(telePathingCommands.getAutoDriveDeferredCommand());
+
+    //R2 - Pipe Outtake
+    driverGamepad.R2().onTrue(pipeIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+
+    // //Circle - Ball Outtake
+    // driverGamepad.circle().onTrue(ballIntakeCommands.getAwareOuttakeCommand(intakePosition, intakePositionCommands));
+
+    // -- Pipe Intake --
+    driverGamepad.R1().onTrue(opCommands.getPipeIntakeFullCommand(pipeIntakeCommands));
+
+    //go to posistion selected by codriver
+    driverGamepad.L2().onTrue(getSetposCommand());
+
+    
+
+
+
+
+    //CODRIVER CONTROLS:
+
+    //C2:R4 - Stow Position
+    buttonPanel.button(10).onTrue(opCommands.getStowParallelCommand());
+
+    //C1:R1-3 - Pipe Set Positions 2-4
+    buttonPanel.button(1).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.L4;}));
+    buttonPanel.button(3).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.L3;}));
+    buttonPanel.button(13).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.L2;}));
+
+    //Gamepad:Dpad Down - Pipe Set Position 1
+    coDriverGamepad.povDown().onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.L1;}));
+
+
+
+    // -- Ball Set Positions --
+    //C3:R1 - High Reef Ball
+    buttonPanel.button(2).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.High_Algae;}));
+    //C3:R2 - Low Reef Ball
+    buttonPanel.button(4).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.Low_Algae;}));
+
+    //C3:R3 - Barge Shoot Position
+    buttonPanel.button(5).onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.Barge;}));
+
+    //Gamepad:Dpad Left - Processor Ball
+    coDriverGamepad.povLeft().onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.Processor;}));
+
+    //Gamepad:Dpad Up - Ground Ball
+    coDriverGamepad.povUp().onTrue(new InstantCommand(()->{intakePosition.targetpos=Posistions.Ground_Ball;}));
+
+
+    //coDriverGamepad.PS().and(coDriverGamepad.options()).debounce(0.1).onTrue(Commands.runOnce(() -> Robot.getInstance().stopCamera()));
+    coDriverGamepad.PS().and(coDriverGamepad.options()).onTrue(intakePosition.disableLiftCommand());
+
+
+
+    // -- Manual Control Overrides --
+    // Reminder: the controller is placed upside-down.
+    //Gamepad:R1 - Toggle Pipe Intake
+    coDriverGamepad.R1().toggleOnTrue(pipeIntakeCommands.new Intake());
+    //Gamepad:R2 - Toggle Pipe Outtake
+    coDriverGamepad.R2().toggleOnTrue(pipeIntakeCommands.new Outtake());
+    //Gamepad:L1 - Toggle Ball Intake
+    coDriverGamepad.L1().toggleOnTrue(ballIntakeCommands.new Intake());
+    //Gamepad:L2 - Toggle Ball Outtake
+    coDriverGamepad.L2().toggleOnTrue(ballIntakeCommands.new Outtake());
+
+    //Joysticks:Left - Manual Lift
+    buttonPanel.axisMagnitudeGreaterThan(1, Constants.OIConstants.kDriveLargeDeadband)
+            .whileTrue(intakePositionCommands.new AdjustLift(() -> -buttonPanel.getRawAxis(1)));
+    //Joysticks:Right - Manual Pivot
+    buttonPanel.axisMagnitudeGreaterThan(5, Constants.OIConstants.kDriveLargeDeadband)
+            .whileTrue(intakePositionCommands.new AdjustPivot(() -> buttonPanel.getRawAxis(5)));
+    
+    //Gamepad:Triangle - Move Lift Down
+    coDriverGamepad.triangle().whileTrue(intakePositionCommands.new AdjustLift(() -> -0.5));
+
+    //Gamepad:Square - Zero Lift
+    coDriverGamepad.square().onTrue(Commands.runOnce(intakePosition::zeroLift));
+
+    //Gamepad:Circle - Unset Auto Drive
+    coDriverGamepad.circle().onTrue(Commands.runOnce(telePathingCommands::setAutoDriveNone));
+
+    //Gamepad:Cross (hold for 0.4s) - Reset Odometry from Vision
+    coDriverGamepad.cross().debounce(0.4).onTrue(Commands.runOnce(this::resetOdometryFromVision));
+
+  }
 
 
 

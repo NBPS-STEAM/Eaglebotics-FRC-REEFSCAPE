@@ -79,9 +79,8 @@ public class OpCommands {
             () -> -gamepad.getLeftX(),
             () -> turnController.calculate(normalDegrees(drivebase.getSwerveDrive().getYaw().getDegrees())),
             OIConstants.kDriveDeadband, 0);
-
+            turnController.close();
         return driveFieldOrientedAnglularVelocity;
-
     
     }
 
